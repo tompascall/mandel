@@ -21,7 +21,7 @@
 		button {
 			float: left;
       margin-top: 10px;
-       background: #ccc;
+      background: #ccc;
 		}
 		#head {
 			width: 100%;
@@ -40,13 +40,20 @@
 		#demo {
 			margin-left: 10px;
 		}
-		.re{
+		#about {
+      margin-left: 20px;
+    }
+		.re #about{
 			padding: 5px;
 			background: #ccc;
 		}
     .canvas_side {
       margin-right: 10px;
       margin-left: 10px;
+		}
+		a {
+			text-decoration: none;
+			color: black;
 		}
 	</style>
 </head>
@@ -88,7 +95,7 @@
 	<div>
 	<br/><button class="re" onclick="mandel()">Recalculate</button>
 	<button class="re" onclick="restart()">Restart</button>
-	
+	<button id="about"><a href="about.html">About</a></button>
 
 	<script src="jquery/jquery-2.1.1.min.js"></script> 
 	<script src="colorarrays.js"></script>
