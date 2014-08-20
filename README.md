@@ -13,3 +13,5 @@
 <p>You can adjust the <strong>size of the canvas</strong> in pixels. Now the shape of the canvas is a square, but maybe later it will be redesigned to be able to have two different sides.</p>
 
 <p>The <strong>maximum iteration</strong> can be set, too. Take care that a too big number may freeze your browser for a long time. I tested up to 20000, and it worked well.</p>
+
+<p>You can try the app <a href="http://mandel.tompascall.com/">here</a>.</p>
