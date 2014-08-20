@@ -15,3 +15,5 @@
 <p>The <strong>maximum iteration</strong> can be set, too. Take care that a too big number may freeze your browser for a long time. I tested up to 20000, and it worked well.</p>
 
 <p>You can try the app <a href="http://mandel.tompascall.com/">here</a>.</p>
+
+<p>In my experience it is <strong>the best choice to run the app on Firefox</strong>. Chrome is really slow, the other browsers about twice faster. IE is suprisingly fast, but it has a drawback that you cannot save the picture by right clicking on it, while Chrome and Firefox works well as regards saving the canvas. Safari is quite fast too, but you cannot save the picture.</p>
