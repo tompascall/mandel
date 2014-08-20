@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>mandelbrot</title>
+	<meta charset="UTF-8">
+	<style>		
+    body {
+      background: #ccc;
+      font-family: courier;
+      margin: 0;
+    }
+    h3 {
+    	text-align: center;
+    }
+		canvas {
+			border: 2px solid #e0e0e0;
+			float: left;
+			padding: 0;
+			margin-right: 30px;
+		}
+		button {
+			float: left;
+      margin-top: 10px;
+       background: #ccc;
+		}
+		#head {
+			width: 100%;
+			padding: 10px;
+			background: #c6c6c6;
+	
+		}
+		#depth {
+			margin-left: 10px;
+		}
+		#schemes {
+			margin-top: -10px;
+			float: left;
+
+		}
+		#demo {
+			margin-left: 10px;
+		}
+		.re{
+			padding: 5px;
+			background: #ccc;
+		}
+    .canvas_side {
+      margin-right: 10px;
+      margin-left: 10px;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="head">
+		<h3>Mandelbrot set</h3>
+	</div>
+		
+	<canvas id="mandelCanvas">
+		Sorry, but your browser does not support the HTML5 canvas tag.  Please try the app on an other browser.
+	</canvas>
+	
+	<p><strong>Canvas size: </strong><input id="canvasSize" type="number" min="2" max="10000" name="canvasSize"></p>
+	<p><strong>Maximum depth: </strong><input id="depthInput" type="number" min="1" max="1000" name="depth" value="20"></p>
+
+	<div id="schemes">
+		<p><strong>Color schemes:</strong></p>
+	
+		
+			<input class="canvas_side" type="radio" id="scheme0" name="scheme" value="0" >German<br>
+			<input class="canvas_side" type="radio" id="scheme1" name="scheme" value="1">Grey<br>
+			<input class="canvas_side" type="radio" id="scheme2" name="scheme" value="2">Yellow to black<br>
+			<input class="canvas_side" type="radio" id="scheme3" name="scheme" value="3">White to red<br>
+    			<input class="canvas_side" type="radio" id="scheme4" name="scheme" value="4">Yellow to Blue<br>
+    			<input class="canvas_side" type="radio" id="scheme5" name="scheme" value="5">Million<br>
+   			<input class="canvas_side" type="radio" id="scheme6" name="scheme" value="6">Rainbow<br>
+    			<input class="canvas_side" type="radio" id="scheme7" name="scheme" value="7">Greeny<br>
+    			<input class="canvas_side" type="radio" id="scheme8" name="scheme" value="8">Deep Purple<br>
+    			<input class="canvas_side" type="radio" id="scheme9" name="scheme" value="9">Golden Age<br>
+    			<input class="canvas_side" type="radio" id="scheme10" name="scheme" value="10">Hellfire<br>
+    			<input class="canvas_side" type="radio" id="scheme11" name="scheme" value="11">Green Thunder<br>
+    			<input class="canvas_side" type="radio" id="scheme12" name="scheme" value="12">Bloody Dusk<br>
+    			<input class="canvas_side" type="radio" id="scheme13" name="scheme" value="13">Blues<br>
+    			<input class="canvas_side" type="radio" id="scheme14" name="scheme" value="14" checked="checked">Spiral<br>
+		
+	
+		<button id="demo" onclick="demoScheme()">Demo schemes</button><br/>
+	<div>
+	<br/><button class="re" onclick="mandel()">Recalculate</button>
+	<button class="re" onclick="restart()">Restart</button>
+	
+
+	<script src="jquery/jquery-2.1.1.min.js"></script> 
+	<script src="colorarrays.js"></script>
+	<script src="mandel.js"></script>
+</body>
+</html>
+
+<!--
+<form class="canvas_side">
+</form>	
+-->
