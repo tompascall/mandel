@@ -99,6 +99,23 @@
 		initDepth(); // initialize the depth input values
 		mandel();
 
+		//touch click helper
+		(function ($) {
+    	$.fn.tclick = function (onclick) {
+        this.bind("touchstart", function (e) { onclick.call(this, e); e.stopPropagation(); e.preventDefault(); });
+        this.bind("click", function (e) { onclick.call(this, e); });        
+        return this;
+    	};
+		})(jQuery);
+
+		(function ($) {
+    	$.fn.tclick = function (onclick) {
+        this.bind("touchend", function (e) { onclick.call(this, e); e.stopPropagation(); e.preventDefault(); });
+        this.bind("click", function (e) { onclick.call(this, e); });         
+        return this;
+    	};
+		})(jQuery);
+
 		$("#mandelCanvas").mousedown(function(e){
   		if (e.which ===1){
   			mouseDownX = e.pageX - this.offsetLeft;
@@ -114,7 +131,9 @@
   		if (leftClick) {
   			mouseUpX = e.pageX - this.offsetLeft;
   			mouseUpY = e.pageY - this.offsetTop;
-  			mandel();
+  			if (mouseUpX !== mouseDownX && mouseUpY !== mouseDownY){
+  				mandel();
+  			}  			
   			leftClick = false;
   		}	
   
@@ -273,13 +292,13 @@
 			}
 
 			changer = aRightBottom - aLeftUpper; // new range
-			if (!changer) {
-				// if you mousedown and mouseup at the same point
-				aLeftUpper = aStart;
-				bLeftUpper = bStart;
-				// set back to original values
-			}
-			else {
+			// if (!changer) {
+			// 	// if you mousedown and mouseup at the same point
+			// 	aLeftUpper = aStart;
+			// 	bLeftUpper = bStart;
+			// 	// set back to original values
+			// }
+			// else {
 				range = changer;
 
 				aStart = aLeftUpper;
@@ -288,7 +307,7 @@
 				bComplex = bStart;
 
 				step = range / CANVAS_WIDTH; // new step
-			}
+			//}
 
 			mouseDownX = mouseDownY = 0;
 			mouseUpX = CANVAS_WIDTH;
