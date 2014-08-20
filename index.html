@@ -4,56 +4,56 @@
 	<title>mandelbrot</title>
 	<meta charset="UTF-8">
 	<style>		
-    body {
+    body{
       background: #ccc;
       font-family: courier;
       margin: 0;
     }
-    h3 {
+    h3{
     	text-align: center;
     }
-		canvas {
+		canvas{
 			border: 2px solid #e0e0e0;
 			float: left;
 			padding: 0;
 			margin-right: 30px;
 		}
-		button {
+		button{
 			float: left;
       margin-top: 10px;
       background: #ccc;
 		}
-		#head {
+		#head{
 			width: 100%;
 			padding: 10px;
 			background: #c6c6c6;
 	
 		}
-		#depth {
+		#depth{
 			margin-left: 10px;
 		}
-		#schemes {
+		#schemes{
 			margin-top: -10px;
 			float: left;
 
 		}
-		#demo {
+		#demo{
 			margin-left: 10px;
 		}
-		#about {
+		#about{
       margin-left: 20px;
     }
 		.re #about{
 			padding: 5px;
 			background: #ccc;
 		}
-    .canvas_side {
+    .canvas_side{
       margin-right: 10px;
       margin-left: 10px;
 		}
-		a {
+		a{
 			text-decoration: none;
-			color: black;
+			color: red;
 		}
 	</style>
 </head>
@@ -68,7 +68,7 @@
 	</canvas>
 	
 	<p><strong>Canvas size: </strong><input id="canvasSize" type="number" min="2" max="10000" name="canvasSize"></p>
-	<p><strong>Maximum depth: </strong><input id="depthInput" type="number" min="1" max="1000" name="depth" value="20"></p>
+	<p><strong>Maximum iteration: </strong><input id="depthInput" type="number" min="1" max="1000" name="depth" value="20"></p>
 
 	<div id="schemes">
 		<p><strong>Color schemes:</strong></p>
