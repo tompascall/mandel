@@ -20,6 +20,7 @@
       margin-top: 10px;
       background: #ccc;
       font-family: courier;
+    	font-size: 0.8em;
 		}
 		#head{
 			width: 100%;
@@ -27,20 +28,9 @@
 			background: #c0c0c0;
 	
 		}
-	
-	
 		a{
 			text-decoration: none;
 			color: red;
-		}
-		@media (max-width: 800px){
-			body{
-				font-size: 2em;
-				margin: 0 20px;
-			}
-			button{
-				font-size: 1em;
-			}
 		}
 		#back{
 			background: #ccc;
@@ -50,6 +40,15 @@
 		#about{
 			max-width: 800px;
 			margin: 0 auto;
+		}
+		@media only screen and (max-width: 480px), only screen and (max-device-width: 480px){
+			body{
+				font-size: 1.2em;
+				margin: 0 20px;
+			}
+			button{
+				font-size: 1em;
+			}
 		}
 	</style>
 </head>

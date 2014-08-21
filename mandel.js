@@ -4,7 +4,7 @@
 	"use strict";
 
 	var c = document.getElementById("mandelCanvas");
-	var DEFAULT_CANVAS_SIZE = 400;
+	var DEFAULT_CANVAS_SIZE = 350;
 	document.getElementById("canvasSize").value = DEFAULT_CANVAS_SIZE;
 
 	var CANVAS_WIDTH = c.width = DEFAULT_CANVAS_SIZE;

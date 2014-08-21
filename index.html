@@ -2,13 +2,13 @@
 <html>
 <head>
 	<title>mandelbrot</title>
-	<meta charset="UTF-8">
+	<meta charset="UTF-8" name="viewport" content="width=device-width">
 	<style>		
     body{
       background: #ccc;
       font-family: courier;
       margin: 0;
-     padding: 0;
+     	padding: 0;
     }
     h3{
     	text-align: center;
@@ -22,9 +22,14 @@
 			display: inline-block;
 		}
 		button{
-      margin-top: 10px;
+      margin: 10px 0 0px 0;
       background: #ccc;
       font-family: courier;
+    	font-size: 0.8em;
+		}
+		input[type=number]{
+			font-size: 0.8em;
+			width: 80px;
 		}
 		#head{
 			width: 100%;
@@ -49,10 +54,6 @@
       right: 10px;
       color: red;
     }
-		.re #about{
-			padding: 5px;
-			background: #ccc;
-		}
 		#scheme_panel{
 			background: #bbb;
 		}
@@ -66,12 +67,20 @@
 			text-decoration: none;
 			color: red;
 		}
-		@media (max-width: 800px){
+		@media only screen and (max-width: 480px), only screen and (max-device-width: 480px){
 			body{
-				font-size: 2em;
+				font-size: 1em;
 			}
 			button{
-				font-size: 1em;
+				display: block;
+			}
+			#demo{
+				display: inline-block;
+				margin-left: 10px;
+			}
+			#about{
+				position: relative;
+				margin-left: 10px;
 			}
 			#panel{
 				display: block;
