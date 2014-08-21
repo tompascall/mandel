@@ -25,7 +25,7 @@
 	// for setting the color schemes immediately, and
 	// may be later for saving the datas to files
 	
-	var colorScheme;
+	var colorScheme = getRadioValue("schemes");
 	
 	var colorArrays;
 
@@ -100,21 +100,21 @@
 		mandel();
 
 		//touch click helper
-		(function ($) {
-    	$.fn.tclick = function (onclick) {
-        this.bind("touchstart", function (e) { onclick.call(this, e); e.stopPropagation(); e.preventDefault(); });
-        this.bind("click", function (e) { onclick.call(this, e); });        
-        return this;
-    	};
-		})(jQuery);
+		// (function ($) {
+  //   	$.fn.tclick = function (onclick) {
+  //       this.bind("touchstart", function (e) { onclick.call(this, e); e.stopPropagation(); e.preventDefault(); });
+  //       this.bind("click", function (e) { onclick.call(this, e); });        
+  //       return this;
+  //   	};
+		// })(jQuery);
 
-		(function ($) {
-    	$.fn.tclick = function (onclick) {
-        this.bind("touchend", function (e) { onclick.call(this, e); e.stopPropagation(); e.preventDefault(); });
-        this.bind("click", function (e) { onclick.call(this, e); });         
-        return this;
-    	};
-		})(jQuery);
+		// (function ($) {
+  //   	$.fn.tclick = function (onclick) {
+  //       this.bind("touchend", function (e) { onclick.call(this, e); e.stopPropagation(); e.preventDefault(); });
+  //       this.bind("click", function (e) { onclick.call(this, e); });         
+  //       return this;
+  //   	};
+		// })(jQuery);
 
 		$("#mandelCanvas").mousedown(function(e){
   		if (e.which ===1){
@@ -385,8 +385,8 @@ function demoScheme() {
 			var actualDepthInput = Number(document.getElementById("depthInput").value);
 			if (maxDepth !== actualDepthInput) { // if the depth input has been set
 				maxDepth = actualDepthInput;
-				colorArrays = createColorArrays(maxDepth, colorScheme);
 			}
+			colorArrays = createColorArrays(maxDepth, colorScheme);
 
 			var actualCanvasSize = document.getElementById("canvasSize").value;
 			if (actualCanvasSize !== CANVAS_WIDTH){ // Canvas size has been changed
