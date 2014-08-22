@@ -99,23 +99,6 @@
 		initDepth(); // initialize the depth input values
 		mandel();
 
-		//touch click helper
-		// (function ($) {
-  //   	$.fn.tclick = function (onclick) {
-  //       this.bind("touchstart", function (e) { onclick.call(this, e); e.stopPropagation(); e.preventDefault(); });
-  //       this.bind("click", function (e) { onclick.call(this, e); });        
-  //       return this;
-  //   	};
-		// })(jQuery);
-
-		// (function ($) {
-  //   	$.fn.tclick = function (onclick) {
-  //       this.bind("touchend", function (e) { onclick.call(this, e); e.stopPropagation(); e.preventDefault(); });
-  //       this.bind("click", function (e) { onclick.call(this, e); });         
-  //       return this;
-  //   	};
-		// })(jQuery);
-
 		$("#mandelCanvas").mousedown(function(e){
   		if (e.which ===1){
   			mouseDownX = e.pageX - this.offsetLeft;
@@ -135,9 +118,30 @@
   				mandel();
   			}  			
   			leftClick = false;
-  		}	
-  
+  		}	  
 		});
+
+		$("#mandelCanvas").on("vmousedown", (function(e){
+  		if (e.which ===1){
+  			mouseDownX = e.pageX - this.offsetLeft;
+  			mouseDownY = e.pageY - this.offsetTop;
+  			leftClick = true; // if pushed left button
+  		}
+ 		}));	
+		// this function gets the coordinates of  
+		// mouse pointer within the canvas
+
+		$('#mandelCanvas').on("vmouseup", (function(e){
+  		
+  		if (leftClick) {
+  			mouseUpX = e.pageX - this.offsetLeft;
+  			mouseUpY = e.pageY - this.offsetTop;
+  			if (mouseUpX !== mouseDownX && mouseUpY !== mouseDownY){
+  				mandel();
+  			}  			
+  			leftClick = false;
+  		}	  
+		}));	
 
 		$("input:radio").click(function(e){
 			var savedImgData = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT); // the whole canvas
