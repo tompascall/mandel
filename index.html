@@ -2,13 +2,14 @@
 <html>
 <head>
 	<title>mandelbrot</title>
-	<meta charset="UTF-8" name="viewport" content="width=device-width">
+	<meta charset="UTF-8" name="viewport" content="width=400">
 	<style>		
     body{
       background: #ccc;
       font-family: courier;
       margin: 0;
      	padding: 0;
+     	font-size: 0.8em;
     }
     h3{
     	text-align: center;
@@ -30,7 +31,7 @@
 		}
 		input[type=number]{
 			font-size: 0.8em;
-			width: 118px;
+			width: 80px;
 			position: absolute;
       right: 20px;
       text-align: right;
@@ -88,9 +89,6 @@
 			margin: 10px 0 10px 0;
 		}
 		@media only screen and (max-width: 480px), only screen and (max-device-width: 480px){
-			body{
-				font-size: 1em;
-			}
 			#demo{
 				display: inline-block;
 				margin-left: 10px;
@@ -137,7 +135,7 @@
 				<input class="canvas_side" type="radio" id="scheme13" name="scheme" value="13">Blues<br>
 				<input class="canvas_side" type="radio" id="scheme14" name="scheme" value="14" checked="checked">Spiral<br/>
 			</div>
-			<button type="button" id="demo" onclick="demoScheme()">Demo schemes</button>
+			<button type="button" id="demo" onclick="demoScheme()">Demo scheme</button>
 			<button id="about" onclick="window.location='about.html'">About</button>
 		</div>				
 	</div>
