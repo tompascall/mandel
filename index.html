@@ -26,18 +26,19 @@
       background: #ccc;
       font-family: courier;
     	font-size: 0.8em;
+    	width: 120px;
 		}
 		input[type=number]{
 			font-size: 0.8em;
-			width: 80px;
+			width: 118px;
+			position: absolute;
+      right: 20px;
+      text-align: right;
 		}
 		#head{
 			width: 100%;
 			padding: 10px;
 			background: #c0c0c0;	
-		}
-		#depth{
-			margin-left: 10px;
 		}
 		#panel{
 			display: inline-block;
@@ -45,41 +46,53 @@
 			padding: 10px;
 			margin: 20px 0 0 20px;
 			position: absolute;
+			width: 335px;
 		}
 		#demo{
 			margin: 10px 0 10px 10px;
 		}
 		#about{
       position: absolute;
-      right: 10px;
-      color: red;
+      right: 20px;
     }
+		#upper_panel{
+			background: #bbb;
+			padding: 10px;
+			margin: 0;
+		}
 		#scheme_panel{
 			background: #bbb;
-		}
-		#schemes{
 		}
     .canvas_side{
       margin-right: 10px;
       margin-left: 10px;
 		}
+		#calculate, #restart{
+			display:inline;
+		}
+		#calculate{
+			margin-left: 64px;
+			/*margin-top: 20px;*/
+			color: red;
+		}
+		#restart{
+			/*margin-left: 195px;*/
+			/*margin-top: 15px;*/
+
+		}
 		a{
 			text-decoration: none;
 			color: red;
+		}
+		p{
+			margin: 10px 0 10px 0;
 		}
 		@media only screen and (max-width: 480px), only screen and (max-device-width: 480px){
 			body{
 				font-size: 1em;
 			}
-			button{
-				display: block;
-			}
 			#demo{
 				display: inline-block;
-				margin-left: 10px;
-			}
-			#about{
-				position: relative;
 				margin-left: 10px;
 			}
 			#panel{
@@ -99,9 +112,12 @@
 	</canvas>
 		
 	<div id="panel">
-		<p><strong>Canvas size: </strong><input id="canvasSize" type="number" min="2" name="canvasSize"></p>
-		<p><strong>Maximum iteration: </strong><input id="depthInput" type="number" min="1" name="depth" value="20"></p>
-
+		<div id="upper_panel">		
+			<strong>Canvas size: </strong><input id="canvasSize" type="number" min="2" name="canvasSize">
+			<p><strong>Maximum iteration: </strong><input id="depthInput" type="number" min="1" name="depth" value="20"></p>
+			<button type="button" id="restart" onclick="restart()">Restart</button>
+			<button type="button" id="calculate" onclick="mandel()">Calculate</button>
+		</div>
 		<div id="scheme_panel">
 			<p style="padding-top: 5px; text-align: center"><strong>Color schemes</strong></p>
 			<div id="schemes">
@@ -122,10 +138,8 @@
 				<input class="canvas_side" type="radio" id="scheme14" name="scheme" value="14" checked="checked">Spiral<br/>
 			</div>
 			<button type="button" id="demo" onclick="demoScheme()">Demo schemes</button>
-		</div>		
-		<button type="button" class="re" onclick="mandel()">Calculate</button>
-		<button type="button" class="re" onclick="restart()">Restart</button>
-		<button id="about" onclick="window.location='about.html'">About</button>
+			<button id="about" onclick="window.location='about.html'">About</button>
+		</div>				
 	</div>
 	<script src="jquery/jquery-2.1.1.min.js"></script> 
 	<script src="colorarrays.js"></script>
