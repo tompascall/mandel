@@ -120,28 +120,36 @@
   			leftClick = false;
   		}	  
 		});
-
+		
+		var firstTap = true;
 		$("#mandelCanvas").on("vmousedown", (function(e){
-  		if (e.which ===1){
+  		if (firstTap){
   			mouseDownX = e.pageX - this.offsetLeft;
   			mouseDownY = e.pageY - this.offsetTop;
-  			leftClick = true; // if pushed left button
-  		}
- 		}));	
-		// this function gets the coordinates of  
-		// mouse pointer within the canvas
-
-		$('#mandelCanvas').on("vmouseup", (function(e){
-  		
-  		if (leftClick) {
+  			firstTap = false;
+  		} else {
   			mouseUpX = e.pageX - this.offsetLeft;
   			mouseUpY = e.pageY - this.offsetTop;
+  			firstTap = true;
   			if (mouseUpX !== mouseDownX && mouseUpY !== mouseDownY){
   				mandel();
-  			}  			
-  			leftClick = false;
-  		}	  
-		}));	
+  			}
+  		
+  		} 
+ 		}));	
+
+		// $('#mandelCanvas').on("vmouseup", (function(e){
+  		
+  // 		if (leftClick) {
+  // 			mouseUpX = e.pageX - this.offsetLeft;
+  // 			mouseUpY = e.pageY - this.offsetTop;
+  // 			alert("here I am");
+  // 			if (mouseUpX !== mouseDownX && mouseUpY !== mouseDownY){
+  // 				mandel();
+  // 			}  			
+  // 			leftClick = false;
+  // 		}	  
+		// }));	
 
 		$("input:radio").click(function(e){
 			var savedImgData = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT); // the whole canvas
