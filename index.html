@@ -106,6 +106,7 @@
 </head>
 
 <body>
+	<!--
 	<div id="fb-root"></div>
 	<script>(function(d, s, id) {
   	var js, fjs = d.getElementsByTagName(s)[0];
@@ -113,8 +114,8 @@
   	js = d.createElement(s); js.id = id;
   	js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
   	fjs.parentNode.insertBefore(js, fjs);
-	}(document, 'script', 'facebook-jssdk'));</script>
-	<!-- facebook recommended button -->
+	}(document, 'script', 'facebook-jssdk'));</script>-->
+	<!-- facebook recommend button -->
 
 	<div id="head">
 		<h3>Mandelbrot set</h3>
@@ -129,7 +130,7 @@
 			<strong>Canvas size: </strong><input id="canvasSize" type="number" min="2" name="canvasSize">
 			<p><strong>Maximum iteration: </strong><input id="depthInput" type="number" min="1" name="depth" value="20"></p>
 			<button type="button" id="restart" onclick="restart()">Restart</button>
-			<button type="button" id="calculate" onclick="mandel()">Calculate</button>
+			<button type="button" id="calculate" onclick="mandelbrot()">Calculate</button>
 		</div>
 		<div id="scheme_panel">
 			<p style="padding-top: 5px; text-align: center"><strong>Color schemes</strong></p>
@@ -154,16 +155,17 @@
 			<button id="about" onclick="window.location='about.html'">About</button>
 		</div>
 		
-		<div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-action="recommend" data-show-faces="false" data-share="true"></div>
+		<!--<div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-action="recommend" data-show-faces="false" data-share="true"></div>
 		<div class="g-plusone" data-size="small" data-annotation="none"></div>
 		<a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">Tweet</a>	
-	</div>
+	</div>-->
 	
 
 	<script src="jquery/jquery-2.1.1.min.js"></script> 
 	<script src="colorarrays.js"></script>
 	<script src="mandel.js"></script>
-	<script>
+	
+	<!--<script>
 	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -172,10 +174,11 @@
 	  ga('create', 'UA-49278705-2', 'auto');
 	  ga('send', 'pageview');
 	</script>
+-->
 	<!-- google analytics -->
-	<script src="https://apis.google.com/js/platform.js" async defer></script>
+	<!--<script src="https://apis.google.com/js/platform.js" async defer></script>-->
 	<!-- google + -->
-	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+	<!--<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>-->
 	<!-- twitter -->
 </body>
 </html>

@@ -2,16 +2,21 @@
 
 
 	"use strict";
+	
+	var mandel = {
+		c : document.getElementById("mandelCanvas")
 
-	var c = document.getElementById("mandelCanvas");
+	};
+
+
 	var DEFAULT_CANVAS_SIZE = 350;
 	document.getElementById("canvasSize").value = DEFAULT_CANVAS_SIZE;
 
-	var CANVAS_WIDTH = c.width = DEFAULT_CANVAS_SIZE;
-	var CANVAS_HEIGHT = c.height = DEFAULT_CANVAS_SIZE;
+	var CANVAS_WIDTH = mandel.c.width = DEFAULT_CANVAS_SIZE;
+	var CANVAS_HEIGHT = mandel.c.height = DEFAULT_CANVAS_SIZE;
 	// the canvas is a square
 
-	var ctx = c.getContext("2d");
+	var ctx = mandel.c.getContext("2d");
 	var imgData = ctx.createImageData(CANVAS_WIDTH, 1); // a simple line
 	
 	var DEFAULT_DEPTH = 20;
@@ -68,14 +73,7 @@
 	// a is the complex part, 
 	// b is the imaginary part of the complex number
 	// see more: http://en.wikipedia.org/wiki/Complex_number
-	
-	// demoScheme(CANVAS_WIDTH, CANVAS_HEIGHT, ctx, imgData, colorArrays);
-	// to demo the colorscheme comment out the upper line, 
-	// and comment on the mandel(range, maxDepth); line
-	// and you need colorArrays = createColorArrays(DEFAULT_DEPTH, colorScheme);
-		
-	//var m = mandel(range, DEFAULT_DEPTH);
-	//var m = mandel();
+
 
 		var initCanvas = function(){
 			for (var row = 0; row < CANVAS_HEIGHT; row++) {
@@ -97,7 +95,7 @@
 
 		//initCanvas(); // clear the canvas
 		initDepth(); // initialize the depth input values
-		mandel();
+		mandelbrot();
 
 		$("#mandelCanvas").mousedown(function(e){
   		if (e.which ===1){
@@ -115,25 +113,25 @@
   			mouseUpX = e.pageX - this.offsetLeft;
   			mouseUpY = e.pageY - this.offsetTop;
   			if (mouseUpX !== mouseDownX && mouseUpY !== mouseDownY){
-  				mandel();
+  				mandelbrot();
   			}  			
   			leftClick = false;
   		}	  
 		});
 		
-		c.addEventListener("touchstart", (function(e) {
+		mandel.c.addEventListener("touchstart", (function(e) {
 	    mouseDownX = e.changedTouches[0].pageX - this.offsetLeft;
 	    mouseDownY = e.changedTouches[0].pageY  - this.offsetTop;	
 	    e.preventDefault();
    
 		}), false);
 
-		c.addEventListener("touchend", (function(e) {
+		mandel.c.addEventListener("touchend", (function(e) {
 	    mouseUpX = e.changedTouches[0].pageX - this.offsetLeft;
 	    mouseUpY = e.changedTouches[0].pageY  - this.offsetTop;
 	   	e.preventDefault();
 	    if (mouseUpX !== mouseDownX && mouseUpY !== mouseDownY){
-  				mandel();
+  				mandelbrot();
   		}  	    
 		}), false);
 		// snippets for mobile devices
@@ -183,7 +181,7 @@
 		range = 4;
 		document.getElementById("canvasSize").value = DEFAULT_CANVAS_SIZE;
 		CANVAS_WIDTH = CANVAS_HEIGHT = DEFAULT_CANVAS_SIZE;
-		c.width = c.height = CANVAS_WIDTH;	
+		mandel.c.width = mandel.c.height = CANVAS_WIDTH;	
 		step = range / CANVAS_WIDTH; 
 		mouseDownX = 0;
 		mouseDownY = 0;
@@ -195,12 +193,12 @@
 		bComplex = bStart;
 		document.getElementById("depthInput").value = DEFAULT_DEPTH.toString();
 	
-		mandel();
+		mandelbrot();
 	}
 
 	
 
-	function mandel(){ // entry point for the calculation and drawing
+	function mandelbrot(){ // entry point for the calculation and drawing
 		
 		if (!depthInput) { 
 			// depthInput is a local variable, and 
@@ -223,7 +221,7 @@
 		
 		if (actualCanvasSize !== CANVAS_WIDTH){ // Canvas size has been changed
 			CANVAS_WIDTH = CANVAS_HEIGHT = actualCanvasSize;
-			c.width = c.height = CANVAS_WIDTH;
+			mandel.c.width = mandel.c.height = CANVAS_WIDTH;
 			mouseUpX = CANVAS_WIDTH; 
 			mouseUpY = CANVAS_HEIGHT;
 			// drawing is based on mouse coordinates
@@ -392,7 +390,7 @@ function demoScheme() {
 			var actualCanvasSize = document.getElementById("canvasSize").value;
 			if (actualCanvasSize !== CANVAS_WIDTH){ // Canvas size has been changed
 				CANVAS_WIDTH = CANVAS_HEIGHT = actualCanvasSize;
-				c.width = c.height = CANVAS_WIDTH;
+				mandel.c.width = mandel.c.height = CANVAS_WIDTH;
 				mouseUpX = CANVAS_WIDTH; 
 				mouseUpY = CANVAS_HEIGHT;
 				// drawing is based on mouse coordinates
