@@ -8,6 +8,8 @@
 // the createColorArrays function returns an object: 
 // {arrays : colorArrays, scheme: colorScheme};
 
+"use strict";
+
 function createColorArrays(depth, colorSchemeIndex){
 
 	var ENDLESS_RED = 255; 
