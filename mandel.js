@@ -4,199 +4,199 @@
 	"use strict";
 	
 	var mandel = {
-		c : document.getElementById("mandelCanvas")
-
+		c : document.getElementById("mandelCanvas"),
+		inputCanvasSize : document.getElementById("inputCanvasSize"),
+		DEFAULT_CANVAS_SIZE : 350, 
+			// the canvas is a square
+		canvasSize : 0,
+		ctx : null,
+			// canvas context
+		imgData : null,
+		DEFAULT_DEPTH : 20,
+		maxDepth : 0,
+			// mandel.maxDepth devides the color-scale of the color scheme into equal parts
+			// if mandel.maxDepth is 1, we have 2 parts, if 2, we have 3 parts etc.  
+		actualDepth : 0,
+		depthArray : [],
+			// an array that contains the depths of all the point in the canvas
+			// for setting the color schemes immediately, and
+			// may be later for saving the datas to files
+		colorScheme : getRadioValue("schemes"),
+		colorArrays : null,
+		mandelClear : null,
+			// reference for setInerval that stops the drawing
+		range : 4,
+			// range is the width (and heigth) of the complex area
+			// the actual range is based on the enlargement
+			// at the beginning, it is equal to 4
+		step : 0,
+			// the X (and Y) step in the complex plane
+			// it must be recalculate if range is changed
+		mouseDownX : 0,
+		mouseDownY : 0,
+		mouseUpX : 0,
+		mouseUpY : 0,
+		leftClick : false,
+			// it will be false if in is not clicked with left mouse button
+		ready : true,
+			// it will be false, when the mandel calculation is progressing
+		colorSchemeDemoModeOn : false,
+			// it will be true, while demoScheme is active
+		demoSchemeIsRunning : false,
+			// it is true while demoScheme() is running
+		aStartInActualRange : -2,
+		bStartInActualRange : 2,
+		aComplexIterated : -2,
+		bComplexIterated : 2,
+			// we need the upper-left point of the complex area
+			// at the beginning, it is equal to -2, 2
+			// aStartInActualRange and bStartInActualRange need for enlargement,
+			// aComplexIterated and bComplexIterated are the actual point we counting
+			// a is the complex part, 
+			// b is the imaginary part of the complex number
+			// see more: http://en.wikipedia.org/wiki/Complex_number
 	};
-
-
-	var DEFAULT_CANVAS_SIZE = 350;
-	document.getElementById("canvasSize").value = DEFAULT_CANVAS_SIZE;
-
-	var CANVAS_WIDTH = mandel.c.width = DEFAULT_CANVAS_SIZE;
-	var CANVAS_HEIGHT = mandel.c.height = DEFAULT_CANVAS_SIZE;
-	// the canvas is a square
-
-	var ctx = mandel.c.getContext("2d");
-	var imgData = ctx.createImageData(CANVAS_WIDTH, 1); // a simple line
-	
-	var DEFAULT_DEPTH = 20;
-	var maxDepth;
-	var actualDepth;
-	// maxDepth devides the color-scale of the color scheme into equal parts
-	// if maxDepth is 1, we have 2 parts, if 2, we have 3 parts etc.  
-	
-	var depthArray;
-	// an array that contains the depths of all the point in the canvas
-	// for setting the color schemes immediately, and
-	// may be later for saving the datas to files
-	
-	var colorScheme = getRadioValue("schemes");
-	
-	var colorArrays;
-
-	var mandelClear;
-	// reference for setInerval that stops the drawing 
-
-	var range = 4;
-	// range is the width (and heigth) of the complex area
-	// the actual range is based on the enlargement
-	// at the beginning, it is equal to 4
-
-	var step = range / CANVAS_WIDTH; 
-	// the X (and Y) step in the complex plane
-	// it must be recalculate if range is changed
-	
-	var mouseDownX = 0;
-	var mouseDownY = 0;
-	var mouseUpX = CANVAS_WIDTH;
-	var mouseUpY = CANVAS_HEIGHT;
-	// if we marked out the whole canvas at the beginning
-
-	var leftClick = false;
-	// it will be false if in is not clicked with left mouse button
-	
-	var mandelReady = true;
-	// it will be false, when the calculation is progressing
-	
-	var colorSchemeDemoModeOn = false;
-	// it will be true, while demoScheme is active
-
-	var demoSchemeRuns = false;
-	// it is true while demoScheme() is running;
-
-	var aStart = -2;
-	var bStart = 2;
-	var aComplex = aStart;
-	var bComplex = bStart;
-	// we need the upper-left point of the complex area
-	// at the beginning, it is equal to -2, 2	
-	// a is the complex part, 
-	// b is the imaginary part of the complex number
-	// see more: http://en.wikipedia.org/wiki/Complex_number
-
-
-		var initCanvas = function(){
-			for (var row = 0; row < CANVAS_HEIGHT; row++) {
-				for (var column = 0; column < CANVAS_WIDTH; column++) {
-					imgData.data[column * 4 + 0] = 255;
-					imgData.data[column * 4 + 1] = 255;
-					imgData.data[column * 4 + 2] = 255;
-					imgData.data[column * 4 + 3] = 255;
-
-				}				
-				ctx.putImageData(imgData, 0, row);
-			}
-		}
-
-		var initDepth = function(){ // init depth-input HTML element
+	mandel.setCanvasSize = function(x){
+		this.canvasSize = x;
+		this.c.width = x;
+		this.c.height = x;
+	}
+	mandel.setInputCanvasSize = function(x){
+		mandel.inputCanvasSize.value = x;
+	}
+	mandel.setCanvasContext = function(){
+		this.ctx = this.c.getContext("2d");
+	}
+	mandel.setImgData = function(){
+		this.ctx.createImageData(this.canvasSize, 1); // a simple line
+	}
+	mandel.setStep = function(step){
+		this.step = step;
+	}
+	mandel.setMouseUpCoordinates = function(x, y){
+		this.mouseUpX = x;
+		this.mouseUpY = y;
+	}
+	mandel.setDepth = function(){ // init depth-input HTML element
 			document.getElementById("depthInput").value = 
-				DEFAULT_DEPTH.toString();
+				this.DEFAULT_DEPTH.toString();
+	}
+
+	mandel.setCanvasSize(mandel.DEFAULT_CANVAS_SIZE);
+	mandel.setInputCanvasSize(mandel.DEFAULT_CANVAS_SIZE);
+	mandel.setCanvasContext();
+	mandel.setImgData();
+	mandel.setStep(mandel.range / mandel.canvasSize);
+	mandel.setMouseUpCoordinates(mandel.canvasSize, mandel.canvasSize)
+		// if we marked out the whole canvas at the beginning as enlargement area	
+	mandel.setDepth();
+
+	mandelbrot();
+
+
+	// ---------------- event handlers ------------------
+
+	$("#mandelCanvas").mousedown(function(e){
+		if (e.which ===1){
+			mandel.mouseDownX = e.pageX - this.offsetLeft;
+			mandel.mouseDownY = e.pageY - this.offsetTop;
+			mandel.leftClick = true; // if pushed left button
 		}
+		});	
+	// this function gets the coordinates of  
+	// mouse pointer within the canvas
 
-		//initCanvas(); // clear the canvas
-		initDepth(); // initialize the depth input values
-		mandelbrot();
-
-		$("#mandelCanvas").mousedown(function(e){
-  		if (e.which ===1){
-  			mouseDownX = e.pageX - this.offsetLeft;
-  			mouseDownY = e.pageY - this.offsetTop;
-  			leftClick = true; // if pushed left button
-  		}
- 		});	
-		// this function gets the coordinates of  
-		// mouse pointer within the canvas
-
-		$('#mandelCanvas').mouseup(function(e){
-  		
-  		if (leftClick) {
-  			mouseUpX = e.pageX - this.offsetLeft;
-  			mouseUpY = e.pageY - this.offsetTop;
-  			if (mouseUpX !== mouseDownX && mouseUpY !== mouseDownY){
-  				mandelbrot();
-  			}  			
-  			leftClick = false;
-  		}	  
-		});
+	$('#mandelCanvas').mouseup(function(e){
 		
-		mandel.c.addEventListener("touchstart", (function(e) {
-	    mouseDownX = e.changedTouches[0].pageX - this.offsetLeft;
-	    mouseDownY = e.changedTouches[0].pageY  - this.offsetTop;	
-	    e.preventDefault();
-   
-		}), false);
+		if (mandel.leftClick) {
+			mandel.mouseUpX = e.pageX - this.offsetLeft;
+			mandel.mouseUpY = e.pageY - this.offsetTop;
+			if (mandel.mouseUpX !== mandel.mouseDownX && mandel.mouseUpY !== mandel.mouseDownY){
+				mandelbrot();
+			}  			
+			mandel.leftClick = false;
+		}	  
+	});
+	
+	mandel.c.addEventListener("touchstart", (function(e) {
+    mandel.mouseDownX = e.changedTouches[0].pageX - this.offsetLeft;
+    mandel.mouseDownY = e.changedTouches[0].pageY  - this.offsetTop;	
+    e.preventDefault();
+ 
+	}), false);
 
-		mandel.c.addEventListener("touchend", (function(e) {
-	    mouseUpX = e.changedTouches[0].pageX - this.offsetLeft;
-	    mouseUpY = e.changedTouches[0].pageY  - this.offsetTop;
-	   	e.preventDefault();
-	    if (mouseUpX !== mouseDownX && mouseUpY !== mouseDownY){
-  				mandelbrot();
-  		}  	    
-		}), false);
-		// snippets for mobile devices
-		// source: http://www.javascriptkit.com/javatutors/touchevents.shtml
+	mandel.c.addEventListener("touchend", (function(e) {
+    mandel.mouseUpX = e.changedTouches[0].pageX - this.offsetLeft;
+    mandel.mouseUpY = e.changedTouches[0].pageY  - this.offsetTop;
+   	e.preventDefault();
+    if (mandel.mouseUpX !== mandel.mouseDownX && mandel.mouseUpY !== mandel.mouseDownY){
+				mandelbrot();
+		}  	    
+	}), false);
+	// snippets for mobile devices
+	// source: http://www.javascriptkit.com/javatutors/touchevents.shtml
 
 
-		$("input:radio").click(function(e){
-			var savedImgData = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT); // the whole canvas
-			if (mandelReady) { // drawing of the set is finished
-				colorScheme = getRadioValue("schemes");
-				colorArrays = createColorArrays(maxDepth, colorScheme);
-				if (!colorSchemeDemoModeOn) {
-					copyDepthArrayDataToCanvas();
-					setTimeout(function(){
-						ctx.putImageData(savedImgData, 0, 0);
-					}, 1);	
-				}
-				else if (!demoSchemeRuns) {
-					demoScheme();
-				}
+	$("input:radio").click(function(e){
+		var savedImgData = mandel.ctx.createImageData(mandel.canvasSize, mandel.canvasSize); // the whole canvas
+		if (mandel.ready) { // drawing of the set is finished
+			mandel.colorScheme = getRadioValue("schemes");
+			mandel.colorArrays = createColorArrays(mandel.maxDepth, mandel.colorScheme);
+			if (!mandel.colorSchemeDemoModeOn) {
+				copyDepthArrayDataToCanvas();
+				setTimeout(function(){
+					mandel.ctx.putImageData(savedImgData, 0, 0);
+				}, 1);	
 			}
-			function copyDepthArrayDataToCanvas(){
-				var depthArrayLenght = depthArray.length;
-				var savedDepth;
-				for (var i = 0; i < depthArrayLenght; i ++) {
-					savedDepth = depthArray[i];
-					savedImgData.data[i * 4] = colorArrays.arrays[savedDepth][0];
-					savedImgData.data[i * 4 + 1] = colorArrays.arrays[savedDepth][1];
-					savedImgData.data[i * 4 + 2] = colorArrays.arrays[savedDepth][2];
-					savedImgData.data[i * 4 + 3] = 255;
-				}
-			} 
-		});
-		function getRadioValue(divId){
-			var radioDiv = document.getElementById(divId);
-			for (var i = 0; i < radioDiv.childElementCount; i++){
-				if (radioDiv.children[i].checked) {
-					return radioDiv.children[i].value;
-				}
+			else if (!mandel.demoSchemeIsRunning) {
+				demoScheme();
 			}
 		}
-			
+		function copyDepthArrayDataToCanvas(){
+			var depthArrayLenght = mandel.depthArray.length;
+			var savedDepth;
+			for (var i = 0; i < depthArrayLenght; i ++) {
+				savedDepth = mandel.depthArray[i];
+				savedImgData.data[i * 4] = mandel.colorArrays.arrays[savedDepth][0];
+				savedImgData.data[i * 4 + 1] = mandel.colorArrays.arrays[savedDepth][1];
+				savedImgData.data[i * 4 + 2] = mandel.colorArrays.arrays[savedDepth][2];
+				savedImgData.data[i * 4 + 3] = 255;
+			}
+		} 
+	});
+
+	
+		
 	
 	// -------------- functions ------------------------
 
+	function getRadioValue(divId){
+		var radioDiv = document.getElementById(divId);
+		for (var i = 0; i < radioDiv.childElementCount; i++){
+			if (radioDiv.children[i].checked) {
+				return radioDiv.children[i].value;
+			}
+		}
+	}
+
 	function restart(){
-		range = 4;
-		document.getElementById("canvasSize").value = DEFAULT_CANVAS_SIZE;
-		CANVAS_WIDTH = CANVAS_HEIGHT = DEFAULT_CANVAS_SIZE;
-		mandel.c.width = mandel.c.height = CANVAS_WIDTH;	
-		step = range / CANVAS_WIDTH; 
-		mouseDownX = 0;
-		mouseDownY = 0;
-		mouseUpX = CANVAS_WIDTH;
-		mouseUpY = CANVAS_HEIGHT;
-		aStart = -2;
-		bStart = 2;
-		aComplex = aStart;
-		bComplex = bStart;
-		document.getElementById("depthInput").value = DEFAULT_DEPTH.toString();
+		mandel.range = 4;
+		mandel.inputCanvasSize.value = mandel.DEFAULT_CANVAS_SIZE;
+		mandel.canvasSize = mandel.canvasSize = mandel.DEFAULT_CANVAS_SIZE;
+		mandel.c.width = mandel.c.height = mandel.canvasSize;	
+		mandel.step = mandel.range / mandel.canvasSize; 
+		mandel.mouseDownX = 0;
+		mandel.mouseDownY = 0;
+		mandel.mouseUpX = mandel.canvasSize;
+		mandel.mouseUpY = mandel.canvasSize;
+		mandel.aStartInActualRange = -2;
+		mandel.bStartInActualRange = 2;
+		mandel.aComplexIterated = mandel.aStartInActualRange;
+		mandel.bComplexIterated = mandel.bStartInActualRange;
+		document.getElementById("depthInput").value = mandel.DEFAULT_DEPTH.toString();
 	
 		mandelbrot();
 	}
-
-	
 
 	function mandelbrot(){ // entry point for the calculation and drawing
 		
@@ -204,41 +204,41 @@
 			// depthInput is a local variable, and 
 			// has already been defined if putMandelLine() is running
 			// in this case it must be stopped
-			clearInterval(mandelClear);
+			clearInterval(mandel.mandelClear);
 		}
 
 		var depthInput = Number(document.getElementById("depthInput").value);
 		// get the depth number from HTML imput line
 
-		maxDepth = depthInput ? depthInput : DEFAULT_DEPTH;
+		mandel.maxDepth = depthInput ? depthInput : mandel.DEFAULT_DEPTH;
 		// if depthInput is undefined then comes the default value
 		
-		depthArray = []; // set/reset the array
-		mandelReady = false; // drawing is progressing
-		colorSchemeDemoModeOn = false; // if demo mode was on, it is finished
+		mandel.depthArray = []; // set/reset the array
+		mandel.ready = false; // drawing is progressing
+		mandel.colorSchemeDemoModeOn = false; // if demo mode was on, it is finished
 		
-		var actualCanvasSize = document.getElementById("canvasSize").value;
+		var actualCanvasSize = mandel.inputCanvasSize.value;
 		
-		if (actualCanvasSize !== CANVAS_WIDTH){ // Canvas size has been changed
-			CANVAS_WIDTH = CANVAS_HEIGHT = actualCanvasSize;
-			mandel.c.width = mandel.c.height = CANVAS_WIDTH;
-			mouseUpX = CANVAS_WIDTH; 
-			mouseUpY = CANVAS_HEIGHT;
+		if (actualCanvasSize !== mandel.canvasSize){ // Canvas size has been changed
+			mandel.canvasSize = mandel.canvasSize = actualCanvasSize;
+			mandel.c.width = mandel.c.height = mandel.canvasSize;
+			mandel.mouseUpX = mandel.canvasSize; 
+			mandel.mouseUpY = mandel.canvasSize;
 			// drawing is based on mouse coordinates
 			// in order to enlargement;
-			step = range / CANVAS_WIDTH;
-			imgData = ctx.createImageData(CANVAS_WIDTH, 1);
+			mandel.step = mandel.range / mandel.canvasSize;
+			mandel.imgData = mandel.ctx.createImageData(mandel.canvasSize, 1);
 		}
 
-		colorScheme = getRadioValue("schemes");
+		mandel.colorScheme = getRadioValue("schemes");
 					
 		var row = 0; 
 		// we want to show the image line per line
 		// row is the Y coordinate of the actual line	of the canvas
 
-		colorArrays = createColorArrays(maxDepth, colorScheme);
-		// Create colorArrays based on the scheme and maxDepth
-		// It's length is maxDepth
+		mandel.colorArrays = createColorArrays(mandel.maxDepth, mandel.colorScheme);
+		// Create mandel.colorArrays based on the scheme and mandel.maxDepth
+		// It's length is mandel.maxDepth
 		// The createColorArrays function is located in colorarrays.js
 		// it returns an object: {arrays, sheme};
 		// the arrays is an array with RGBA codes, e.g. [255, 255, 255, 255], 
@@ -246,17 +246,17 @@
 
 		//initCanvas();
 		initFromMouseCoordinates();
-		mandelClear = setInterval(putMandelLine, 1);
+		mandel.mandelClear = setInterval(putMandelLine, 1);
 		return;
 
 		function putMandelLine(){
 			mandelLine();
-			ctx.putImageData(imgData, 0, row);
+			mandel.ctx.putImageData(mandel.imgData, 0, row);
 			row += 1;
-			bComplex -= step;
-			if (row > CANVAS_HEIGHT) {
-				clearInterval(mandelClear);
-				mandelReady = true;
+			mandel.bComplexIterated -= mandel.step;
+			if (row > mandel.canvasSize) {
+				clearInterval(mandel.mandelClear);
+				mandel.ready = true;
 			}
 		}
 
@@ -271,10 +271,10 @@
 
 		function initFromMouseCoordinates(){
 
-			var aLeftUpper = aStart + mouseDownX * step;
-			var bLeftUpper = bStart - mouseDownY * step;
-			var aRightBottom = aStart + mouseUpX * step;
-			var bRightBottom = bStart - mouseUpY * step;
+			var aLeftUpper = mandel.aStartInActualRange + mandel.mouseDownX * mandel.step;
+			var bLeftUpper = mandel.bStartInActualRange - mandel.mouseDownY * mandel.step;
+			var aRightBottom = mandel.aStartInActualRange + mandel.mouseUpX * mandel.step;
+			var bRightBottom = mandel.bStartInActualRange - mandel.mouseUpY * mandel.step;
 
 			var changer;
 			if (aLeftUpper > aRightBottom) {
@@ -293,24 +293,24 @@
 			changer = aRightBottom - aLeftUpper; // new range
 			// if (!changer) {
 			// 	// if you mousedown and mouseup at the same point
-			// 	aLeftUpper = aStart;
-			// 	bLeftUpper = bStart;
+			// 	aLeftUpper = mandel.aStartInActualRange;
+			// 	bLeftUpper = mandel.bStartInActualRange;
 			// 	// set back to original values
 			// }
 			// else {
-				range = changer;
+				mandel.range = changer;
 
-				aStart = aLeftUpper;
-				bStart = bLeftUpper;
-				aComplex = aStart;
-				bComplex = bStart;
+				mandel.aStartInActualRange = aLeftUpper;
+				mandel.bStartInActualRange = bLeftUpper;
+				mandel.aComplexIterated = mandel.aStartInActualRange;
+				mandel.bComplexIterated = mandel.bStartInActualRange;
 
-				step = range / CANVAS_WIDTH; // new step
+				mandel.step = mandel.range / mandel.canvasSize; // new step
 			//}
 
-			mouseDownX = mouseDownY = 0;
-			mouseUpX = CANVAS_WIDTH;
-			mouseUpY = CANVAS_HEIGHT;
+			mandel.mouseDownX = mandel.mouseDownY = 0;
+			mandel.mouseUpX = mandel.canvasSize;
+			mandel.mouseUpY = mandel.canvasSize;
 			// the original values must be reset 
 			// in case there is no enlargement the next session
 		}
@@ -318,26 +318,19 @@
 		function mandelLine() {
 			// we will generate the picture from single lines
 			// cStartNumber is the complex number, with which we start counting the actual point
-			var cStartNumber = {a : aComplex, b : bComplex};
+			var cStartNumber = {a : mandel.aComplexIterated, b : mandel.bComplexIterated};
 				
-			for (var lineX = 0; lineX < CANVAS_WIDTH; lineX++) {
-				actualDepth = 0;
-				mandelCalc(cStartNumber); // modifies actualDepth
+			for (var lineX = 0; lineX < mandel.canvasSize; lineX++) {
+				mandel.actualDepth = 0;
+				mandelCalc(cStartNumber); // modifies mandel.actualDepth
 	
-				//if (actualDepth < maxDepth) {
-					imgData.data[lineX * 4 + 0] = colorArrays.arrays[actualDepth][0];
-					imgData.data[lineX * 4 + 1] = colorArrays.arrays[actualDepth][1];
-					imgData.data[lineX * 4 + 2] = colorArrays.arrays[actualDepth][2];
-					imgData.data[lineX * 4 + 3] = colorArrays.arrays[actualDepth][3];
-			//	}
-				// else {
-				// 	imgData.data[ lineX * 4 + 0] = 0;
-				// 	imgData.data[lineX * 4 + 1] = 0;
-				// 	imgData.data[lineX * 4 + 2] = 0;
-				// 	imgData.data[lineX * 4 + 3] = 255;
-				// }
-				cStartNumber.a += step;
-				depthArray.push(actualDepth);
+					mandel.imgData.data[lineX * 4 + 0] = mandel.colorArrays.arrays[mandel.actualDepth][0];
+					mandel.imgData.data[lineX * 4 + 1] = mandel.colorArrays.arrays[mandel.actualDepth][1];
+					mandel.imgData.data[lineX * 4 + 2] = mandel.colorArrays.arrays[mandel.actualDepth][2];
+					mandel.imgData.data[lineX * 4 + 3] = mandel.colorArrays.arrays[mandel.actualDepth][3];
+
+				cStartNumber.a += mandel.step;
+				mandel.depthArray.push(mandel.actualDepth);
 				// saving the depth data of the point
 				// for later color manipulation
 				// and saving the data to files (TODO)
@@ -345,7 +338,7 @@
 	
 			function mandelCalc(cNumber){
 
-				if ((cLength(cNumber) > 2) || (actualDepth === maxDepth)) {
+				if ((cLength(cNumber) > 2) || (mandel.actualDepth === mandel.maxDepth)) {
 					return;
 				}
 				else {				
@@ -366,7 +359,7 @@
 					z.b = 2 * cNumber.a * cNumber.b;
 					z.a += cStartNumber.a;
 					z.b += cStartNumber.b;
-					actualDepth++;
+					mandel.actualDepth++;
 					return z;
 				}
 			}		
@@ -377,48 +370,48 @@ function demoScheme() {
 		// this function shows the actual color scheme
 		 
 		
-		if (mandelReady) {
-			colorSchemeDemoModeOn = true;
-			demoSchemeRuns = true;
+		if (mandel.ready) {
+			mandel.colorSchemeDemoModeOn = true;
+			mandel.demoSchemeIsRunning = true;
 
 			var actualDepthInput = Number(document.getElementById("depthInput").value);
-			if (maxDepth !== actualDepthInput) { // if the depth input has been set
-				maxDepth = actualDepthInput;
+			if (mandel.maxDepth !== actualDepthInput) { // if the depth input has been set
+				mandel.maxDepth = actualDepthInput;
 			}
-			colorArrays = createColorArrays(maxDepth, colorScheme);
+			mandel.colorArrays = createColorArrays(mandel.maxDepth, mandel.colorScheme);
 
-			var actualCanvasSize = document.getElementById("canvasSize").value;
-			if (actualCanvasSize !== CANVAS_WIDTH){ // Canvas size has been changed
-				CANVAS_WIDTH = CANVAS_HEIGHT = actualCanvasSize;
-				mandel.c.width = mandel.c.height = CANVAS_WIDTH;
-				mouseUpX = CANVAS_WIDTH; 
-				mouseUpY = CANVAS_HEIGHT;
+			var actualCanvasSize = mandel.inputCanvasSize.value;
+			if (actualCanvasSize !== mandel.canvasSize){ // Canvas size has been changed
+				mandel.canvasSize = mandel.canvasSize = actualCanvasSize;
+				mandel.c.width = mandel.c.height = mandel.canvasSize;
+				mandel.mouseUpX = mandel.canvasSize; 
+				mandel.mouseUpY = mandel.canvasSize;
 				// drawing is based on mouse coordinates
 				// in order to enlargement;
-				step = range / CANVAS_WIDTH;
-				imgData = ctx.createImageData(CANVAS_WIDTH, 1);
+				mandel.step = mandel.range / mandel.canvasSize;
+				mandel.imgData = mandel.ctx.createImageData(mandel.canvasSize, 1);
 			}
 	
 	
-			var sectionNumber = colorArrays.arrays.length;
-			var ratio = CANVAS_WIDTH / colorArrays.scheme.RGBColorNumbers;
-			var sectionLength = (colorArrays.scheme.RGBColorNumbers / sectionNumber);
+			var sectionNumber = mandel.colorArrays.arrays.length;
+			var ratio = mandel.canvasSize / mandel.colorArrays.scheme.RGBColorNumbers;
+			var sectionLength = (mandel.colorArrays.scheme.RGBColorNumbers / sectionNumber);
 			var colorArraysIndex;
 		
 			
 
-			for (var lineY = 0; lineY < CANVAS_HEIGHT; lineY++) {
-				for (var lineX = 0; lineX < CANVAS_WIDTH; lineX++){
+			for (var lineY = 0; lineY < mandel.canvasSize; lineY++) {
+				for (var lineX = 0; lineX < mandel.canvasSize; lineX++){
 					colorArraysIndex = Math.floor(lineX / ratio / sectionLength);
-					imgData.data[lineX * 4] = colorArrays.arrays[colorArraysIndex][0];
-					imgData.data[lineX * 4 + 1] = colorArrays.arrays[colorArraysIndex][1];
-					imgData.data[lineX * 4 + 2] = colorArrays.arrays[colorArraysIndex][2];
-					imgData.data[lineX * 4 + 3] = 255;
+					mandel.imgData.data[lineX * 4] = mandel.colorArrays.arrays[colorArraysIndex][0];
+					mandel.imgData.data[lineX * 4 + 1] = mandel.colorArrays.arrays[colorArraysIndex][1];
+					mandel.imgData.data[lineX * 4 + 2] = mandel.colorArrays.arrays[colorArraysIndex][2];
+					mandel.imgData.data[lineX * 4 + 3] = 255;
 
 				}
-				ctx.putImageData(imgData, 0, lineY);
+				mandel.ctx.putImageData(mandel.imgData, 0, lineY);
 			}
-			demoSchemeRuns = false;
+			mandel.demoSchemeIsRunning = false;
 		}
 		
 	}
