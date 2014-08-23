@@ -121,35 +121,24 @@
   		}	  
 		});
 		
-		var firstTap = true;
-		$("#mandelCanvas").on("vmousedown", (function(e){
-  		if (firstTap){
-  			mouseDownX = e.pageX - this.offsetLeft;
-  			mouseDownY = e.pageY - this.offsetTop;
-  			firstTap = false;
-  		} else {
-  			mouseUpX = e.pageX - this.offsetLeft;
-  			mouseUpY = e.pageY - this.offsetTop;
-  			firstTap = true;
-  			if (mouseUpX !== mouseDownX && mouseUpY !== mouseDownY){
-  				mandel();
-  			}
-  		
-  		} 
- 		}));	
+		c.addEventListener("touchstart", (function(e) {
+	    mouseDownX = e.changedTouches[0].pageX - this.offsetLeft;
+	    mouseDownY = e.changedTouches[0].pageY  - this.offsetTop;	
+	    e.preventDefault();
+   
+		}), false);
 
-		// $('#mandelCanvas').on("vmouseup", (function(e){
-  		
-  // 		if (leftClick) {
-  // 			mouseUpX = e.pageX - this.offsetLeft;
-  // 			mouseUpY = e.pageY - this.offsetTop;
-  // 			alert("here I am");
-  // 			if (mouseUpX !== mouseDownX && mouseUpY !== mouseDownY){
-  // 				mandel();
-  // 			}  			
-  // 			leftClick = false;
-  // 		}	  
-		// }));	
+		c.addEventListener("touchend", (function(e) {
+	    mouseUpX = e.changedTouches[0].pageX - this.offsetLeft;
+	    mouseUpY = e.changedTouches[0].pageY  - this.offsetTop;
+	   	e.preventDefault();
+	    if (mouseUpX !== mouseDownX && mouseUpY !== mouseDownY){
+  				mandel();
+  		}  	    
+		}), false);
+		// snippets for mobile devices
+		// source: http://www.javascriptkit.com/javatutors/touchevents.shtml
+
 
 		$("input:radio").click(function(e){
 			var savedImgData = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT); // the whole canvas
