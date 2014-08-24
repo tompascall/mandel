@@ -26,7 +26,7 @@
 		colorArrays : null,
 		mandelClear : null,
 			// reference for setInerval that stops the drawing
-		range : 4,
+		range : 0,
 			// range is the width (and heigth) of the complex area
 			// the actual range is based on the enlargement
 			// at the beginning, it is equal to 4
@@ -45,12 +45,12 @@
 			// it will be true, while demoScheme is active
 		demoSchemeIsRunning : false,
 			// it is true while demoScheme() is running
-		aStartInActualRange : -2,
-		bStartInActualRange : 2,
-		aComplexIterated : -2,
-		bComplexIterated : 2,
+		aStartInActualRange : 0,
+		bStartInActualRange : 0,
+		aComplexIterated : 0,
+		bComplexIterated : 0,
 			// we need the upper-left point of the complex area
-			// at the beginning, it is equal to -2, 2
+			// at the beginning, it is equal to (-2 + 2i)
 			// aStartInActualRange and bStartInActualRange need for enlargement,
 			// aComplexIterated and bComplexIterated are the actual point we counting
 			// a is the complex part, 
@@ -104,7 +104,7 @@
 				mandel.mouseUpX = e.pageX - this.offsetLeft;
 				mandel.mouseUpY = e.pageY - this.offsetTop;
 				if (mandel.mouseUpX !== mandel.mouseDownX && mandel.mouseUpY !== mandel.mouseDownY){
-					mandelbrot();
+					mandel.mandelbrot();
 				}  			
 				mandel.leftClick = false;
 			}	  
@@ -124,7 +124,7 @@
 	    mandel.mouseUpY = e.changedTouches[0].pageY  - this.offsetTop;
 	   	e.preventDefault();
 	    if (mandel.mouseUpX !== mandel.mouseDownX && mandel.mouseUpY !== mandel.mouseDownY){
-					mandelbrot();
+					mandel.mandelbrot();
 			}  	    
 		}), false);
 		// snippets for mobile devices
@@ -143,7 +143,7 @@
 					}, 1);	
 				}
 				else if (!mandel.demoSchemeIsRunning) {
-					demoScheme();
+					mandel.demoScheme(); // actualizes color schemes when setting the radio buttons
 				}
 			}
 			function copyDepthArrayDataToCanvas(){
@@ -187,18 +187,10 @@
 	}
 	mandel.restart = function(){
 		this.initialize();
-		mandelbrot();
+		this.mandelbrot();
 	}
 
-	// ----------- end functions -----------------------------------------------------------
-	
-	mandel.initialize();
-	mandelbrot();
-
-
-	
-
-	function mandelbrot(){ // entry point for the calculation and drawing
+	mandel.mandelbrot = function(){ // entry point for the calculation and drawing
 		
 		if (!depthInput) { 
 			// depthInput is a local variable, and 
@@ -366,7 +358,7 @@
 		}
 	}
 
-function demoScheme() {
+	mandel.demoScheme = function() {
 		// this function shows the actual color scheme
 		 
 		
@@ -415,5 +407,10 @@ function demoScheme() {
 		}
 		
 	}
+
+	// ----------- end functions -----------------------------------------------------------
+	
+	mandel.initialize();
+	mandel.mandelbrot();
 
 	
