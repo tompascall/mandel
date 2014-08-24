@@ -67,7 +67,7 @@
 		this.ctx = this.c.getContext("2d");
 	}
 	mandel.setImgData = function(){
-		this.ctx.createImageData(this.canvasSize, 1); // a simple line
+		this.imgData = this.ctx.createImageData(this.canvasSize, 1); // a simple line
 	}
 	mandel.setStep = function(){
 		this.step = this.range / this.canvasSize;
@@ -83,9 +83,17 @@
 		this.colorArrays = createColorArrays(this.maxDepth, this.colorScheme);
 		  // the createColorArrays function is in colorarrays.js
 	}
-	mandel.setDepth = function(){ // init depth-input HTML element
+	mandel.setDepthInputToDefault = function(){ // init depth-input HTML element
 			document.getElementById("depthInput").value = 
 				this.DEFAULT_DEPTH.toString();
+	}
+	mandel.getDepthInput = function(){
+		 return Number(document.getElementById("depthInput").value);
+	}
+	mandel.setMaxDepth = function(){
+		var d = this.getDepthInput();
+		this.maxDepth = d ? d : this.DEFAULT_DEPTH;
+			// if depthInput cannot be interpreted, then comes the default value
 	}
 	mandel.setEvents = function(){
 		$("#mandelCanvas").mousedown(function(e){
@@ -127,8 +135,8 @@
 					mandel.mandelbrot();
 			}  	    
 		}), false);
-		// snippets for mobile devices
-		// source: http://www.javascriptkit.com/javatutors/touchevents.shtml
+			// snippets for mobile devices
+			// source: http://www.javascriptkit.com/javatutors/touchevents.shtml
 
 
 		$("input:radio").click(function(e){
@@ -182,7 +190,8 @@
 		this.setStep();
 		this.setMouseCoordinates(); 
 		this.setColorScheme();
-		this.setDepth();
+		this.setDepthInputToDefault();
+		this.setMaxDepth();
 		this.setEvents();
 	}
 	mandel.restart = function(){
@@ -190,55 +199,51 @@
 		this.mandelbrot();
 	}
 
-	mandel.mandelbrot = function(){ // entry point for the calculation and drawing
-		
-		if (!depthInput) { 
-			// depthInput is a local variable, and 
-			// has already been defined if putMandelLine() is running
-			// in this case it must be stopped
-			clearInterval(mandel.mandelClear);
+	mandel.mandelbrotIntro = function(){
+		if (!this.ready) { 
+			clearInterval(this.mandelClear);
+				// if putMandelLine() has been arleady running via setInterval, it must be stopped
 		}
-
-		var depthInput = Number(document.getElementById("depthInput").value);
-		// get the depth number from HTML imput line
-
-		mandel.maxDepth = depthInput ? depthInput : mandel.DEFAULT_DEPTH;
-		// if depthInput is undefined then comes the default value
+		this.ready = false; 
+			// the show is being started; it is a status flag
+		this.setMaxDepth();
+			// if Depth input is changed, it must be actualized	
+		this.depthArray = []; 
+			// set/reset the depth array that contains all the depth values of
+			// the points of the canvas
+		this.colorSchemeDemoModeOn = false; // if demo mode is on, it must be finished
+	
+		var actualCanvasSize = Number(this.inputCanvasSize.value);
 		
-		mandel.depthArray = []; // set/reset the array
-		mandel.ready = false; // drawing is progressing
-		mandel.colorSchemeDemoModeOn = false; // if demo mode was on, it is finished
-		
-		var actualCanvasSize = mandel.inputCanvasSize.value;
-		
-		if (actualCanvasSize !== mandel.canvasSize){ // Canvas size has been changed
-			mandel.canvasSize = actualCanvasSize;
-			mandel.c.width = mandel.c.height = mandel.canvasSize;
-			mandel.mouseUpX = mandel.canvasSize; 
-			mandel.mouseUpY = mandel.canvasSize;
+		if (actualCanvasSize !== this.canvasSize){ // Canvas size has been changed
+			this.setCanvasSize(actualCanvasSize);
+			this.mouseUpX = this.canvasSize; 
+			this.mouseUpY = this.canvasSize;
 			// drawing is based on mouse coordinates
 			// in order to enlargement;
-			mandel.step = mandel.range / mandel.canvasSize;
-			mandel.imgData = mandel.ctx.createImageData(mandel.canvasSize, 1);
+			this.setStep();
+			this.setImgData();
 		}
-
-		mandel.setColorScheme();
-					
-		var row = 0; 
-		// we want to show the image line per line
-		// row is the Y coordinate of the actual line	of the canvas
-
-		mandel.setColorArrays();
+		this.setColorScheme();
+		this.setColorArrays();
 		// Create mandel.colorArrays based on the scheme and mandel.maxDepth
 		// It's length is mandel.maxDepth
 		// The createColorArrays function is located in colorarrays.js
 		// it returns an object: {arrays, sheme};
 		// the arrays is an array with RGBA codes, e.g. [255, 255, 255, 255], 
 		// the scheme is an object: {schemeName, RGBColorNumbers, calculatorFunction}
+	}
 
-		//initCanvas();
+	mandel.mandelbrot = function(){ // entry point for the calculation and drawing
+		
+		this.mandelbrotIntro();
+	
+		var row = 0; 
+		// we want to show the image line per line
+		// row is the Y coordinate of the actual line	of the canvas
+
 		initFromMouseCoordinates();
-		mandel.mandelClear = setInterval(putMandelLine, 1);
+		this.mandelClear = setInterval(putMandelLine, 1);
 		return;
 
 		function putMandelLine(){
@@ -251,15 +256,6 @@
 				mandel.ready = true;
 			}
 		}
-
-		// function getRadioValue(divId){
-		// 	var radioDiv = document.getElementById(divId);
-		// 	for (var i = 0; i < radioDiv.childElementCount; i++){
-		// 		if (radioDiv.children[i].checked) {
-		// 			return radioDiv.children[i].value;
-		// 		}
-		// 	}
-		// }
 
 		function initFromMouseCoordinates(){
 
