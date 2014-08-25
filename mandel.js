@@ -245,16 +245,16 @@
 		// row is the Y coordinate of the actual line	of the canvas
 
 		initFromMouseCoordinates();
-		this.mandelClear = setInterval(putMandelLine, 1);
+		this.mandelClear = setInterval(putMandelLine, 1); // to start drawing the lines
 		return;
 
 		function putMandelLine(){
 			mandelLine();
-			mandel.ctx.putImageData(mandel.imgData, 0, row);
+			mandel.ctx.putImageData(mandel.imgData, 0, row); // put a line
 			row += 1;
 			mandel.bComplexIterated -= mandel.step;
 			if (row > mandel.canvasSize) {
-				clearInterval(mandel.mandelClear);
+				clearInterval(mandel.mandelClear); // stop drawing the lines
 				mandel.ready = true;
 			}
 		}
@@ -266,7 +266,6 @@
 			var aRightBottom = mandel.aStartInActualRange + mandel.mouseUpX * mandel.step;
 			var bRightBottom = mandel.bStartInActualRange - mandel.mouseUpY * mandel.step;
 
-			var changer;
 			if (aLeftUpper > aRightBottom) {
 				changer = aLeftUpper;
 				aLeftUpper = aRightBottom;
@@ -280,23 +279,14 @@
 					// if you create the new area from right to left
 			}
 
-			changer = aRightBottom - aLeftUpper; // new range
-			// if (!changer) {
-			// 	// if you mousedown and mouseup at the same point
-			// 	aLeftUpper = mandel.aStartInActualRange;
-			// 	bLeftUpper = mandel.bStartInActualRange;
-			// 	// set back to original values
-			// }
-			// else {
-				mandel.range = changer;
+			mandel.range = aRightBottom - aLeftUpper; // new range
 
-				mandel.aStartInActualRange = aLeftUpper;
-				mandel.bStartInActualRange = bLeftUpper;
-				mandel.aComplexIterated = mandel.aStartInActualRange;
-				mandel.bComplexIterated = mandel.bStartInActualRange;
+			mandel.aStartInActualRange = aLeftUpper;
+			mandel.bStartInActualRange = bLeftUpper;
+			mandel.aComplexIterated = mandel.aStartInActualRange;
+			mandel.bComplexIterated = mandel.bStartInActualRange;
 
-				mandel.setStep(); // new step
-			//}
+			mandel.setStep(); // new step
 
 			mandel.setMouseCoordinates();
 			// the original values must be reset 
@@ -338,6 +328,7 @@
 				function cLength(cNumber) {
 					return Math.sqrt(Math.pow(cNumber.a, 2) + 
 						Math.pow(cNumber.b, 2));
+							// calculate the length of the complex number
 				}
 
 				function iterate(cNumber) {
