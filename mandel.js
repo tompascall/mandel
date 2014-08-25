@@ -63,6 +63,9 @@
 	mandel.setInputCanvasSize = function(x){
 		mandel.inputCanvasSize.value = x;
 	}
+	mandel.getInputCanvasSize = function(){
+		return Number(mandel.inputCanvasSize.value);
+	}
 	mandel.setCanvasContext = function(){
 		this.ctx = this.c.getContext("2d");
 	}
@@ -112,7 +115,7 @@
 				mandel.mouseUpX = e.pageX - this.offsetLeft;
 				mandel.mouseUpY = e.pageY - this.offsetTop;
 				if (mandel.mouseUpX !== mandel.mouseDownX && mandel.mouseUpY !== mandel.mouseDownY){
-					mandel.mandelbrot();
+					if (!mandel.colorSchemeDemoModeOn) mandel.mandelbrot();
 				}  			
 				mandel.leftClick = false;
 			}	  
@@ -213,12 +216,11 @@
 			// the points of the canvas
 		this.colorSchemeDemoModeOn = false; // if demo mode is on, it must be finished
 	
-		var actualCanvasSize = Number(this.inputCanvasSize.value);
+		var actualCanvasSize = this.getInputCanvasSize();
 		
 		if (actualCanvasSize !== this.canvasSize){ // Canvas size has been changed
 			this.setCanvasSize(actualCanvasSize);
-			this.mouseUpX = this.canvasSize; 
-			this.mouseUpY = this.canvasSize;
+			this.setMouseCoordinates();
 			// drawing is based on mouse coordinates
 			// in order to enlargement;
 			this.setStep();
@@ -293,12 +295,10 @@
 				mandel.aComplexIterated = mandel.aStartInActualRange;
 				mandel.bComplexIterated = mandel.bStartInActualRange;
 
-				mandel.step = mandel.range / mandel.canvasSize; // new step
+				mandel.setStep(); // new step
 			//}
 
-			mandel.mouseDownX = mandel.mouseDownY = 0;
-			mandel.mouseUpX = mandel.canvasSize;
-			mandel.mouseUpY = mandel.canvasSize;
+			mandel.setMouseCoordinates();
 			// the original values must be reset 
 			// in case there is no enlargement the next session
 		}
@@ -358,48 +358,46 @@
 		// this function shows the actual color scheme
 		 
 		
-		if (mandel.ready) {
-			mandel.colorSchemeDemoModeOn = true;
-			mandel.demoSchemeIsRunning = true;
+		if (this.ready) {
+			this.colorSchemeDemoModeOn = true;
+				// it is true while mandelbrot is not in progress
+			this.demoSchemeIsRunning = true;
+				// it is true while demoScheme() is in progress
 
-			var actualDepthInput = Number(document.getElementById("depthInput").value);
-			if (mandel.maxDepth !== actualDepthInput) { // if the depth input has been set
-				mandel.maxDepth = actualDepthInput;
+			var actualDepthInput = this.getDepthInput();
+			if (this.maxDepth !== actualDepthInput) { // if the depth input has been set
+				this.maxDepth = actualDepthInput;
 			}
-			mandel.setColorArrays();
+			this.setColorArrays();
 
-			var actualCanvasSize = mandel.inputCanvasSize.value;
-			if (actualCanvasSize !== mandel.canvasSize){ // Canvas size has been changed
-				mandel.canvasSize = actualCanvasSize;
-				mandel.c.width = mandel.c.height = mandel.canvasSize;
-				mandel.mouseUpX = mandel.canvasSize; 
-				mandel.mouseUpY = mandel.canvasSize;
-				// drawing is based on mouse coordinates
-				// in order to enlargement;
-				mandel.step = mandel.range / mandel.canvasSize;
-				mandel.imgData = mandel.ctx.createImageData(mandel.canvasSize, 1);
+			var actualCanvasSize = this.getInputCanvasSize();
+			if (actualCanvasSize !== this.canvasSize){ // Canvas size has been changed
+				this.setCanvasSize(actualCanvasSize);
+				this.setMouseCoordinates();
+				this.setStep();
+				this.setImgData();
 			}
 	
 	
-			var sectionNumber = mandel.colorArrays.arrays.length;
-			var ratio = mandel.canvasSize / mandel.colorArrays.scheme.RGBColorNumbers;
-			var sectionLength = (mandel.colorArrays.scheme.RGBColorNumbers / sectionNumber);
+			var sectionNumber = this.colorArrays.arrays.length;
+			var ratio = this.canvasSize / this.colorArrays.scheme.RGBColorNumbers;
+			var sectionLength = (this.colorArrays.scheme.RGBColorNumbers / sectionNumber);
 			var colorArraysIndex;
 		
 			
 
-			for (var lineY = 0; lineY < mandel.canvasSize; lineY++) {
-				for (var lineX = 0; lineX < mandel.canvasSize; lineX++){
+			for (var lineY = 0; lineY < this.canvasSize; lineY++) {
+				for (var lineX = 0; lineX < this.canvasSize; lineX++){
 					colorArraysIndex = Math.floor(lineX / ratio / sectionLength);
-					mandel.imgData.data[lineX * 4] = mandel.colorArrays.arrays[colorArraysIndex][0];
-					mandel.imgData.data[lineX * 4 + 1] = mandel.colorArrays.arrays[colorArraysIndex][1];
-					mandel.imgData.data[lineX * 4 + 2] = mandel.colorArrays.arrays[colorArraysIndex][2];
-					mandel.imgData.data[lineX * 4 + 3] = 255;
+					this.imgData.data[lineX * 4] = this.colorArrays.arrays[colorArraysIndex][0];
+					this.imgData.data[lineX * 4 + 1] = this.colorArrays.arrays[colorArraysIndex][1];
+					this.imgData.data[lineX * 4 + 2] = this.colorArrays.arrays[colorArraysIndex][2];
+					this.imgData.data[lineX * 4 + 3] = 255;
 
 				}
-				mandel.ctx.putImageData(mandel.imgData, 0, lineY);
+				this.ctx.putImageData(this.imgData, 0, lineY);
 			}
-			mandel.demoSchemeIsRunning = false;
+			this.demoSchemeIsRunning = false;
 		}
 		
 	}
