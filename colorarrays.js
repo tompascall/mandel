@@ -34,7 +34,10 @@ function createColorArrays(depth, colorSchemeIndex){
 		["greenThunder", parseInt("FFF", 16), greenThunderDepthToArray],
 		["bloodyDusk", parseInt("FFF", 16), bloodyDuskDepthToArray],
 		["blues", parseInt("FFF", 16), bluesDepthToArray],
-		["spiral", parseInt("FFFF", 16), spiralDepthToArray]	
+		["pinkFire", parseInt("FFFF", 16), pinkFireDepthToArray],
+		["greenIce", parseInt("FFFF", 16), greenIceDepthToArray],
+		["spiral", parseInt("FFFF", 16), spiralDepthToArray],
+		["foo", parseInt("4E20", 16), fooDepthToArray]	// 20000
 	]
 
 	var actualColorSchemeArray = colorSchemesArrays[colorSchemeIndex];
@@ -202,10 +205,40 @@ function createColorArrays(depth, colorSchemeIndex){
 	function spiralDepthToArray(coord){
 		var red, green, blue;
 		var deg = Math.PI/360;
+			// this turns around a vector that is of 255/2 length,
+			// and its fixed point is the middle of the red-green plane of the RGB color space
+			// the other point is on a circle, and continually go along paralelly the blue axix,
+			// so its route is a spiral
+		red = (255 >>> 1) + Math.cos(deg * coord) * (255 >>> 1); // x coordinste of the vector
+		green = (255 >>> 1) + Math.sin(deg * coord) * (255 >>> 1); // y coordinate of the vector
+		blue = Math.floor(255 / colorScheme.RGBColorNumbers * coord);
+		return [red, green, blue, 255];
+	}
+	function pinkFireDepthToArray(coord){
+		var red, green, blue;
+		var deg = Math.PI/360;
+		
+		red = (255 >>> 1) + Math.cos(deg * coord) * (255 >>> 1); 
+		blue = (255 >>> 1) + Math.sin(deg * coord) * (255 >>> 1);
+		green = Math.floor(255 / colorScheme.RGBColorNumbers * coord);
+		return [red, green, blue, 255]; 
+	}
+	function greenIceDepthToArray(coord){
+		var red, green, blue;
+		var deg = Math.PI/360;
+			
+		blue = (255 >>> 1) + Math.cos(deg * coord) * (255 >>> 1); 
+		green = (255 >>> 1) + Math.sin(deg * coord) * (255 >>> 1); 
+		red = Math.floor(255 / colorScheme.RGBColorNumbers * coord);
+		return [red, green, blue, 255]; 
+	}
+	function fooDepthToArray(coord){
+		var red, green, blue;
+		var deg = Math.PI/360;
 		
 		red = (255 >>> 1) + Math.cos(deg * coord) * (255 >>> 1);
 		green = (255 >>> 1) + Math.sin(deg * coord) * (255 >>> 1);
-		blue = Math.floor(255 / colorScheme.RGBColorNumbers * coord);
-		return [red, green, blue, 255]; 
+		blue =  Math.floor(255 / colorScheme.RGBColorNumbers * coord);
+		return [red, green, blue, 255];
 	}
 }
