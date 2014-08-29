@@ -56,7 +56,12 @@
 			// a is the complex part, 
 			// b is the imaginary part of the complex number
 			// see more: http://en.wikipedia.org/wiki/Complex_number
+		tipExist : true
+			// there is an HTML tag (id="tip") about the enlargement, 
+			// but when the mouse is used, there is no need for it any more,
+			// so this is an indicator if the enlargement has already happended
 	};
+
 	mandel.setCanvasSize = function(x){
 		this.canvasSize = this.c.width = this.c.height = x;
 	}
@@ -98,6 +103,13 @@
 		this.maxDepth = d ? d : this.DEFAULT_DEPTH;
 			// if depthInput cannot be interpreted, then comes the default value
 	}
+	mandel.delTip = function(){
+		var parent = document.getElementById("upper_panel");
+		var child = document.getElementById("tip");
+		parent.removeChild(child);
+		this.tipExist = false;
+			// it deletes the tip tag from the DOM, when there is no need for this any more
+	}
 	mandel.setEvents = function(){
 		$("#mandelCanvas").mousedown(function(e){
 		if (e.which === 1){
@@ -115,7 +127,12 @@
 				mandel.mouseUpX = e.pageX - this.offsetLeft;
 				mandel.mouseUpY = e.pageY - this.offsetTop;
 				if (mandel.mouseUpX !== mandel.mouseDownX && mandel.mouseUpY !== mandel.mouseDownY){
-					if (!mandel.colorSchemeDemoModeOn) mandel.mandelbrot();
+					if (!mandel.colorSchemeDemoModeOn) {
+						if (mandel.tipExist){
+							mandel.delTip();
+						}
+						mandel.mandelbrot();
+					}
 				}  			
 				mandel.leftClick = false;
 			}	  
@@ -135,6 +152,9 @@
 	    mandel.mouseUpY = e.changedTouches[0].pageY  - this.offsetTop;
 	   	e.preventDefault();
 	    if (mandel.mouseUpX !== mandel.mouseDownX && mandel.mouseUpY !== mandel.mouseDownY){
+					if (mandel.tipExist){
+						mandel.delTip();
+					}
 					mandel.mandelbrot();
 			}  	    
 		}), false);
