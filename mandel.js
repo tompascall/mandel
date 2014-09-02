@@ -92,7 +92,7 @@
 			bigNumberStep();
 		}
 		function bigNumberStep(){
-			mandel.step = math.eval(mandel.range.toString() + '/' + mandel.canvasSize.toString());
+			mandel.step = math.divide(mandel.range, mandel.canvasSize);
 		}
 	}
 	mandel.setMouseCoordinates = function(){
@@ -219,9 +219,9 @@
 		}		
 	}
 	mandel.initialize = function(){
-		this.range = 1.3933298959045715e-14; //4
-		this.aStartInActualRange = 0.36271289974036747; //-2;
-		this.bStartInActualRange = 0.6621023820459511; //2;
+		this.range = 4;//9.321363125813775e-14;
+		this.aStartInActualRange = -2;//-0.017355275925516306;
+		this.bStartInActualRange = 2;//1.0043295723343555;
 		this.aComplexIterated = this.aStartInActualRange;
 		this.bComplexIterated = this.bStartInActualRange;
 		this.setInputCanvasSize(this.DEFAULT_CANVAS_SIZE);
@@ -294,7 +294,7 @@
 				mandel.bComplexIterated -= mandel.step;
 			} 
 			else {
-				mandel.bComplexIterated = math.eval(mandel.bComplexIterated.toString() + '-' + mandel.step.toString());
+				mandel.bComplexIterated = math.subtract(mandel.bComplexIterated, mandel.step);
 			}
 			if (row > mandel.canvasSize) {
 				clearInterval(mandel.mandelClear); // stop drawing the lines
@@ -329,20 +329,23 @@
 					// if you create the new area from right to left
 				}
 				mandel.range = aRightBottom - aLeftUpper; // new range
-				if (mandel.range < 2e-15) {
+				if (mandel.range < 1e-13) {
 					mandel.bigNumber = true;
+					mandel.aStartInActualRange = math.eval(mandel.aStartInActualRange.toString());
+					mandel.bStartInActualRange = math.eval(mandel.bStartInActualRange.toString());
+					mandel.step = math.eval(mandel.step.toString());
+					mandel.mouseDownY = math.eval(mandel.mouseDownY.toString());
+					mandel.mouseDownX = math.eval(mandel.mouseDownX.toString());
+					mandel.mouseUpY = math.eval(mandel.mouseUpY.toString());
+					mandel.mouseUpX = math.eval(mandel.mouseUpX.toString());
 				}				
 			};
 
 			if (mandel.bigNumber) {
-				var alu = mandel.aStartInActualRange.toString() + '+' + mandel.mouseDownX.toString() + '*' + mandel.step.toString();
-				var blu = mandel.bStartInActualRange.toString() + '-' + mandel.mouseDownY.toString() + '*' + mandel.step.toString();
-				var arb = mandel.aStartInActualRange.toString() + '+' + mandel.mouseUpX.toString() + '*' + mandel.step.toString();
-				var brb = mandel.bStartInActualRange.toString() + '-' + mandel.mouseUpY.toString() + '*' + mandel.step.toString();
-				aLeftUpper = math.eval(alu);
-				bLeftUpper = math.eval(blu);
-				aRightBottom = math.eval(arb);
-				bRightBottom = math.eval(brb);
+				aLeftUpper = math.add(mandel.aStartInActualRange, math.multiply(mandel.mouseDownX, mandel.step));
+				bLeftUpper = math.subtract(mandel.bStartInActualRange, math.multiply(mandel.mouseDownY, mandel.step));
+				aRightBottom = math.add(mandel.aStartInActualRange, math.multiply(mandel.mouseUpX, mandel.step));
+				bRightBottom = math.subtract(mandel.bStartInActualRange, math.multiply(mandel.mouseUpY, mandel.step));
 
 				if (math.larger(aLeftUpper, aRightBottom)) {
 					changer = aLeftUpper;
@@ -356,7 +359,7 @@
 					bRightBottom = changer;
 					// if you create the new area from right to left
 				}
-				mandel.range = math.eval(aRightBottom.toString() + '-' + aLeftUpper.toString()); // new range
+				mandel.range = math.subtract(aRightBottom, aLeftUpper); // new range
 			}
 
 			mandel.aStartInActualRange = aLeftUpper;
@@ -396,7 +399,7 @@
 					cStartNumber.a = cStartNumber.a + mandel.step;
 				}
 				else {
-					cStartNumber.a = math.eval(cStartNumber.a.toString() + '+' + mandel.step.toString());
+					cStartNumber.a = math.add(cStartNumber.a, mandel.step);
 				}
 				mandel.depthArray.push(mandel.actualDepth);
 				// saving the depth data of the point
@@ -438,7 +441,7 @@
 
 			function mandelCalcBigNumber(cNumber){
 
-				if (math.eval(cLength(cNumber).toString() + " - 2") > 0 || (mandel.actualDepth === mandel.maxDepth)) {
+				if (math.larger(cLength(cNumber), 2) || (mandel.actualDepth === mandel.maxDepth)) {
 					return;
 				}
 				else {				
@@ -448,10 +451,8 @@
 				}
 				
 				function cLength(cNumber) {
-				
-						var cl = 'sqrt(' + cNumber.a.toString() +'^2 + ' + cNumber.b.toString() + '^2)';
-						cl = math.eval(cl);
-						return cl;
+						var cl = math.add(math.square(cNumber.a), math.square(cNumber.b));
+						return math.sqrt(cl);
 							// calculate the length of the complex number					
 				}
 
@@ -459,10 +460,11 @@
 					
 					var z = {};
 					
-						z.a = math.eval(cNumber.a.toString() + '^2 - ' + cNumber.b.toString() + '^2');
-						z.b = math.eval('2 * ' + cNumber.a.toString() + '*' + cNumber.b.toString());
-						z.a = math.eval(z.a.toString() + '+' + cStartNumber.a.toString());
-						z.b = math.eval(z.b.toString() + '+' + cStartNumber.b.toString());
+						z.a = math.subtract(math.square(cNumber.a), math.square(cNumber.b));
+						z.b = math.multiply(cNumber.a, cNumber.b);
+						z.b = math.multiply(2, z.b);
+						z.a = math.add(z.a, cStartNumber.a);
+						z.b = math.add(z.b, cStartNumber.b);
 									
 					mandel.actualDepth++;
 					return z;
