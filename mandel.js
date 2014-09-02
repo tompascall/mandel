@@ -2,6 +2,12 @@
 
 
 	"use strict";
+
+	math.config({
+  	number: 'bignumber',  // Default type of number: 'number' (default) or 'bignumber'
+  	precision: 20         // Number of significant digits for BigNumbers
+	});
+		// configuring math.js
 	
 	var mandel = {
 		c : document.getElementById("mandelCanvas"),
@@ -56,10 +62,11 @@
 			// a is the complex part, 
 			// b is the imaginary part of the complex number
 			// see more: http://en.wikipedia.org/wiki/Complex_number
-		tipExist : true
+		tipExist : true,
 			// there is an HTML tag (id="tip") about the enlargement, 
 			// but when the mouse is used, there is no need for it any more,
 			// so this is an indicator if the enlargement has already happended
+		bigNumber : false
 	};
 
 	mandel.setCanvasSize = function(x){
@@ -78,7 +85,19 @@
 		this.imgData = this.ctx.createImageData(this.canvasSize, 1); // a simple line
 	}
 	mandel.setStep = function(){
-		this.step = this.range / this.canvasSize;
+		if (!this.bigNumber) {
+			this.step = this.range / this.canvasSize;
+			if (this.step < 1e-15) {
+				this.bigNumber = true;
+				bigNumberStep();
+			}
+		}
+		else {
+			bigNumberStep();
+		}
+		function bigNumberStep(){
+			mandel.step = math.divide(mandel.range, mandel.canvasSize);
+		}
 	}
 	mandel.setMouseCoordinates = function(){
 		this.mouseDownX = this.mouseDownY = 0;
@@ -133,6 +152,9 @@
 						}
 						mandel.mandelbrot();
 					}
+				}
+				else {
+					console.log("hello");
 				}  			
 				mandel.leftClick = false;
 			}	  
@@ -272,7 +294,12 @@
 			mandelLine();
 			mandel.ctx.putImageData(mandel.imgData, 0, row); // put a line
 			row += 1;
-			mandel.bComplexIterated -= mandel.step;
+			if (!mandel.bigNumber) {
+				mandel.bComplexIterated -= mandel.step;
+			} 
+			else {
+				mandel.bComplexIterated = math.subtract(mandel.bComplexIterated, mandel.step);
+			}
 			if (row > mandel.canvasSize) {
 				clearInterval(mandel.mandelClear); // stop drawing the lines
 				mandel.ready = true;
@@ -281,25 +308,52 @@
 
 		function initFromMouseCoordinates(){
 
-			var aLeftUpper = mandel.aStartInActualRange + mandel.mouseDownX * mandel.step;
-			var bLeftUpper = mandel.bStartInActualRange - mandel.mouseDownY * mandel.step;
-			var aRightBottom = mandel.aStartInActualRange + mandel.mouseUpX * mandel.step;
-			var bRightBottom = mandel.bStartInActualRange - mandel.mouseUpY * mandel.step;
+			var aLeftUpper;
+			var bLeftUpper;
+			var aRightBottom;
+			var bRightBottom;
+			var changer;
 
-			if (aLeftUpper > aRightBottom) {
+			if (!mandel.bigNumber) {
+				aLeftUpper = mandel.aStartInActualRange + mandel.mouseDownX * mandel.step;
+				bLeftUpper = mandel.bStartInActualRange - mandel.mouseDownY * mandel.step;
+				aRightBottom = mandel.aStartInActualRange + mandel.mouseUpX * mandel.step;
+				bRightBottom = mandel.bStartInActualRange - mandel.mouseUpY * mandel.step;
+				
+				if (aLeftUpper > aRightBottom) {
 				changer = aLeftUpper;
 				aLeftUpper = aRightBottom;
 				aRightBottom = changer;
-				// if you create the new area from right to left
-			}
-			if (bLeftUpper < bRightBottom) {
+					// if you create the new area from right to left
+				}
+				if (bLeftUpper < bRightBottom) {
 					changer = bLeftUpper;
 					bLeftUpper = bRightBottom;
 					bRightBottom = changer;
 					// if you create the new area from right to left
+				}
+				mandel.range = aRightBottom - aLeftUpper; // new range				
 			}
+			else {
+				aLeftUpper = math.add(mandel.aStartInActualRange, math.multiply(mandel.mouseDownX, mandel.step));
+				bLeftUpper = math.subtract(mandel.bStartInActualRange, math.multiply(mandel.mouseDownY, mandel.step));
+				aRightBottom = math.add(mandel.aStartInActualRange, math.multiply(mandel.mouseUpX, mandel.step));
+				bRightBottom = math.subtract(mandel.bStartInActualRange, math.multiply(mandel.mouseUpY, mandel.step));
 
-			mandel.range = aRightBottom - aLeftUpper; // new range
+				if (math.larger(aLeftUpper, aRightBottom)) {
+					changer = aLeftUpper;
+					aLeftUpper = aRightBottom;
+					aRightBottom = changer;
+						// if you create the new area from right to left
+				}
+				if (math.smaller(bLeftUpper, bRightBottom)) {
+					changer = bLeftUpper;
+					bLeftUpper = bRightBottom;
+					bRightBottom = changer;
+					// if you create the new area from right to left
+				}
+				mandel.range = math.subtract(aRightBottom, aLeftUpper); // new range
+			}
 
 			mandel.aStartInActualRange = aLeftUpper;
 			mandel.bStartInActualRange = bLeftUpper;
@@ -320,48 +374,94 @@
 				
 			for (var lineX = 0; lineX < mandel.canvasSize; lineX++) {
 				mandel.actualDepth = 0;
-				mandelCalc(cStartNumber); // modifies mandel.actualDepth
+				
+				if (!mandel.bigNumber) {
+					mandelCalcNotBigNumber(cStartNumber); // modifies mandel.actualDepth
+				}
+				else {
+					mandelCalcBigNumber(cStartNumber);
+				}
+				
 	
 					mandel.imgData.data[lineX * 4 + 0] = mandel.colorArrays.arrays[mandel.actualDepth][0];
 					mandel.imgData.data[lineX * 4 + 1] = mandel.colorArrays.arrays[mandel.actualDepth][1];
 					mandel.imgData.data[lineX * 4 + 2] = mandel.colorArrays.arrays[mandel.actualDepth][2];
 					mandel.imgData.data[lineX * 4 + 3] = mandel.colorArrays.arrays[mandel.actualDepth][3];
 
-				cStartNumber.a += mandel.step;
+				if (!mandel.bigNumber) {
+					cStartNumber.a = cStartNumber.a + mandel.step;
+				}
+				else {
+					cStartNumber.a = math.add(cStartNumber.a, mandel.step);
+				}
 				mandel.depthArray.push(mandel.actualDepth);
 				// saving the depth data of the point
 				// for later color manipulation
 				// and saving the data to files (TODO)
 			}
 	
-			function mandelCalc(cNumber){
+			function mandelCalcNotBigNumber(cNumber){
 
 				if ((cLength(cNumber) > 2) || (mandel.actualDepth === mandel.maxDepth)) {
 					return;
 				}
 				else {				
 					cNumber = iterate(cNumber);
-					mandelCalc(cNumber);
+					mandelCalcNotBigNumber(cNumber);
 					return;
 				}
 				
 				function cLength(cNumber) {
-					return Math.sqrt(Math.pow(cNumber.a, 2) + 
-						Math.pow(cNumber.b, 2));
+				
+						return Math.sqrt(Math.pow(cNumber.a, 2) + Math.pow(cNumber.b, 2));
 							// calculate the length of the complex number
+					
 				}
 
 				function iterate(cNumber) {
 					
 					var z = {};
-					z.a = Math.pow(cNumber.a, 2) - Math.pow(cNumber.b, 2);
-					z.b = 2 * cNumber.a * cNumber.b;
-					z.a += cStartNumber.a;
-					z.b += cStartNumber.b;
+	
+						z.a = Math.pow(cNumber.a, 2) - Math.pow(cNumber.b, 2);
+						z.b = 2 * cNumber.a * cNumber.b;
+						z.a += cStartNumber.a;
+						z.b += cStartNumber.b;
+					
 					mandel.actualDepth++;
 					return z;
 				}
-			}		
+			}
+
+			function mandelCalcBigNumber(cNumber){
+
+				if ((cLength(cNumber) > 2) || (mandel.actualDepth === mandel.maxDepth)) {
+					return;
+				}
+				else {				
+					cNumber = iterate(cNumber);
+					mandelCalcBigNumber(cNumber);
+					return;
+				}
+				
+				function cLength(cNumber) {
+				
+						return math.sqrt(math.add(math.square(cNumber.a), math.square(cNumber.b)));
+							// calculate the length of the complex number					
+				}
+
+				function iterate(cNumber) {
+					
+					var z = {};
+					
+						z.a = math.subtract(math.square(cNumber.a), math.square(cNumber.b));
+						z.b = math.multiply(2, math.multiply(cNumber.a, cNumber.b));
+						z.a = math.add(z.a, cStartNumber.a);
+						z.b = math.add(z.b, cStartNumber.b);
+									
+					mandel.actualDepth++;
+					return z;
+				}
+			}			
 		}
 	}
 
