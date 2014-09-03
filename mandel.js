@@ -5,7 +5,7 @@
 
 	math.config({
   	number: 'bignumber',  // Default type of number: 'number' (default) or 'bignumber'
-  	precision: 64         // Number of significant digits for BigNumbers
+  	precision: 20         // Number of significant digits for BigNumbers
 	});
 		// configuring math.js
 	
@@ -89,10 +89,7 @@
 			this.step = this.range / this.canvasSize;
 		}
 		else {
-			bigNumberStep();
-		}
-		function bigNumberStep(){
-			mandel.step = math.divide(mandel.range, mandel.canvasSize);
+			this.step = math.divide(this.range, this.canvasSize);
 		}
 	}
 	mandel.setMouseCoordinates = function(){
@@ -219,9 +216,9 @@
 		}		
 	}
 	mandel.initialize = function(){
-		this.range = 4;//9.321363125813775e-14;
-		this.aStartInActualRange = -2;//-0.017355275925516306;
-		this.bStartInActualRange = 2;//1.0043295723343555;
+		this.range = 9.321363125813775e-14; //4
+		this.aStartInActualRange = -0.017355275925516306; //-2
+		this.bStartInActualRange = 1.0043295723343555; //2
 		this.aComplexIterated = this.aStartInActualRange;
 		this.bComplexIterated = this.bStartInActualRange;
 		this.setInputCanvasSize(this.DEFAULT_CANVAS_SIZE);
@@ -338,6 +335,10 @@
 					mandel.mouseDownX = math.eval(mandel.mouseDownX.toString());
 					mandel.mouseUpY = math.eval(mandel.mouseUpY.toString());
 					mandel.mouseUpX = math.eval(mandel.mouseUpX.toString());
+						// this turns the numbers into math.js bignumbers
+						// after this you cannot calculate with these properties
+						// as before, but you have to apply the math.js functions
+						// e.g. add(x, y)
 				}				
 			};
 
@@ -409,7 +410,9 @@
 	
 			function mandelCalcNotBigNumber(cNumber){
 
-				if ((cLength(cNumber) > 2) || (mandel.actualDepth === mandel.maxDepth)) {
+				if ((cLength(cNumber) > 4) || (mandel.actualDepth === mandel.maxDepth)) {
+						// if the square of the lenght larger than 4, 
+						// it will escape to infinity
 					return;
 				}
 				else {				
@@ -420,8 +423,10 @@
 				
 				function cLength(cNumber) {
 				
-						return Math.sqrt(Math.pow(cNumber.a, 2) + Math.pow(cNumber.b, 2));
-							// calculate the length of the complex number
+						return Math.pow(cNumber.a, 2) + Math.pow(cNumber.b, 2);
+							// calculate the length of the complex number,
+							// more precisely the square of the length, thus we
+							// don't need to calculate the square root
 					
 				}
 
@@ -441,7 +446,9 @@
 
 			function mandelCalcBigNumber(cNumber){
 
-				if (math.larger(cLength(cNumber), 2) || (mandel.actualDepth === mandel.maxDepth)) {
+				if (math.larger(cLength(cNumber), 4) || (mandel.actualDepth === mandel.maxDepth)) {
+						// if the square of the lenght larger than 4, 
+						// it will escape to infinity
 					return;
 				}
 				else {				
@@ -451,9 +458,10 @@
 				}
 				
 				function cLength(cNumber) {
-						var cl = math.add(math.square(cNumber.a), math.square(cNumber.b));
-						return math.sqrt(cl);
-							// calculate the length of the complex number					
+						return math.add(math.square(cNumber.a), math.square(cNumber.b));
+							// calculate the length of the complex number
+							// more precisely the square of the length, thus we
+							// don't need to calculate the square root					
 				}
 
 				function iterate(cNumber) {
