@@ -216,9 +216,9 @@
 		}		
 	}
 	mandel.initialize = function(){
-		this.range = 9.321363125813775e-14; //4
-		this.aStartInActualRange = -0.017355275925516306; //-2
-		this.bStartInActualRange = 1.0043295723343555; //2
+		this.range = 4;//9.321363125813775e-14; //4
+		this.aStartInActualRange = -2;//-0.017355275925516306; //-2
+		this.bStartInActualRange = 2;//1.0043295723343555; //2
 		this.aComplexIterated = this.aStartInActualRange;
 		this.bComplexIterated = this.bStartInActualRange;
 		this.setInputCanvasSize(this.DEFAULT_CANVAS_SIZE);
@@ -326,6 +326,9 @@
 					// if you create the new area from right to left
 				}
 				mandel.range = aRightBottom - aLeftUpper; // new range
+				if (mandel.range < 1e-11) {
+					document.getElementById("bignumber").style.display = "block";
+				}
 				if (mandel.range < 1e-13) {
 					mandel.bigNumber = true;
 					mandel.aStartInActualRange = math.eval(mandel.aStartInActualRange.toString());
@@ -339,6 +342,7 @@
 						// after this you cannot calculate with these properties
 						// as before, but you have to apply the math.js functions
 						// e.g. add(x, y)
+					document.getElementById("bignumber").style.display = "none";
 				}				
 			};
 

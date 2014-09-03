@@ -93,7 +93,13 @@
 		p{
 			margin: 10px 0 10px 0;
 		}
-
+		#bignumber{
+			display: none;
+			background: white;	
+		}
+		#bignumber span{
+			color: red;
+		}
 		@media only screen and (max-width: 480px), only screen and (max-device-width: 480px){
 			#demo{
 				display: inline-block;
@@ -136,6 +142,7 @@
 			<button type="button" id="restart" title="Restarts the app, sets back the canvas size and the iteration number to the default values." onclick="mandel.restart()" tabindex="4">Restart</button>
 			<button type="button" id="calculate" title="The calculation is based on the values of the canvas size and iteration number. The calculation is automated, when you enlarge an area of the set by your mouse." onclick="mandel.mandelbrot()" tabindex="3">Calculate</button>
 			<p id="tip">Tip: use your mouse to enlarge an area</p>
+			<p id="bignumber"><span>Warning:</span> you are approaching the limit, after that the set cannot be represented by the means of standard javascript number. The app will use the math.js bignumber objects, but the speed will be much-much lower.</p>
 		</div>
 		<div id="scheme_panel">
 			<p style="padding-top: 5px; text-align: center"><strong>Color schemes</strong></p>
