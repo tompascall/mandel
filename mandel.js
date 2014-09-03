@@ -3,11 +3,15 @@
 
 	"use strict";
 
-	math.config({
-  	number: 'bignumber',  // Default type of number: 'number' (default) or 'bignumber'
-  	precision: 20         // Number of significant digits for BigNumbers
-	});
-		// configuring math.js
+		Big.DP = 20; 
+			// setting big.js maximum number of decimal places
+			// It is relevant only to the div and sqrt methods, 
+			// and the pow method when the exponent is negative.
+		Big.RM = 1; 
+			// setting big.js rounding mode
+			// Rounds towards nearest neighbour
+			// used in div, sqrt and methods
+		
 	
 	var mandel = {
 		c : document.getElementById("mandelCanvas"),
@@ -89,7 +93,7 @@
 			this.step = this.range / this.canvasSize;
 		}
 		else {
-			this.step = math.divide(this.range, this.canvasSize);
+			this.step = this.range.div(this.canvasSize);
 		}
 	}
 	mandel.setMouseCoordinates = function(){
@@ -291,7 +295,7 @@
 				mandel.bComplexIterated -= mandel.step;
 			} 
 			else {
-				mandel.bComplexIterated = math.subtract(mandel.bComplexIterated, mandel.step);
+				mandel.bComplexIterated = mandel.bComplexIterated.minus(mandel.step);
 			}
 			if (row > mandel.canvasSize) {
 				clearInterval(mandel.mandelClear); // stop drawing the lines
@@ -328,39 +332,41 @@
 				mandel.range = aRightBottom - aLeftUpper; // new range
 				if (mandel.range < 1e-13) {
 					mandel.bigNumber = true;
-					mandel.aStartInActualRange = math.eval(mandel.aStartInActualRange.toString());
-					mandel.bStartInActualRange = math.eval(mandel.bStartInActualRange.toString());
-					mandel.step = math.eval(mandel.step.toString());
-					mandel.mouseDownY = math.eval(mandel.mouseDownY.toString());
-					mandel.mouseDownX = math.eval(mandel.mouseDownX.toString());
-					mandel.mouseUpY = math.eval(mandel.mouseUpY.toString());
-					mandel.mouseUpX = math.eval(mandel.mouseUpX.toString());
-						// this turns the numbers into math.js bignumbers
+					mandel.aStartInActualRange = new Big(mandel.aStartInActualRange);
+					mandel.bStartInActualRange = new Big(mandel.bStartInActualRange);
+					mandel.step = new Big(mandel.step);
+					mandel.mouseDownY = new Big(mandel.mouseDownY);
+					mandel.mouseDownX = new Big(mandel.mouseDownX);
+					mandel.mouseUpY = new Big(mandel.mouseUpY);
+					mandel.mouseUpX = new Big(mandel.mouseUpX);
+						// this turns the numbers into big.js objects
 						// after this you cannot calculate with these properties
-						// as before, but you have to apply the math.js functions
-						// e.g. add(x, y)
+						// as before, but you have to apply the big.js methods
+						// e.g. x.plus(y)
 				}				
 			};
 
 			if (mandel.bigNumber) {
-				aLeftUpper = math.add(mandel.aStartInActualRange, math.multiply(mandel.mouseDownX, mandel.step));
-				bLeftUpper = math.subtract(mandel.bStartInActualRange, math.multiply(mandel.mouseDownY, mandel.step));
-				aRightBottom = math.add(mandel.aStartInActualRange, math.multiply(mandel.mouseUpX, mandel.step));
-				bRightBottom = math.subtract(mandel.bStartInActualRange, math.multiply(mandel.mouseUpY, mandel.step));
+				aLeftUpper = mandel.mouseDownX.times(mandel.step).round(20).plus(mandel.aStartInActualRange);
+				bLeftUpper = mandel.bStartInActualRange.minus(mandel.mouseDownY.times(mandel.step).round(20));
+				aRightBottom = mandel.mouseUpX.times(mandel.step).round(20).plus(mandel.aStartInActualRange);
+				bRightBottom = mandel.bStartInActualRange.minus(mandel.mouseUpY.times(mandel.step).round(20));
 
-				if (math.larger(aLeftUpper, aRightBottom)) {
+				if (aLeftUpper.gt(aRightBottom)) {
+						// aLeftUpper > aRightBottom
 					changer = aLeftUpper;
 					aLeftUpper = aRightBottom;
 					aRightBottom = changer;
 						// if you create the new area from right to left
 				}
-				if (math.smaller(bLeftUpper, bRightBottom)) {
+				if (bLeftUpper.lt(bRightBottom)) {
+						// bLeftUpper < ltbRightBottom
 					changer = bLeftUpper;
 					bLeftUpper = bRightBottom;
 					bRightBottom = changer;
 					// if you create the new area from right to left
 				}
-				mandel.range = math.subtract(aRightBottom, aLeftUpper); // new range
+				mandel.range = aRightBottom.minus(aLeftUpper); // new range
 			}
 
 			mandel.aStartInActualRange = aLeftUpper;
@@ -400,7 +406,7 @@
 					cStartNumber.a = cStartNumber.a + mandel.step;
 				}
 				else {
-					cStartNumber.a = math.add(cStartNumber.a, mandel.step);
+					cStartNumber.a = cStartNumber.a.plus(mandel.step);
 				}
 				mandel.depthArray.push(mandel.actualDepth);
 				// saving the depth data of the point
@@ -446,7 +452,7 @@
 
 			function mandelCalcBigNumber(cNumber){
 
-				if (math.larger(cLength(cNumber), 4) || (mandel.actualDepth === mandel.maxDepth)) {
+				if (cLength(cNumber).gt(4) || (mandel.actualDepth === mandel.maxDepth)) {
 						// if the square of the lenght larger than 4, 
 						// it will escape to infinity
 					return;
@@ -458,7 +464,9 @@
 				}
 				
 				function cLength(cNumber) {
-						return math.add(math.square(cNumber.a), math.square(cNumber.b));
+						var cnb = cNumber.b.pow(2).round(20);
+						var cna = cNumber.a.pow(2).round(20);
+						return cna.plus(cnb);
 							// calculate the length of the complex number
 							// more precisely the square of the length, thus we
 							// don't need to calculate the square root					
@@ -467,12 +475,15 @@
 				function iterate(cNumber) {
 					
 					var z = {};
-					
-						z.a = math.subtract(math.square(cNumber.a), math.square(cNumber.b));
-						z.b = math.multiply(cNumber.a, cNumber.b);
-						z.b = math.multiply(2, z.b);
-						z.a = math.add(z.a, cStartNumber.a);
-						z.b = math.add(z.b, cStartNumber.b);
+						z.aa = cNumber.a.pow(2).round(20);
+						z.ab = cNumber.b.pow(2).round(20);
+						z.a = z.aa.minus(z.ab);
+
+						z.b = cNumber.a.times(cNumber.b).round(20);
+						z.b = z.b.plus(z.b);
+
+						z.a = z.a.plus(cStartNumber.a);
+						z.b = z.b.plus(cStartNumber.b);
 									
 					mandel.actualDepth++;
 					return z;
