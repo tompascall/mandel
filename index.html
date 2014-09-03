@@ -95,9 +95,16 @@
 		}
 		#bignumber{
 			display: none;
-			background: white;	
+			background: white;
+			margin-bottom: 0;
+			padding: 5px;	
 		}
-		#bignumber span{
+		#tip{
+			background: white;
+			margin-bottom: 0;
+			padding: 5px;
+		}
+		#bignumber span, #tip span{
 			color: red;
 		}
 		@media only screen and (max-width: 480px), only screen and (max-device-width: 480px){
@@ -141,8 +148,8 @@
 			<p><strong>Maximum iteration: </strong><input id="depthInput" title="The iteration means that a mathematical operation is repeated on a number again and again, as much times as the iteration number. The more iteration the more computing and the more detailed picture (see about page for more details). After modifying the iterration number and/or the canvas size, you have to push the Calculate button to enforce the changes." type="number" min="1" name="depth" value="20" tabindex="2"></p>
 			<button type="button" id="restart" title="Restarts the app, sets back the canvas size and the iteration number to the default values." onclick="mandel.restart()" tabindex="4">Restart</button>
 			<button type="button" id="calculate" title="The calculation is based on the values of the canvas size and iteration number. The calculation is automated, when you enlarge an area of the set by your mouse." onclick="mandel.mandelbrot()" tabindex="3">Calculate</button>
-			<p id="tip">Tip: use your mouse to enlarge an area</p>
-			<p id="bignumber"><span>Warning:</span> you are approaching the limit, after that the set cannot be represented by the means of standard javascript number. The app will use the math.js bignumber objects, but the speed will be much-much lower.</p>
+			<p id="tip"><span>Tip:</span> use your mouse to enlarge an area.</p>
+			<p id="bignumber"><span>Warning:</span> you are approaching the limit, when the set cannot be represented by the means of standard javascript numbers. Then the app will use the math.js bignumbers, but this results much lower speed.</p>
 		</div>
 		<div id="scheme_panel">
 			<p style="padding-top: 5px; text-align: center"><strong>Color schemes</strong></p>

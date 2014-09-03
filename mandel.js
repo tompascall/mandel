@@ -5,21 +5,21 @@
 
 	math.config({
   	number: 'bignumber',  // Default type of number: 'number' (default) or 'bignumber'
-  	precision: 20         // Number of significant digits for BigNumbers
+  	precision: 64         // Number of significant digits for BigNumbers
 	});
 		// configuring math.js
 	
 	var mandel = {
 		c : document.getElementById("mandelCanvas"),
 		inputCanvasSize : document.getElementById("inputCanvasSize"),
-		DEFAULT_CANVAS_SIZE : 200, 
+		DEFAULT_CANVAS_SIZE : 350, 
 			// the canvas is a square
 		canvasSize : 0,
 			// actual canvas size
 		ctx : null,
 			// canvas context
 		imgData : null,
-		DEFAULT_DEPTH : 200,
+		DEFAULT_DEPTH : 50,
 		maxDepth : 0,
 			// mandel.maxDepth devides the color-scale of the color scheme into equal parts
 			// if mandel.maxDepth is 1, we have 2 parts, if 2, we have 3 parts etc.  
