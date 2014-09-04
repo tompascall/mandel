@@ -19,7 +19,7 @@
 		ctx : null,
 			// canvas context
 		imgData : null,
-		DEFAULT_DEPTH : 50,
+		DEFAULT_DEPTH : 20,
 		maxDepth : 0,
 			// mandel.maxDepth devides the color-scale of the color scheme into equal parts
 			// if mandel.maxDepth is 1, we have 2 parts, if 2, we have 3 parts etc.  
@@ -216,9 +216,15 @@
 		}		
 	}
 	mandel.initialize = function(){
-		this.range = 4;//9.321363125813775e-14; //4
-		this.aStartInActualRange = -2;//-0.017355275925516306; //-2
-		this.bStartInActualRange = 2;//1.0043295723343555; //2
+		this.range = 4; 
+			// if you only want to test bignumber, 
+			// add this value to this.range: 9.321363125813775e-14;
+		this.aStartInActualRange = -2;
+			// if you only want to test bignumber, 
+			// add this value to this.aStartInActualRange: -0.017355275925516306;
+		this.bStartInActualRange = 2; 
+			// if you only want to test bignumber, 
+			// add this value to this.bStartInActualRange: 1.0043295723343555;
 		this.aComplexIterated = this.aStartInActualRange;
 		this.bComplexIterated = this.bStartInActualRange;
 		this.setInputCanvasSize(this.DEFAULT_CANVAS_SIZE);
@@ -329,7 +335,7 @@
 				if (mandel.range < 1e-11) {
 					document.getElementById("bignumber").style.display = "block";
 				}
-				if (mandel.range < 1e-13) {
+				if (mandel.range < 1e-12) {
 					mandel.bigNumber = true;
 					mandel.aStartInActualRange = math.eval(mandel.aStartInActualRange.toString());
 					mandel.bStartInActualRange = math.eval(mandel.bStartInActualRange.toString());
@@ -383,8 +389,6 @@
 			// we will generate the picture from single lines
 			// cStartNumber is the complex number, with which we start counting the actual point
 			var cStartNumber = {a : mandel.aComplexIterated, b : mandel.bComplexIterated};
-			var cl;
-			var z;	
 			
 			for (var lineX = 0; lineX < mandel.canvasSize; lineX++) {
 				mandel.actualDepth = 0;
@@ -414,84 +418,44 @@
 				// and saving the data to files (TODO)
 			}
 			
-
 			function mandelCalcNotBigNumber(cNumber){
-				cl = cNumber.a * cNumber.a + cNumber.b * cNumber.b;
+				var cLength = cNumber.a * cNumber.a + cNumber.b * cNumber.b;
 					// calculate the length of the complex number,
 					// more precisely the square of the length, thus we
 					// don't need to calculate the square root
-				if ((cl > 4) || (mandel.actualDepth === mandel.maxDepth)) {
+				var z;
+				while ((cLength <= 4) && (mandel.actualDepth !== mandel.maxDepth)) {
 						// if the square of the lenght larger than 4, 
 						// it will escape to infinity
-					return;
+					z = {};
+					z.a = cNumber.a * cNumber.a - cNumber.b * cNumber.b;
+					z.b = 2 * cNumber.a * cNumber.b;
+					z.a += cStartNumber.a;
+					z.b += cStartNumber.b;
+					cNumber = z;
+					cLength = cNumber.a * cNumber.a + cNumber.b * cNumber.b;
+					mandel.actualDepth++;	
 				}
-				else {				
-					//cNumber = iterate(cNumber);
-						z = {};
-						z.a = cNumber.a * cNumber.a - cNumber.b * cNumber.b;
-						z.b = 2 * cNumber.a * cNumber.b;
-						z.a += cStartNumber.a;
-						z.b += cStartNumber.b;
-						mandel.actualDepth++;
-						mandelCalcNotBigNumber(z);
-					return;
-				}
-				
-				// function cLength(cNumber) {
-				
-				// 		return Math.pow(cNumber.a, 2) + Math.pow(cNumber.b, 2);
-				// 			// calculate the length of the complex number,
-				// 			// more precisely the square of the length, thus we
-				// 			// don't need to calculate the square root
-					
-				// }
-
-				// function iterate(cNumber) {
-					
-				// 	var z = {};
-	
-				// 		z.a = cNumber.a * cNumber.a - cNumber.b * cNumber.b;
-				// 		z.b = 2 * cNumber.a * cNumber.b;
-				// 		z.a += cStartNumber.a;
-				// 		z.b += cStartNumber.b;
-					
-				// 	mandel.actualDepth++;
-				// 	return z;
-				// }
 			}
 
 			function mandelCalcBigNumber(cNumber){
-
-				if (math.larger(cLength(cNumber), 4) || (mandel.actualDepth === mandel.maxDepth)) {
+				var cLength = math.add(math.square(cNumber.a), math.square(cNumber.b));
+					// calculate the length of the complex number,
+					// more precisely the square of the length, thus we
+					// don't need to calculate the square root
+				var z;
+				while (math.smallerEq(cLength, 4) && (mandel.actualDepth !== mandel.maxDepth)) {
 						// if the square of the lenght larger than 4, 
 						// it will escape to infinity
-					return;
-				}
-				else {				
-					cNumber = iterate(cNumber);
-					mandelCalcBigNumber(cNumber);
-					return;
-				}
-				
-				function cLength(cNumber) {
-						return math.add(math.square(cNumber.a), math.square(cNumber.b));
-							// calculate the length of the complex number
-							// more precisely the square of the length, thus we
-							// don't need to calculate the square root					
-				}
-
-				function iterate(cNumber) {
-					
-					var z = {};
-					
-						z.a = math.subtract(math.square(cNumber.a), math.square(cNumber.b));
-						z.b = math.multiply(cNumber.a, cNumber.b);
-						z.b = math.multiply(2, z.b);
-						z.a = math.add(z.a, cStartNumber.a);
-						z.b = math.add(z.b, cStartNumber.b);
-									
-					mandel.actualDepth++;
-					return z;
+					z = {};
+					z.a = math.subtract(math.square(cNumber.a), math.square(cNumber.b));
+					z.b = math.multiply(cNumber.a, cNumber.b);
+					z.b = math.add(z.b, z.b);
+					z.a = math.add(z.a, cStartNumber.a);
+					z.b = math.add(z.b, cStartNumber.b);
+					cNumber = z;
+					cLength = math.add(math.square(cNumber.a), math.square(cNumber.b));
+					mandel.actualDepth++;	
 				}
 			}			
 		}
