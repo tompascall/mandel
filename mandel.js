@@ -383,7 +383,9 @@
 			// we will generate the picture from single lines
 			// cStartNumber is the complex number, with which we start counting the actual point
 			var cStartNumber = {a : mandel.aComplexIterated, b : mandel.bComplexIterated};
-				
+			var cl;
+			var z;	
+			
 			for (var lineX = 0; lineX < mandel.canvasSize; lineX++) {
 				mandel.actualDepth = 0;
 				
@@ -411,41 +413,51 @@
 				// for later color manipulation
 				// and saving the data to files (TODO)
 			}
-	
-			function mandelCalcNotBigNumber(cNumber){
+			
 
-				if ((cLength(cNumber) > 4) || (mandel.actualDepth === mandel.maxDepth)) {
+			function mandelCalcNotBigNumber(cNumber){
+				cl = cNumber.a * cNumber.a + cNumber.b * cNumber.b;
+					// calculate the length of the complex number,
+					// more precisely the square of the length, thus we
+					// don't need to calculate the square root
+				if ((cl > 4) || (mandel.actualDepth === mandel.maxDepth)) {
 						// if the square of the lenght larger than 4, 
 						// it will escape to infinity
 					return;
 				}
 				else {				
-					cNumber = iterate(cNumber);
-					mandelCalcNotBigNumber(cNumber);
-					return;
-				}
-				
-				function cLength(cNumber) {
-				
-						return Math.pow(cNumber.a, 2) + Math.pow(cNumber.b, 2);
-							// calculate the length of the complex number,
-							// more precisely the square of the length, thus we
-							// don't need to calculate the square root
-					
-				}
-
-				function iterate(cNumber) {
-					
-					var z = {};
-	
-						z.a = Math.pow(cNumber.a, 2) - Math.pow(cNumber.b, 2);
+					//cNumber = iterate(cNumber);
+						z = {};
+						z.a = cNumber.a * cNumber.a - cNumber.b * cNumber.b;
 						z.b = 2 * cNumber.a * cNumber.b;
 						z.a += cStartNumber.a;
 						z.b += cStartNumber.b;
-					
-					mandel.actualDepth++;
-					return z;
+						mandel.actualDepth++;
+						mandelCalcNotBigNumber(z);
+					return;
 				}
+				
+				// function cLength(cNumber) {
+				
+				// 		return Math.pow(cNumber.a, 2) + Math.pow(cNumber.b, 2);
+				// 			// calculate the length of the complex number,
+				// 			// more precisely the square of the length, thus we
+				// 			// don't need to calculate the square root
+					
+				// }
+
+				// function iterate(cNumber) {
+					
+				// 	var z = {};
+	
+				// 		z.a = cNumber.a * cNumber.a - cNumber.b * cNumber.b;
+				// 		z.b = 2 * cNumber.a * cNumber.b;
+				// 		z.a += cStartNumber.a;
+				// 		z.b += cStartNumber.b;
+					
+				// 	mandel.actualDepth++;
+				// 	return z;
+				// }
 			}
 
 			function mandelCalcBigNumber(cNumber){
