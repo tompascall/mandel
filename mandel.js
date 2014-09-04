@@ -62,8 +62,8 @@
 			// a is the complex part, 
 			// b is the imaginary part of the complex number
 			// see more: http://en.wikipedia.org/wiki/Complex_number
-		tipExist : true,
-			// there is an HTML tag (id="tip") about the enlargement, 
+		tip1Exist : true,
+			// there is an HTML tag (id="tip1") about the enlargement, 
 			// but when the mouse is used, there is no need for it any more,
 			// so this is an indicator if the enlargement has already happended
 		bigNumber : false
@@ -115,11 +115,11 @@
 		this.maxDepth = d ? d : this.DEFAULT_DEPTH;
 			// if depthInput cannot be interpreted, then comes the default value
 	}
-	mandel.delTip = function(){
+	mandel.delTip1 = function(){
 		var parent = document.getElementById("upper_panel");
-		var child = document.getElementById("tip");
+		var child = document.getElementById("tip1");
 		parent.removeChild(child);
-		this.tipExist = false;
+		this.tip1Exist = false;
 			// it deletes the tip tag from the DOM, when there is no need for this any more
 	}
 	mandel.setEvents = function(){
@@ -140,8 +140,8 @@
 				mandel.mouseUpY = e.pageY - this.offsetTop;
 				if (mandel.mouseUpX !== mandel.mouseDownX && mandel.mouseUpY !== mandel.mouseDownY){
 					if (!mandel.colorSchemeDemoModeOn) {
-						if (mandel.tipExist){
-							mandel.delTip();
+						if (mandel.tip1Exist){
+							mandel.delTip1();
 						}
 						mandel.mandelbrot();
 					}
@@ -167,8 +167,8 @@
 	    mandel.mouseUpY = e.changedTouches[0].pageY  - this.offsetTop;
 	   	e.preventDefault();
 	    if (mandel.mouseUpX !== mandel.mouseDownX && mandel.mouseUpY !== mandel.mouseDownY){
-					if (mandel.tipExist){
-						mandel.delTip();
+					if (mandel.tip1Exist){
+						mandel.delTip1();
 					}
 					mandel.mandelbrot();
 			}  	    
