@@ -2,7 +2,7 @@ https://github.com/tompascall/mandel
 
 This is a basic application for studying the Mandelbrot set.
 
-Copyright 2014 Gulácsy-Tóth Tamás [gulacsy.toth.tamas@gmail.com]
+Copyright 2014 Gulácsy-Tóth Tamás [gulacsy.toth.tamas geemail]
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
