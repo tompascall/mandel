@@ -62,11 +62,13 @@
 			// a is the complex part, 
 			// b is the imaginary part of the complex number
 			// see more: http://en.wikipedia.org/wiki/Complex_number
-		tip1Exist : true,
-			// there is an HTML tag (id="tip1") about the enlargement, 
-			// but when the mouse is used, there is no need for it any more,
-			// so this is an indicator if the enlargement has already happended
-		bigNumber : false
+		tipMouseDisplay : true,
+			// when document loads, there is a tip about the enlargement, 
+			// but after the first enlargement, there is no need for 
+			// this tip any more, so this is an indicator 
+			// if the enlargement has already happended
+		tipIterationDisplay: false,
+		bigNumber : false,
 	};
 
 	mandel.setCanvasSize = function(x){
@@ -114,13 +116,15 @@
 		var d = this.getDepthInput();
 		this.maxDepth = d ? d : this.DEFAULT_DEPTH;
 			// if depthInput cannot be interpreted, then comes the default value
+		if (d !== this.DEFAULT_DEPTH && this.tipIterationDisplay) {
+			this.setTip("tip_iteration", "none");
+			this.tipIterationDisplay = false;
+				// if the value of the itaration is has been set,
+				// there is no need for the tip about the iteration
+		}
 	}
-	mandel.delTip1 = function(){
-		var parent = document.getElementById("upper_panel");
-		var child = document.getElementById("tip1");
-		parent.removeChild(child);
-		this.tip1Exist = false;
-			// it deletes the tip tag from the DOM, when there is no need for this any more
+	mandel.setTip = function(tipID, display){
+			document.getElementById(tipID).style.display = display;
 	}
 	mandel.setEvents = function(){
 		$("#mandelCanvas").mousedown(function(e){
@@ -138,10 +142,14 @@
 			if (mandel.leftClick) {
 				mandel.mouseUpX = e.pageX - this.offsetLeft;
 				mandel.mouseUpY = e.pageY - this.offsetTop;
-				if (mandel.mouseUpX !== mandel.mouseDownX && mandel.mouseUpY !== mandel.mouseDownY){
+				if (mandel.mouseUpX !== mandel.mouseDownX || mandel.mouseUpY !== mandel.mouseDownY){
 					if (!mandel.colorSchemeDemoModeOn) {
-						if (mandel.tip1Exist){
-							mandel.delTip1();
+						if (mandel.tipMouseDisplay){
+							mandel.setTip("tip_mouse", "none");
+							mandel.tipMouseDisplay = false;
+							mandel.setTip("tip_iteration", "block");
+							mandel.tipIterationDisplay = true;
+								// let's show the next tip about the iteration
 						}
 						mandel.mandelbrot();
 					}
@@ -167,8 +175,12 @@
 	    mandel.mouseUpY = e.changedTouches[0].pageY  - this.offsetTop;
 	   	e.preventDefault();
 	    if (mandel.mouseUpX !== mandel.mouseDownX && mandel.mouseUpY !== mandel.mouseDownY){
-					if (mandel.tip1Exist){
-						mandel.delTip1();
+					if (mandel.tipMouseDisplay){
+						mandel.setTip("tip_mouse", "none");
+						mandel.tipMouseDisplay = false;
+						mandel.setTip("tip_iteration", "block");
+						mandel.tipIterationDisplay = true;
+							// let's show the next tip about the iteration
 					}
 					mandel.mandelbrot();
 			}  	    
@@ -333,9 +345,10 @@
 				}
 				mandel.range = aRightBottom - aLeftUpper; // new range
 				if (mandel.range < 1e-11) {
-					document.getElementById("bignumber").style.display = "block";
+					mandel.setTip("tip_bignumber", "block");
+					// show warning about the limit of the standard js numbers
 				}
-				if (mandel.range < 1e-12) {
+				if (mandel.range < 5e-13) {
 					mandel.bigNumber = true;
 					mandel.aStartInActualRange = math.eval(mandel.aStartInActualRange.toString());
 					mandel.bStartInActualRange = math.eval(mandel.bStartInActualRange.toString());
@@ -348,7 +361,8 @@
 						// after this you cannot calculate with these properties
 						// as before, but you have to apply the math.js functions
 						// e.g. add(x, y)
-					document.getElementById("bignumber").style.display = "none";
+					mandel.setTip("tip_bignumber", "none");
+						// there is no need for the tip any more
 				}				
 			};
 

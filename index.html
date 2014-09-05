@@ -93,21 +93,24 @@
 		p{
 			margin: 10px 0 10px 0;
 		}
-		#bignumber{
-			display: none;
-			background: white;
-			margin-bottom: 0;
-			padding: 5px;	
-		}
 		.tip{
 			background: white;
 			margin-bottom: 0;
 			padding: 5px;
 		}
-		#tip2{
+		#tip_mouse{
+			display : block;
+		}
+		#tip_iteration{
 			display: none;
 		}
-		#bignumber span, .tip span{
+		#tip_bignumber{
+			display: none;
+			background: white;
+			margin-bottom: 0;
+			padding: 5px;	
+		}
+		.tip span{
 			color: red;
 		}
 		@media only screen and (max-width: 480px), only screen and (max-device-width: 480px){
@@ -151,9 +154,9 @@
 			<p><strong>Maximum iteration: </strong><input id="depthInput" title="The iteration means that a mathematical operation is repeated on a number again and again, as much times as the iteration number. The more iteration the more computing and the more detailed picture (see about page for more details). After modifying the iteration number and/or the canvas size, you have to push the Calculate button to enforce the changes." type="number" min="1" name="depth" value="20" tabindex="2"></p>
 			<button type="button" id="restart" title="Restarts the app, sets back the canvas size and the iteration number to the default values." onclick="mandel.restart()" tabindex="4">Restart</button>
 			<button type="button" id="calculate" title="The calculation is based on the values of the canvas size and iteration number. The calculation is automated, when you enlarge an area of the set by your mouse." onclick="mandel.mandelbrot()" tabindex="3">Calculate</button>
-			<p id="tip1" class="tip"><span><strong>Tip:</strong></span> use your mouse to enlarge an area.</p>
-			<p id="tip2" class="tip"><span><strong>Tip:</strong> The more iteration the more detailed picture. After modifying the iteration number and/or the canvas size, you have to push the Calculate button to enforce the changes.</span></p>
-			<p id="bignumber"><span>Warning:</span> you are about to approach the limit, when the set cannot be represented by the means of standard javascript numbers. In this case the app will use the math.js bignumbers, but this results much lower speed.</p>
+			<p id="tip_mouse" class="tip"><span><strong>Tip:</strong></span> use your mouse to enlarge an area.</p>
+			<p id="tip_iteration" class="tip"><span><strong>Tip: </strong></span>The more iteration the more detailed picture. After modifying the iteration number and/or the canvas size, you have to push the Calculate button to enforce the changes.</p>
+			<p id="tip_bignumber" class="tip"><span>Warning:</span> you are about to approach the limit, when the set cannot be represented by the means of standard javascript numbers. In this case the app will use the <a href="http://mathjs.org/">math.js</a> bignumbers, but this results <strong>much lower speed</strong>.</p>
 		</div>
 		<div id="scheme_panel">
 			<p style="padding-top: 5px; text-align: center"><strong>Color schemes</strong></p>
@@ -189,7 +192,7 @@
 	
 
 	<script src="jquery/jquery-2.1.1.min.js"></script>
-	<script src="math/math.js"></script>
+	<script src="math/math.min.js"></script>
 	<script src="colorarrays.js"></script>
 	<script src="mandel.js"></script>
 	
@@ -202,11 +205,10 @@
 	  ga('create', 'UA-49278705-2', 'auto');
 	  ga('send', 'pageview');
 	</script>
-
-	<!-- google analytics -->
+		<!-- google analytics -->
 	<script src="https://apis.google.com/js/platform.js" async defer></script>
-	<!-- google + -->
+		<!-- google + -->
 	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-	<!-- twitter -->
+			<!-- twitter -->
 </body>
 </html>
