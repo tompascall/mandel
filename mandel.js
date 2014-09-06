@@ -174,7 +174,11 @@
 	    mandel.mouseUpX = e.changedTouches[0].pageX - this.offsetLeft;
 	    mandel.mouseUpY = e.changedTouches[0].pageY  - this.offsetTop;
 	   	e.preventDefault();
-	    if (mandel.mouseUpX !== mandel.mouseDownX && mandel.mouseUpY !== mandel.mouseDownY){
+	   	if (Math.abs(mandel.mouseDownX - mandel.mouseUpX) > 40) {
+	   			// if you only want to swipe, then there need no enlargement
+	   			// we suppose that you want to swip if the difference between
+	   			// the down and up X coord. <= 20px
+		   	if (mandel.mouseUpX !== mandel.mouseDownX){
 					if (mandel.tipMouseDisplay){
 						mandel.setTip("tip_mouse", "none");
 						mandel.tipMouseDisplay = false;
@@ -183,7 +187,9 @@
 							// let's show the next tip about the iteration
 					}
 					mandel.mandelbrot();
-			}  	    
+				}  	 	
+	   	}
+		       
 		}), false);
 			// snippets for mobile devices
 			// source: http://www.javascriptkit.com/javatutors/touchevents.shtml
