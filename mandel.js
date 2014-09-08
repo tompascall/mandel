@@ -155,7 +155,9 @@
 					}
 				}
 				else {
-					console.log("hello");
+					// console.log("hello");
+					// this can be a possible brakepoint
+					// it executes when you click down and up in the same point
 				}  			
 				mandel.leftClick = false;
 			}	  
@@ -176,8 +178,8 @@
 	   	e.preventDefault();
 	   	if (Math.abs(mandel.mouseDownX - mandel.mouseUpX) > 40) {
 	   			// if you only want to swipe, then there need no enlargement
-	   			// we suppose that you want to swip if the difference between
-	   			// the down and up X coord. <= 20px
+	   			// we suppose that you want to swipe if the difference between
+	   			// the down and up X coord. <= 40px
 		   	if (mandel.mouseUpX !== mandel.mouseDownX){
 					if (mandel.tipMouseDisplay){
 						mandel.setTip("tip_mouse", "none");
