@@ -129,17 +129,40 @@
 	mandel.setTip = function(tipID, display){
 			document.getElementById(tipID).style.display = display;
 	}
+	mandel.bigNumberToBigObject = function(bignumber){
+		var bigObject = {};
+		bigObject.c = bignumber.c; // an array
+		bigObject.e = bignumber.e; // 
+		bigObject.s = bignumber.s; // 
+		return bigObject;
+	} 
+
 	mandel.sendMessageToWorker = function(){
-		var message = {"aComplexIterated" : mandel.aComplexIterated,
-										"bComplexIterated" : mandel.bComplexIterated,
-										"canvasSize" : mandel.canvasSize,
-										"bigNumber" : mandel.bigNumber,
-										"step" : mandel.step, 
-										"maxDepth" : mandel.maxDepth
-									}
+		var aComplexIterated;
+		var bComplexIterated;
+		var step;
+
+		if (!mandel.bigNumber){
+			aComplexIterated = this.aComplexIterated;
+			bComplexIterated = this.bComplexIterated;
+			step = this.step;
+		}
+		else {
+			aComplexIterated = this.bigNumberToBigObject(this.aComplexIterated);
+			bComplexIterated = this.bigNumberToBigObject(this.bComplexIterated);
+			step = this.bigNumberToBigObject(this.step);
+		}
+		var message = {aComplexIterated : aComplexIterated,
+										bComplexIterated : bComplexIterated,
+										canvasSize : this.canvasSize,
+										bigNumber : mandel.bigNumber,
+										step : step, 
+										maxDepth : this.maxDepth
+									};
+		var jsonMessage = JSON.stringify(message);
 
 		//[mandel.aComplexIterated, mandel.bComplexIterated, mandel.canvasSize, mandel.bigNumber, mandel.step, mandel.maxDepth];
-			mandel.worker.postMessage(message);
+			mandel.worker.postMessage(jsonMessage);
 	}
 	mandel.setEvents = function(){
 		$("#mandelCanvas").mousedown(function(e){
@@ -297,13 +320,13 @@
 		}		
 	}
 	mandel.initialize = function(){
-		this.range = 4; 
+		this.range = 9.321363125813775e-14;//4; 
 			// if you only want to test bignumber, 
 			// add this value to this.range: 9.321363125813775e-14;
-		this.aStartInActualRange = -2;
+		this.aStartInActualRange = -0.017355275925516306;//-2;
 			// if you only want to test bignumber, 
 			// add this value to this.aStartInActualRange: -0.017355275925516306;
-		this.bStartInActualRange = 2; 
+		this.bStartInActualRange = 1.0043295723343555;//2; 
 			// if you only want to test bignumber, 
 			// add this value to this.bStartInActualRange: 1.0043295723343555;
 		this.aComplexIterated = this.aStartInActualRange;

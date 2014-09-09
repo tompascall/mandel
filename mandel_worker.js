@@ -1,19 +1,48 @@
 // mandel_worker.js
 // worker for mandel.js
 
+"use strict";
+
+importScripts('math/math.min.js');
+
+math.config({
+  	number: 'bignumber',  // Default type of number: 'number' (default) or 'bignumber'
+  	precision: 64         // Number of significant digits for BigNumbers
+	});
+		// configuring math.js
+		
+
 self.addEventListener('message', function(e) {
   
-	// var message = {"aComplexIterated" : mandel.aComplexIterated,
-	// 									"bComplexIterated" : mandel.bComplexIterated,
-	// 									"canvasSize" : mandel.canvasSize,
-	// 									"bigNumber" : mandel.bigNumber,
-	// 									"step" : mandel.step, 
-	// 									"maxDepth" : mandel.maxDepth
-	// 								}  	
+	var aComplexIterated;
+	var bComplexIterated;
+	var step;
 
-  var message = mandelWorker(e.aComplexIterated, e.bComplexIterated, e.canvasSize, e.bigNumber, e.step, e.maxDepth);
-  self.postMessage(message);
+	var message = JSON.parse(e.data);
+
+	if (!message.bigNumber){
+			aComplexIterated = message.aComplexIterated;
+			bComplexIterated = message.bComplexIterated;
+			step = message.step;
+		}
+		else {
+			aComplexIterated = bigObjectToBigNumber(message.aComplexIterated);
+			bComplexIterated = bigObjectToBigNumber(message.bComplexIterated);
+			step = bigObjectToBigNumber(message.step);
+		}
+
+  var sendMessage = mandelWorker(aComplexIterated, bComplexIterated, message.canvasSize, message.bigNumber, step, message.maxDepth);
+  
+  self.postMessage(sendMessage);
 }, false);
+
+function bigObjectToBigNumber(big){
+	var bignumber = math.bignumber();
+	bignumber.c = big.c;
+	bignumber.e = big.e;
+	bignumber.s = big.s;
+	return bignumber;
+}
 
 function mandelWorker(aComplexIterated, bComplexIterated, canvasSize, bigNumber, step, maxDepth){
 	var cStartNumber = {a : aComplexIterated, b : bComplexIterated};
