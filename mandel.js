@@ -69,6 +69,9 @@
 			// if the enlargement has already happended
 		tipIterationDisplay: false,
 		bigNumber : false,
+		worker : new Worker("mandel_worker.js"),
+		actualDepthArray : [],
+		row : 0,
 	};
 
 	mandel.setCanvasSize = function(x){
@@ -125,6 +128,18 @@
 	}
 	mandel.setTip = function(tipID, display){
 			document.getElementById(tipID).style.display = display;
+	}
+	mandel.sendMessageToWorker = function(){
+		var message = {"aComplexIterated" : mandel.aComplexIterated,
+										"bComplexIterated" : mandel.bComplexIterated,
+										"canvasSize" : mandel.canvasSize,
+										"bigNumber" : mandel.bigNumber,
+										"step" : mandel.step, 
+										"maxDepth" : mandel.maxDepth
+									}
+
+		//[mandel.aComplexIterated, mandel.bComplexIterated, mandel.canvasSize, mandel.bigNumber, mandel.step, mandel.maxDepth];
+			mandel.worker.postMessage(message);
 	}
 	mandel.setEvents = function(){
 		$("#mandelCanvas").mousedown(function(e){
@@ -224,6 +239,52 @@
 				}
 			} 
 		});
+
+
+
+		// ***********************************************************
+
+
+
+		mandel.worker.addEventListener('message', function(e) {
+  			mandel.actualDepthArray = e.data;
+  			afterWorkerSentMessage();
+
+				function afterWorkerSentMessage(){
+					var actualDepth;
+
+					for (var lineX = 0; lineX < mandel.canvasSize; lineX++) {
+						actualDepth = mandel.actualDepthArray[lineX];
+						mandel.imgData.data[lineX * 4 + 0] = mandel.colorArrays.arrays[actualDepth][0];
+						mandel.imgData.data[lineX * 4 + 1] = mandel.colorArrays.arrays[actualDepth][1];
+						mandel.imgData.data[lineX * 4 + 2] = mandel.colorArrays.arrays[actualDepth][2];
+						mandel.imgData.data[lineX * 4 + 3] = mandel.colorArrays.arrays[actualDepth][3];
+
+						mandel.depthArray.push(actualDepth);
+					}
+			
+						// saving the depth data of the point
+						// for later color manipulation
+						// and saving the data to files (TODO)
+
+					setTimeout(mandel.ctx.putImageData(mandel.imgData, 0, mandel.row),1); 
+
+					mandel.row += 1;
+					if (mandel.row > mandel.canvasSize) {
+						mandel.row = 0; // stop drawing the lines
+						mandel.ready = true;
+					}
+					else {
+						if (!mandel.bigNumber) {
+							mandel.bComplexIterated -= mandel.step;
+						} 
+						else {
+							mandel.bComplexIterated = math.subtract(mandel.bComplexIterated, mandel.step);
+						}
+						mandel.sendMessageToWorker();
+					}
+				}
+			}, false);
 	}
 	// -------------- functions -----------------------------------------------------------
 
@@ -265,7 +326,7 @@
 
 	mandel.mandelbrotIntro = function(){
 		if (!this.ready) { 
-			clearInterval(this.mandelClear);
+			//clearInterval(this.mandelClear);
 				// if putMandelLine() has been arleady running via setInterval, it must be stopped
 		}
 		this.ready = false; 
@@ -301,29 +362,33 @@
 		
 		this.mandelbrotIntro();
 	
-		var row = 0; 
 		// we want to show the image line per line
 		// row is the Y coordinate of the actual line	of the canvas
 
 		initFromMouseCoordinates();
-		this.mandelClear = setInterval(putMandelLine, 1); // to start drawing the lines
+		
+		this.sendMessageToWorker();
+
+		//this.mandelClear = setInterval(putMandelLine, 1); // to start drawing the lines
 		return;
 
-		function putMandelLine(){
-			mandelLine();
-			mandel.ctx.putImageData(mandel.imgData, 0, row); // put a line
-			row += 1;
-			if (!mandel.bigNumber) {
-				mandel.bComplexIterated -= mandel.step;
-			} 
-			else {
-				mandel.bComplexIterated = math.subtract(mandel.bComplexIterated, mandel.step);
-			}
-			if (row > mandel.canvasSize) {
-				clearInterval(mandel.mandelClear); // stop drawing the lines
-				mandel.ready = true;
-			}
-		}
+		// function putMandelLine(){
+		// 	//mandelLine();
+			
+
+		// 	//mandel.ctx.putImageData(mandel.imgData, 0, row); // put a line
+		// 	mandel.row += 1;
+		// 	if (!mandel.bigNumber) {
+		// 		mandel.bComplexIterated -= mandel.step;
+		// 	} 
+		// 	else {
+		// 		mandel.bComplexIterated = math.subtract(mandel.bComplexIterated, mandel.step);
+		// 	}
+		// 	if (mandel.row > mandel.canvasSize) {
+		// 		clearInterval(mandel.mandelClear); // stop drawing the lines
+		// 		mandel.ready = true;
+		// 	}
+		// }
 
 		function initFromMouseCoordinates(){
 
@@ -410,21 +475,9 @@
 		function mandelLine() {
 			// we will generate the picture from single lines
 			// cStartNumber is the complex number, with which we start counting the actual point
-			var actualDepthArray = mandelWorker(mandel.aComplexIterated, mandel.bComplexIterated, mandel.canvasSize, mandel.bigNumber, mandel.step, mandel.maxDepth);
-			var actualDepth;
 
-			for (var lineX = 0; lineX < mandel.canvasSize; lineX++) {
-				actualDepth = actualDepthArray[lineX];
-				mandel.imgData.data[lineX * 4 + 0] = mandel.colorArrays.arrays[actualDepth][0];
-				mandel.imgData.data[lineX * 4 + 1] = mandel.colorArrays.arrays[actualDepth][1];
-				mandel.imgData.data[lineX * 4 + 2] = mandel.colorArrays.arrays[actualDepth][2];
-				mandel.imgData.data[lineX * 4 + 3] = mandel.colorArrays.arrays[actualDepth][3];
-
-				mandel.depthArray.push(actualDepth);
-				// saving the depth data of the point
-				// for later color manipulation
-				// and saving the data to files (TODO)
-			}
+			// var actualDepthArray = mandelWorker(mandel.aComplexIterated, mandel.bComplexIterated, mandel.canvasSize, mandel.bigNumber, mandel.step, mandel.maxDepth);
+			
 			
 			// function mandelCalcNotBigNumber(cNumber){
 			// 	var cLength = cNumber.a * cNumber.a + cNumber.b * cNumber.b;
