@@ -54,7 +54,7 @@
 			// we use them for enlergement, calculate the new range, step etc.
 		leftClick : false,
 			// it will be false if in is not clicked with left mouse button
-		ready : false,
+		ready : true,
 			// ???
 		colorSchemeDemoModeOn : false,
 			// it will be true, while we are in colorScheme Demo
@@ -92,6 +92,7 @@
 		row : 0,
 			// the actual row of the canvas
 			// this needs because we draw lines
+		flag : false,
 	};
 
 	mandel.setCanvasSize = function(x){
@@ -118,7 +119,7 @@
 			this.step = math.divide(this.range, this.canvasSize);
 		}
 	}
-	mandel.setMouseCoordinates = function(){
+	mandel.setMouseCoordinatesToCanvas = function(){
 		this.mouseDownX = this.mouseDownY = 0;
 		this.mouseUpX = this.mouseUpY = this.canvasSize;
 			// ???
@@ -297,7 +298,7 @@
 					// actualize the color scheme
 				if (!mandel.colorSchemeDemoModeOn) {
 					mandel.copyArrayToCanvas(mandel.depthArray, savedImgData);
-						setTimeout(mandel.ctx.putImageData(savedImgData, 0, 0), 1);
+						mandel.ctx.putImageData(savedImgData, 0, 0);
 						// actualize the canvas based on the new scheme	
 				}
 				else if (!mandel.demoSchemeIsRunning) {
@@ -314,9 +315,8 @@
 		mandel.actualDepthArray = e.data;
 			// the worker sent back the array of depths, we need to put it to the canvas
 		mandel.copyArrayToCanvas(mandel.actualDepthArray, mandel.imgData);
-		var row = mandel.row;
-		setTimeout(mandel.ctx.putImageData(mandel.imgData, 0, row), 1);					
-		
+		var row = mandel.row;			
+		mandel.ctx.putImageData(mandel.imgData, 0, row);
 		mandel.row += 1;
 		if (mandel.row > mandel.canvasSize) {
 
@@ -332,6 +332,7 @@
 			}
 			mandel.sendMessageToWorker();
 		}
+		
 	}
 
 	mandel.getRadioValue = function(divId){
@@ -359,7 +360,7 @@
 		this.setCanvasContext();
 		this.setImgData();
 		this.setStep();
-		this.setMouseCoordinates(); 
+		this.setMouseCoordinatesToCanvas(); 
 		this.setColorScheme();
 		this.setDepthInputToDefault();
 		this.setMaxDepth();
@@ -374,35 +375,44 @@
 	mandel.mandelbrot = function(){ // entry point for the calculation and drawing
 		mandelbrotIntro();
 		initFromMouseCoordinates();
-		if (!mandel.ready) {
-			mandel.worker.addEventListener('message', mandel.workerEvent, false);
-			mandel.row = 0;
-		}
-
+		mandel.row = 0;
+		mandel.worker = new Worker("mandel_worker.js");
+		mandel.worker.addEventListener('message', mandel.workerEvent, false);
 		mandel.sendMessageToWorker();
+
+		// var message = {	aComplexIterated : aComplexIterated,
+		// 								bComplexIterated : bComplexIterated,
+		// 								canvasSize : this.canvasSize,
+		// 								bigNumberMode : mandel.bigNumberMode,
+		// 								step : step, 
+		// 								maxDepth : this.maxDepth
+		// 							};
+
+
 		return;
 
 		function mandelbrotIntro(){
 			if (!mandel.ready) { 
 				// if mandelbrot is already active, it must be stopped
 				mandel.worker.removeEventListener('message', mandel.workerEvent, false);
-				//mandel.row = 0;
+				mandel.worker.terminate();
+				//mandel.flag = true;
 			}
-			mandel.ready = false; 
+			else mandel.ready = false; 
+			//mandel.flag = false;
 				// the show is being started; it is a status flag
 			mandel.setMaxDepth();
 				// if Depth input is changed, it must be actualized	
 			mandel.depthArray = []; 
 				// set/reset the depth array that contains all the depth values of
 				// the points of the canvas
-			//mandel.row = 0;
 			mandel.colorSchemeDemoModeOn = false; // if demo mode is on, it must be finished
 
 			var actualCanvasSize = mandel.getInputCanvasSize();
 			
 			if (actualCanvasSize !== mandel.canvasSize){ // Canvas size has been changed
 				mandel.setCanvasSize(actualCanvasSize);
-				mandel.setMouseCoordinates();
+				mandel.setMouseCoordinatesToCanvas();
 				// drawing is based on mouse coordinates
 				// in order to enlargement;
 				mandel.setStep();
@@ -493,7 +503,7 @@
 
 			mandel.setStep(); // new step
 
-			mandel.setMouseCoordinates();
+			mandel.setMouseCoordinatesToCanvas();
 			// the original values must be reset 
 			// in case there is no enlargement the next session
 		}
@@ -517,7 +527,7 @@
 			var actualCanvasSize = this.getInputCanvasSize();
 			if (actualCanvasSize !== this.canvasSize){ // Canvas size has been changed
 				this.setCanvasSize(actualCanvasSize);
-				this.setMouseCoordinates();
+				this.setMouseCoordinatesToCanvas();
 				this.setStep();
 				this.setImgData();
 			}
@@ -545,6 +555,7 @@
 	
 	mandel.initialize();
 	mandel.setEvents();
+	mandel.worker.addEventListener('message', mandel.workerEvent, false);
 	mandel.mandelbrot();
 
 	
