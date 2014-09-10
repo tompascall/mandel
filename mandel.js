@@ -54,8 +54,8 @@
 			// we use them for enlergement, calculate the new range, step etc.
 		leftClick : false,
 			// it will be false if in is not clicked with left mouse button
-		ready : true,
-			// it will be false, when the mandel calculation is progressing
+		ready : false,
+			// ???
 		colorSchemeDemoModeOn : false,
 			// it will be true, while we are in colorScheme Demo
 		demoSchemeIsRunning : false,
@@ -194,6 +194,7 @@
 
 		mandel.worker.postMessage(jsonMessage);
 	}
+
 	mandel.copyArrayToCanvas = function(array, imgData){
 	var depth;
 	var length = array.length;
@@ -306,8 +307,7 @@
 				}
 			}
 		});
-
-		mandel.worker.addEventListener('message', mandel.workerEvent, false);
+	//	mandel.worker.addEventListener('message', mandel.workerEvent, false);
 	}
 
 	mandel.workerEvent = function(e) {
@@ -319,8 +319,8 @@
 		
 		mandel.row += 1;
 		if (mandel.row > mandel.canvasSize) {
-			mandel.row = 0; // stop drawing the lines
-			mandel.ready = true;
+			mandel.row = 0; 
+			mandel.ready = true; // stop drawing the lines
 		}
 		else {
 			// set the calculation to the next line
@@ -374,15 +374,17 @@
 	mandel.mandelbrot = function(){ // entry point for the calculation and drawing
 		mandelbrotIntro();
 		initFromMouseCoordinates();
-		if (!mandel.ready) mandel.worker.addEventListener('message', mandel.workerEvent, false);
+		if (!mandel.ready) {
+			mandel.worker.addEventListener('message', mandel.workerEvent, false);
+		}
 		mandel.sendMessageToWorker();
 		return;
 
 		function mandelbrotIntro(){
 			if (!mandel.ready) { 
-				//clearInterval(this.mandelClear);
-					// if putMandelLine() has been arleady running via setInterval, it must be stopped
+				// if mandelbrot is already active, it must be stopped
 				mandel.worker.removeEventListener('message', mandel.workerEvent, false);
+				mandel.row = 0;
 			}
 			mandel.ready = false; 
 				// the show is being started; it is a status flag
