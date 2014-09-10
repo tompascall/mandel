@@ -1,5 +1,6 @@
 // mandel_worker.js
 // worker for mandel.js
+// for local testing launch chrome width --allow-file-access-from-files
 
 "use strict";
 
@@ -20,7 +21,7 @@ self.addEventListener('message', function(e) {
 
 	var message = JSON.parse(e.data);
 
-	if (!message.bigNumber){
+	if (!message.bigNumberMode){
 			aComplexIterated = message.aComplexIterated;
 			bComplexIterated = message.bComplexIterated;
 			step = message.step;
@@ -31,7 +32,7 @@ self.addEventListener('message', function(e) {
 			step = bigObjectToBigNumber(message.step);
 		}
 
-  var sendMessage = mandelWorker(aComplexIterated, bComplexIterated, message.canvasSize, message.bigNumber, step, message.maxDepth);
+  var sendMessage = mandelWorker(aComplexIterated, bComplexIterated, message.canvasSize, message.bigNumberMode, step, message.maxDepth);
   
   self.postMessage(sendMessage);
 }, false);
@@ -44,7 +45,7 @@ function bigObjectToBigNumber(big){
 	return bignumber;
 }
 
-function mandelWorker(aComplexIterated, bComplexIterated, canvasSize, bigNumber, step, maxDepth){
+function mandelWorker(aComplexIterated, bComplexIterated, canvasSize, bigNumberMode, step, maxDepth){
 	var cStartNumber = {a : aComplexIterated, b : bComplexIterated};
 	var actualDepth;
 	var actualDepthArray = [];
@@ -52,7 +53,7 @@ function mandelWorker(aComplexIterated, bComplexIterated, canvasSize, bigNumber,
 	for (var lineX = 0; lineX < canvasSize; lineX++) {
 			actualDepth = 0;
 			
-			if (!bigNumber) {
+			if (!bigNumberMode) {
 				mandelCalcNotBigNumber(cStartNumber); // modifies mandel.actualDepth
 			}
 			else {
@@ -61,7 +62,7 @@ function mandelWorker(aComplexIterated, bComplexIterated, canvasSize, bigNumber,
 			
 				actualDepthArray.push(actualDepth);
 
-			if (!bigNumber) {
+			if (!bigNumberMode) {
 				cStartNumber.a = cStartNumber.a + step;
 			}
 			else {

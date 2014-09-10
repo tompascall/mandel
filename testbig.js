@@ -29,3 +29,5 @@ function bigObjectToBigNumber(big){
 	if (math.equal(bignumber4, bignumber3)){
 		console.log("ok");
 	}
+
+	

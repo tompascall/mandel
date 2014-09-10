@@ -7,11 +7,13 @@
   	number: 'bignumber',  // Default type of number: 'number' (default) or 'bignumber'
   	precision: 64         // Number of significant digits for BigNumbers
 	});
-		// configuring math.js
+		// configuring math.js for bignumbers
 	
 	var mandel = {
 		c : document.getElementById("mandelCanvas"),
+			// the canvas element
 		inputCanvasSize : document.getElementById("inputCanvasSize"),
+			// the canvas size input field of the UI
 		DEFAULT_CANVAS_SIZE : 350, 
 			// the canvas is a square
 		canvasSize : 0,
@@ -19,19 +21,24 @@
 		ctx : null,
 			// canvas context
 		imgData : null,
+			// canvas image data object, it will contain a line of the set
 		DEFAULT_DEPTH : 20,
 		maxDepth : 0,
+			// the max. iteration number
+			// it can be set in the UI
 			// mandel.maxDepth devides the color-scale of the color scheme into equal parts
 			// if mandel.maxDepth is 1, we have 2 parts, if 2, we have 3 parts etc.  
 		actualDepth : 0,
+			// when we calculte a point, the actualDepth is 
+			// continually incremented
 		depthArray : [],
 			// an array that contains the depths of all the point in the canvas
 			// for setting the color schemes immediately, and
 			// may be later for saving the datas to files
 		colorScheme : 0,
+			// the index of the colorscheme
 		colorArrays : null,
-		mandelClear : null,
-			// reference for setInerval that stops the drawing
+			// the colorscheme based on the colorscheme index
 		range : 0,
 			// range is the width (and heigth) of the complex area
 			// the actual range is based on the enlargement
@@ -43,35 +50,48 @@
 		mouseDownY : 0,
 		mouseUpX : 0,
 		mouseUpY : 0,
+			// the mouse coordinates when you enlarge an area of the set
+			// we use them for enlergement, calculate the new range, step etc.
 		leftClick : false,
 			// it will be false if in is not clicked with left mouse button
 		ready : true,
 			// it will be false, when the mandel calculation is progressing
 		colorSchemeDemoModeOn : false,
-			// it will be true, while demoScheme is active
+			// it will be true, while we are in colorScheme Demo
 		demoSchemeIsRunning : false,
 			// it is true while demoScheme() is running
 		aStartInActualRange : 0,
 		bStartInActualRange : 0,
 		aComplexIterated : 0,
 		bComplexIterated : 0,
-			// we need the upper-left point of the complex area
+			// we need the upper-left point of the complex area 
+			// (aStartInActualRange and bStartInActualRange),
 			// at the beginning, it is equal to (-2 + 2i)
 			// aStartInActualRange and bStartInActualRange need for enlargement,
 			// aComplexIterated and bComplexIterated are the actual point we counting
-			// a is the complex part, 
+			// (a is the complex part, 
 			// b is the imaginary part of the complex number
-			// see more: http://en.wikipedia.org/wiki/Complex_number
+			// see more: http://en.wikipedia.org/wiki/Complex_number)
 		tipMouseDisplay : true,
 			// when document loads, there is a tip about the enlargement, 
 			// but after the first enlargement, there is no need for 
 			// this tip any more, so this is an indicator 
 			// if the enlargement has already happended
 		tipIterationDisplay: false,
-		bigNumber : false,
+			// it is also a tip flag for the iteration tip
+		bigNumberMode : false,
+			// this is a flag if we are in bigNumber mode
 		worker : new Worker("mandel_worker.js"),
+			// web worker for calculations
+			// sources: http://www.html5rocks.com/en/tutorials/workers/basics/
+			// https://developer.mozilla.org/en-US/docs/Web/Guide/Performance/Using_web_workers
 		actualDepthArray : [],
+			// an arry for saving the values of actualDepth, when
+			// we finished the calculation of a point
+			// so as we will able to change fast the color scheme
 		row : 0,
+			// the actual row of the canvas
+			// this needs because we draw lines
 	};
 
 	mandel.setCanvasSize = function(x){
@@ -87,10 +107,11 @@
 		this.ctx = this.c.getContext("2d");
 	}
 	mandel.setImgData = function(){
-		this.imgData = this.ctx.createImageData(this.canvasSize, 1); // a simple line
+		this.imgData = this.ctx.createImageData(this.canvasSize, 1); 
+			// a simple line
 	}
 	mandel.setStep = function(){
-		if (!this.bigNumber) {
+		if (!this.bigNumberMode) {
 			this.step = this.range / this.canvasSize;
 		}
 		else {
@@ -100,6 +121,7 @@
 	mandel.setMouseCoordinates = function(){
 		this.mouseDownX = this.mouseDownY = 0;
 		this.mouseUpX = this.mouseUpY = this.canvasSize;
+			// ???
 	}
 	mandel.setColorScheme = function(){
 		this.colorScheme = this.getRadioValue("schemes");
@@ -108,9 +130,9 @@
 		this.colorArrays = createColorArrays(this.maxDepth, this.colorScheme);
 		  // the createColorArrays function is in colorarrays.js
 	}
-	mandel.setDepthInputToDefault = function(){ // init depth-input HTML element
-			document.getElementById("depthInput").value = 
-				this.DEFAULT_DEPTH.toString();
+	mandel.setDepthInputToDefault = function(){ 
+			document.getElementById("depthInput").value = this.DEFAULT_DEPTH.toString();
+				// init depth-input HTML element (i.e. max. iteration)
 	}
 	mandel.getDepthInput = function(){
 		 return Number(document.getElementById("depthInput").value);
@@ -122,27 +144,36 @@
 		if (d !== this.DEFAULT_DEPTH && this.tipIterationDisplay) {
 			this.setTip("tip_iteration", "none");
 			this.tipIterationDisplay = false;
-				// if the value of the itaration is has been set,
+				// if the value of the iteration has already been set,
 				// there is no need for the tip about the iteration
 		}
 	}
 	mandel.setTip = function(tipID, display){
 			document.getElementById(tipID).style.display = display;
+				// display on and off and element by ID
 	}
 	mandel.bigNumberToBigObject = function(bignumber){
 		var bigObject = {};
-		bigObject.c = bignumber.c; // an array
-		bigObject.e = bignumber.e; // 
-		bigObject.s = bignumber.s; // 
+		bigObject.c = bignumber.c; 
+		bigObject.e = bignumber.e;  
+		bigObject.s = bignumber.s; 
 		return bigObject;
-	} 
-
+			// a helper object, that transforms math.bignumber object
+			// to a function-less object,
+			// so you can send it to the web worker (in JSON object format)
+			// it has its complementer in mandel_worker.js
+	}
 	mandel.sendMessageToWorker = function(){
+			// we need to send some data to the worker
+			// in order that it can calculate the actual line
+			// the problem is that if we are in bigNumberMode
+			// we need to transform the bignumber types to a function-less object
+			// that can be re-form to bignumbers in the web worker
 		var aComplexIterated;
 		var bComplexIterated;
 		var step;
 
-		if (!mandel.bigNumber){
+		if (!mandel.bigNumberMode){
 			aComplexIterated = this.aComplexIterated;
 			bComplexIterated = this.bComplexIterated;
 			step = this.step;
@@ -152,39 +183,61 @@
 			bComplexIterated = this.bigNumberToBigObject(this.bComplexIterated);
 			step = this.bigNumberToBigObject(this.step);
 		}
-		var message = {aComplexIterated : aComplexIterated,
+		var message = {	aComplexIterated : aComplexIterated,
 										bComplexIterated : bComplexIterated,
 										canvasSize : this.canvasSize,
-										bigNumber : mandel.bigNumber,
+										bigNumberMode : mandel.bigNumberMode,
 										step : step, 
 										maxDepth : this.maxDepth
 									};
 		var jsonMessage = JSON.stringify(message);
 
-		//[mandel.aComplexIterated, mandel.bComplexIterated, mandel.canvasSize, mandel.bigNumber, mandel.step, mandel.maxDepth];
-			mandel.worker.postMessage(jsonMessage);
+		mandel.worker.postMessage(jsonMessage);
 	}
+	mandel.copyArrayToCanvas = function(array, imgData){
+	var depth;
+	var length = array.length;
+	for (var lineX = 0; lineX < length; lineX++) {
+		depth = array[lineX];
+		imgData.data[lineX * 4 + 0] = mandel.colorArrays.arrays[depth][0];
+		imgData.data[lineX * 4 + 1] = mandel.colorArrays.arrays[depth][1];
+		imgData.data[lineX * 4 + 2] = mandel.colorArrays.arrays[depth][2];
+		imgData.data[lineX * 4 + 3] = mandel.colorArrays.arrays[depth][3];
+
+		if (!mandel.ready) {
+			mandel.depthArray.push(depth);	
+			// saving the depth data of the point
+			// for later color manipulation
+		}			
+	}
+}
 	mandel.setEvents = function(){
 		$("#mandelCanvas").mousedown(function(e){
-		if (e.which === 1){
-			mandel.mouseDownX = e.pageX - this.offsetLeft;
-			mandel.mouseDownY = e.pageY - this.offsetTop;
-			mandel.leftClick = true; // if pushed left button
-		}
-		});	
 			// this function gets the coordinates of  
 			// mouse pointer over the canvas
 			// when you push down the left mouse button
+			if (e.which === 1){
+				mandel.mouseDownX = e.pageX - this.offsetLeft;
+				mandel.mouseDownY = e.pageY - this.offsetTop;
+				mandel.leftClick = true; 
+					// this is a flag, that the left button pushed 
+			}
+		});	
 
-		$('#mandelCanvas').mouseup(function(e){			
+		$('#mandelCanvas').mouseup(function(e){
+			// this function gets the coordinates of  
+			// mouse pointer over the canvas
+			// when you release the left mouse button			
 			if (mandel.leftClick) {
 				mandel.mouseUpX = e.pageX - this.offsetLeft;
 				mandel.mouseUpY = e.pageY - this.offsetTop;
 				if (mandel.mouseUpX !== mandel.mouseDownX || mandel.mouseUpY !== mandel.mouseDownY){
+					// if you didn't click in the same point
 					if (!mandel.colorSchemeDemoModeOn) {
 						if (mandel.tipMouseDisplay){
 							mandel.setTip("tip_mouse", "none");
 							mandel.tipMouseDisplay = false;
+								// let's take the mouse-tip away
 							mandel.setTip("tip_iteration", "block");
 							mandel.tipIterationDisplay = true;
 								// let's show the next tip about the iteration
@@ -193,24 +246,23 @@
 					}
 				}
 				else {
-					// console.log("hello");
-					// this can be a possible brakepoint
+					console.log("you clicked down and up in the same point");
+					// this can be a possible breakpoint
 					// it executes when you click down and up in the same point
 				}  			
 				mandel.leftClick = false;
 			}	  
 		});
-			// this function gets the coordinates of  
-			// mouse pointer over the canvas
-			// when you release the left mouse button
 	
 		mandel.c.addEventListener("touchstart", (function(e) {
+				// this function is for mobile devices to handle the touch event
 	    mandel.mouseDownX = e.changedTouches[0].pageX - this.offsetLeft;
 	    mandel.mouseDownY = e.changedTouches[0].pageY  - this.offsetTop;	
 	    e.preventDefault();	 
 		}), false);
 
 		mandel.c.addEventListener("touchend", (function(e) {
+				// this function is for mobile devices to handle the touch event
 	    mandel.mouseUpX = e.changedTouches[0].pageX - this.offsetLeft;
 	    mandel.mouseUpY = e.changedTouches[0].pageY  - this.offsetTop;
 	   	e.preventDefault();
@@ -231,85 +283,56 @@
 	   	}
 		       
 		}), false);
-			// snippets for mobile devices
 			// source: http://www.javascriptkit.com/javatutors/touchevents.shtml
 
-
 		$("input:radio").click(function(e){
-			var savedImgData = mandel.ctx.createImageData(mandel.canvasSize, mandel.canvasSize); // the whole canvas
-			if (mandel.ready) { // drawing of the set is finished
+			// actualizes color schemes when setting the radio buttons
+			var savedImgData = mandel.ctx.createImageData(mandel.canvasSize, mandel.canvasSize); 
+				// the whole canvas
+			if (mandel.ready) { 
+				// if drawing the set is finished
 				mandel.setColorScheme();
 				mandel.setColorArrays();
+					// actualize the color scheme
 				if (!mandel.colorSchemeDemoModeOn) {
-					copyDepthArrayDataToCanvas();
-					setTimeout(function(){
-						mandel.ctx.putImageData(savedImgData, 0, 0);
-					}, 1);	
+					mandel.copyArrayToCanvas(mandel.depthArray, savedImgData);
+						setTimeout(mandel.ctx.putImageData(savedImgData, 0, 0), 1);
+						// actualize the canvas based on the new scheme	
 				}
 				else if (!mandel.demoSchemeIsRunning) {
-					mandel.demoScheme(); // actualizes color schemes when setting the radio buttons
+					// if not just right in the middle of actualizing color schemes
+					// in demoScheme mode
+					mandel.demoScheme(); 
 				}
 			}
-			function copyDepthArrayDataToCanvas(){
-				var depthArrayLenght = mandel.depthArray.length;
-				var savedDepth;
-				for (var i = 0; i < depthArrayLenght; i ++) {
-					savedDepth = mandel.depthArray[i];
-					savedImgData.data[i * 4] = mandel.colorArrays.arrays[savedDepth][0];
-					savedImgData.data[i * 4 + 1] = mandel.colorArrays.arrays[savedDepth][1];
-					savedImgData.data[i * 4 + 2] = mandel.colorArrays.arrays[savedDepth][2];
-					savedImgData.data[i * 4 + 3] = 255;
-				}
-			} 
 		});
 
-
-
-		// ***********************************************************
-
-
-
-		mandel.worker.addEventListener('message', function(e) {
-  			mandel.actualDepthArray = e.data;
-  			afterWorkerSentMessage();
-
-				function afterWorkerSentMessage(){
-					var actualDepth;
-
-					for (var lineX = 0; lineX < mandel.canvasSize; lineX++) {
-						actualDepth = mandel.actualDepthArray[lineX];
-						mandel.imgData.data[lineX * 4 + 0] = mandel.colorArrays.arrays[actualDepth][0];
-						mandel.imgData.data[lineX * 4 + 1] = mandel.colorArrays.arrays[actualDepth][1];
-						mandel.imgData.data[lineX * 4 + 2] = mandel.colorArrays.arrays[actualDepth][2];
-						mandel.imgData.data[lineX * 4 + 3] = mandel.colorArrays.arrays[actualDepth][3];
-
-						mandel.depthArray.push(actualDepth);
-					}
-			
-						// saving the depth data of the point
-						// for later color manipulation
-						// and saving the data to files (TODO)
-
-					setTimeout(mandel.ctx.putImageData(mandel.imgData, 0, mandel.row),1); 
-
-					mandel.row += 1;
-					if (mandel.row > mandel.canvasSize) {
-						mandel.row = 0; // stop drawing the lines
-						mandel.ready = true;
-					}
-					else {
-						if (!mandel.bigNumber) {
-							mandel.bComplexIterated -= mandel.step;
-						} 
-						else {
-							mandel.bComplexIterated = math.subtract(mandel.bComplexIterated, mandel.step);
-						}
-						mandel.sendMessageToWorker();
-					}
-				}
-			}, false);
+		mandel.worker.addEventListener('message', mandel.workerEvent, false);
 	}
-	// -------------- functions -----------------------------------------------------------
+
+	mandel.workerEvent = function(e) {
+		mandel.actualDepthArray = e.data;
+			// the worker sent back the array of depths, we need to put it to the canvas
+		mandel.copyArrayToCanvas(mandel.actualDepthArray, mandel.imgData);
+		var row = mandel.row;
+		setTimeout(mandel.ctx.putImageData(mandel.imgData, 0, row), 1);					
+		
+		mandel.row += 1;
+		if (mandel.row > mandel.canvasSize) {
+			mandel.row = 0; // stop drawing the lines
+			mandel.ready = true;
+		}
+		else {
+			// set the calculation to the next line
+			if (!mandel.bigNumberMode) {
+				mandel.bComplexIterated -= mandel.step;
+			} 
+			else {
+				mandel.bComplexIterated = math.subtract(mandel.bComplexIterated, mandel.step);
+			}
+			mandel.sendMessageToWorker();
+		}
+	}
 
 	mandel.getRadioValue = function(divId){
 		var radioDiv = document.getElementById(divId);
@@ -320,13 +343,13 @@
 		}		
 	}
 	mandel.initialize = function(){
-		this.range = 9.321363125813775e-14;//4; 
+		this.range = 4; 
 			// if you only want to test bignumber, 
 			// add this value to this.range: 9.321363125813775e-14;
-		this.aStartInActualRange = -0.017355275925516306;//-2;
+		this.aStartInActualRange = -2;
 			// if you only want to test bignumber, 
 			// add this value to this.aStartInActualRange: -0.017355275925516306;
-		this.bStartInActualRange = 1.0043295723343555;//2; 
+		this.bStartInActualRange = 2; 
 			// if you only want to test bignumber, 
 			// add this value to this.bStartInActualRange: 1.0043295723343555;
 		this.aComplexIterated = this.aStartInActualRange;
@@ -340,88 +363,64 @@
 		this.setColorScheme();
 		this.setDepthInputToDefault();
 		this.setMaxDepth();
-		this.setEvents();
+		this.row = 0;
+		
 	}
 	mandel.restart = function(){
 		this.initialize();
 		this.mandelbrot();
 	}
 
-	mandel.mandelbrotIntro = function(){
-		if (!this.ready) { 
-			//clearInterval(this.mandelClear);
-				// if putMandelLine() has been arleady running via setInterval, it must be stopped
-		}
-		this.ready = false; 
-			// the show is being started; it is a status flag
-		this.setMaxDepth();
-			// if Depth input is changed, it must be actualized	
-		this.depthArray = []; 
-			// set/reset the depth array that contains all the depth values of
-			// the points of the canvas
-		this.colorSchemeDemoModeOn = false; // if demo mode is on, it must be finished
-	
-		var actualCanvasSize = this.getInputCanvasSize();
-		
-		if (actualCanvasSize !== this.canvasSize){ // Canvas size has been changed
-			this.setCanvasSize(actualCanvasSize);
-			this.setMouseCoordinates();
-			// drawing is based on mouse coordinates
-			// in order to enlargement;
-			this.setStep();
-			this.setImgData();
-		}
-		this.setColorScheme();
-		this.setColorArrays();
-		// Create mandel.colorArrays based on the scheme and mandel.maxDepth
-		// It's length is mandel.maxDepth
-		// The createColorArrays function is located in colorarrays.js
-		// it returns an object: {arrays, sheme};
-		// the arrays is an array with RGBA codes, e.g. [255, 255, 255, 255], 
-		// the scheme is an object: {schemeName, RGBColorNumbers, calculatorFunction}
-	}
-
 	mandel.mandelbrot = function(){ // entry point for the calculation and drawing
-		
-		this.mandelbrotIntro();
-	
-		// we want to show the image line per line
-		// row is the Y coordinate of the actual line	of the canvas
-
+		mandelbrotIntro();
 		initFromMouseCoordinates();
-		
-		this.sendMessageToWorker();
-
-		//this.mandelClear = setInterval(putMandelLine, 1); // to start drawing the lines
+		if (!mandel.ready) mandel.worker.addEventListener('message', mandel.workerEvent, false);
+		mandel.sendMessageToWorker();
 		return;
 
-		// function putMandelLine(){
-		// 	//mandelLine();
+		function mandelbrotIntro(){
+			if (!mandel.ready) { 
+				//clearInterval(this.mandelClear);
+					// if putMandelLine() has been arleady running via setInterval, it must be stopped
+				mandel.worker.removeEventListener('message', mandel.workerEvent, false);
+			}
+			mandel.ready = false; 
+				// the show is being started; it is a status flag
+			mandel.setMaxDepth();
+				// if Depth input is changed, it must be actualized	
+			mandel.depthArray = []; 
+				// set/reset the depth array that contains all the depth values of
+				// the points of the canvas
+			//mandel.row = 0;
+			mandel.colorSchemeDemoModeOn = false; // if demo mode is on, it must be finished
+
+			var actualCanvasSize = mandel.getInputCanvasSize();
 			
-
-		// 	//mandel.ctx.putImageData(mandel.imgData, 0, row); // put a line
-		// 	mandel.row += 1;
-		// 	if (!mandel.bigNumber) {
-		// 		mandel.bComplexIterated -= mandel.step;
-		// 	} 
-		// 	else {
-		// 		mandel.bComplexIterated = math.subtract(mandel.bComplexIterated, mandel.step);
-		// 	}
-		// 	if (mandel.row > mandel.canvasSize) {
-		// 		clearInterval(mandel.mandelClear); // stop drawing the lines
-		// 		mandel.ready = true;
-		// 	}
-		// }
-
+			if (actualCanvasSize !== mandel.canvasSize){ // Canvas size has been changed
+				mandel.setCanvasSize(actualCanvasSize);
+				mandel.setMouseCoordinates();
+				// drawing is based on mouse coordinates
+				// in order to enlargement;
+				mandel.setStep();
+				mandel.setImgData();
+			}
+			mandel.setColorScheme();
+			mandel.setColorArrays();
+			// Create mandel.colorArrays based on the scheme and mandel.maxDepth
+			// It's length is mandel.maxDepth
+			// The createColorArrays function is located in colorarrays.js
+			// it returns an object: {arrays, sheme};
+			// the arrays is an array with RGBA codes, e.g. [255, 255, 255, 255], 
+			// the scheme is an object: {schemeName, RGBColorNumbers, calculatorFunction}
+		}
 		function initFromMouseCoordinates(){
-
 			var aLeftUpper;
 			var bLeftUpper;
 			var aRightBottom;
 			var bRightBottom;
 			var changer;
 
-			if (!mandel.bigNumber) {
+			if (!mandel.bigNumberMode) {
 				aLeftUpper = mandel.aStartInActualRange + mandel.mouseDownX * mandel.step;
 				bLeftUpper = mandel.bStartInActualRange - mandel.mouseDownY * mandel.step;
 				aRightBottom = mandel.aStartInActualRange + mandel.mouseUpX * mandel.step;
@@ -445,7 +444,7 @@
 					// show warning about the limit of the standard js numbers
 				}
 				if (mandel.range < 5e-13) {
-					mandel.bigNumber = true;
+					mandel.bigNumberMode = true;
 					mandel.aStartInActualRange = math.eval(mandel.aStartInActualRange.toString());
 					mandel.bStartInActualRange = math.eval(mandel.bStartInActualRange.toString());
 					mandel.step = math.eval(mandel.step.toString());
@@ -462,7 +461,7 @@
 				}				
 			};
 
-			if (mandel.bigNumber) {
+			if (mandel.bigNumberMode) {
 				aLeftUpper = math.add(mandel.aStartInActualRange, math.multiply(mandel.mouseDownX, mandel.step));
 				bLeftUpper = math.subtract(mandel.bStartInActualRange, math.multiply(mandel.mouseDownY, mandel.step));
 				aRightBottom = math.add(mandel.aStartInActualRange, math.multiply(mandel.mouseUpX, mandel.step));
@@ -494,60 +493,10 @@
 			// the original values must be reset 
 			// in case there is no enlargement the next session
 		}
-
-		function mandelLine() {
-			// we will generate the picture from single lines
-			// cStartNumber is the complex number, with which we start counting the actual point
-
-			// var actualDepthArray = mandelWorker(mandel.aComplexIterated, mandel.bComplexIterated, mandel.canvasSize, mandel.bigNumber, mandel.step, mandel.maxDepth);
-			
-			
-			// function mandelCalcNotBigNumber(cNumber){
-			// 	var cLength = cNumber.a * cNumber.a + cNumber.b * cNumber.b;
-			// 		// calculate the length of the complex number,
-			// 		// more precisely the square of the length, thus we
-			// 		// don't need to calculate the square root
-			// 	var z;
-			// 	while ((cLength <= 4) && (mandel.actualDepth !== mandel.maxDepth)) {
-			// 			// if the square of the lenght larger than 4, 
-			// 			// it will escape to infinity
-			// 		z = {};
-			// 		z.a = cNumber.a * cNumber.a - cNumber.b * cNumber.b;
-			// 		z.b = 2 * cNumber.a * cNumber.b;
-			// 		z.a += cStartNumber.a;
-			// 		z.b += cStartNumber.b;
-			// 		cNumber = z;
-			// 		cLength = cNumber.a * cNumber.a + cNumber.b * cNumber.b;
-			// 		mandel.actualDepth++;	
-			// 	}
-			// }
-
-			// function mandelCalcBigNumber(cNumber){
-			// 	var cLength = math.add(math.square(cNumber.a), math.square(cNumber.b));
-			// 		// calculate the length of the complex number,
-			// 		// more precisely the square of the length, thus we
-			// 		// don't need to calculate the square root
-			// 	var z;
-			// 	while (math.smallerEq(cLength, 4) && (mandel.actualDepth !== mandel.maxDepth)) {
-			// 			// if the square of the lenght larger than 4, 
-			// 			// it will escape to infinity
-			// 		z = {};
-			// 		z.a = math.subtract(math.square(cNumber.a), math.square(cNumber.b));
-			// 		z.b = math.multiply(cNumber.a, cNumber.b);
-			// 		z.b = math.add(z.b, z.b);
-			// 		z.a = math.add(z.a, cStartNumber.a);
-			// 		z.b = math.add(z.b, cStartNumber.b);
-			// 		cNumber = z;
-			// 		cLength = math.add(math.square(cNumber.a), math.square(cNumber.b));
-			// 		mandel.actualDepth++;	
-			// 	}
-			// }			
-		}
 	}
 
 	mandel.demoScheme = function() {
-		// this function shows the actual color scheme
-		 
+		// this function shows the actual color scheme	 
 		
 		if (this.ready) {
 			this.colorSchemeDemoModeOn = true;
@@ -568,14 +517,11 @@
 				this.setStep();
 				this.setImgData();
 			}
-	
-	
+		
 			var sectionNumber = this.colorArrays.arrays.length;
 			var ratio = this.canvasSize / this.colorArrays.scheme.RGBColorNumbers;
 			var sectionLength = (this.colorArrays.scheme.RGBColorNumbers / sectionNumber);
-			var colorArraysIndex;
-		
-			
+			var colorArraysIndex;		
 
 			for (var lineY = 0; lineY < this.canvasSize; lineY++) {
 				for (var lineX = 0; lineX < this.canvasSize; lineX++){
@@ -584,86 +530,17 @@
 					this.imgData.data[lineX * 4 + 1] = this.colorArrays.arrays[colorArraysIndex][1];
 					this.imgData.data[lineX * 4 + 2] = this.colorArrays.arrays[colorArraysIndex][2];
 					this.imgData.data[lineX * 4 + 3] = 255;
-
 				}
 				this.ctx.putImageData(this.imgData, 0, lineY);
 			}
 			this.demoSchemeIsRunning = false;
-		}
-		
+		}		
 	}
-
-	function mandelWorker(aComplexIterated, bComplexIterated, canvasSize, bigNumber, step, maxDepth){
-		var cStartNumber = {a : aComplexIterated, b : bComplexIterated};
-		var actualDepth;
-		var actualDepthArray = [];
-
-		for (var lineX = 0; lineX < canvasSize; lineX++) {
-				actualDepth = 0;
-				
-				if (!bigNumber) {
-					mandelCalcNotBigNumber(cStartNumber); // modifies mandel.actualDepth
-				}
-				else {
-					mandelCalcBigNumber(cStartNumber);
-				}
-				
-					actualDepthArray.push(actualDepth);
-
-				if (!bigNumber) {
-					cStartNumber.a = cStartNumber.a + step;
-				}
-				else {
-					cStartNumber.a = math.add(cStartNumber.a, step);
-				}				
-		}
-		return actualDepthArray;
-
-		function mandelCalcNotBigNumber(cNumber){
-					var cLength = cNumber.a * cNumber.a + cNumber.b * cNumber.b;
-						// calculate the length of the complex number,
-						// more precisely the square of the length, thus we
-						// don't need to calculate the square root
-					var z;
-					while ((cLength <= 4) && (actualDepth !== maxDepth)) {
-							// if the square of the lenght larger than 4, 
-							// it will escape to infinity
-						z = {};
-						z.a = cNumber.a * cNumber.a - cNumber.b * cNumber.b;
-						z.b = 2 * cNumber.a * cNumber.b;
-						z.a += cStartNumber.a;
-						z.b += cStartNumber.b;
-						cNumber = z;
-						cLength = cNumber.a * cNumber.a + cNumber.b * cNumber.b;
-						actualDepth++;	
-					}
-		}
-
-		function mandelCalcBigNumber(cNumber){
-					var cLength = math.add(math.square(cNumber.a), math.square(cNumber.b));
-						// calculate the length of the complex number,
-						// more precisely the square of the length, thus we
-						// don't need to calculate the square root
-					var z;
-					while (math.smallerEq(cLength, 4) && (actualDepth !== maxDepth)) {
-							// if the square of the lenght larger than 4, 
-							// it will escape to infinity
-						z = {};
-						z.a = math.subtract(math.square(cNumber.a), math.square(cNumber.b));
-						z.b = math.multiply(cNumber.a, cNumber.b);
-						z.b = math.add(z.b, z.b);
-						z.a = math.add(z.a, cStartNumber.a);
-						z.b = math.add(z.b, cStartNumber.b);
-						cNumber = z;
-						cLength = math.add(math.square(cNumber.a), math.square(cNumber.b));
-						actualDepth++;	
-					}
-		}			
-	}			
 
 	// ----------- end functions -----------------------------------------------------------
 	
 	mandel.initialize();
+	mandel.setEvents();
 	mandel.mandelbrot();
 
 	
