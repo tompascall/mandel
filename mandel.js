@@ -319,7 +319,7 @@
 		
 		mandel.row += 1;
 		if (mandel.row > mandel.canvasSize) {
-			mandel.row = 0; 
+
 			mandel.ready = true; // stop drawing the lines
 		}
 		else {
@@ -376,7 +376,9 @@
 		initFromMouseCoordinates();
 		if (!mandel.ready) {
 			mandel.worker.addEventListener('message', mandel.workerEvent, false);
+			mandel.row = 0;
 		}
+
 		mandel.sendMessageToWorker();
 		return;
 
@@ -384,7 +386,7 @@
 			if (!mandel.ready) { 
 				// if mandelbrot is already active, it must be stopped
 				mandel.worker.removeEventListener('message', mandel.workerEvent, false);
-				mandel.row = 0;
+				//mandel.row = 0;
 			}
 			mandel.ready = false; 
 				// the show is being started; it is a status flag
