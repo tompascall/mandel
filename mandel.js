@@ -257,6 +257,7 @@
 		this.setDepthInputToDefault();
 		this.setMaxDepth();
 		this.setEvents();
+		this.bigNumber = false;
 	}
 	mandel.restart = function(){
 		this.initialize();
