@@ -81,8 +81,8 @@
 			// it is also a tip flag for the iteration tip
 		bigNumberMode : false,
 			// this is a flag if we are in bigNumber mode
-		worker : new Worker("mandel_worker.js"),
-			// web worker for calculations
+		worker : null,
+			// web worker for calculations (mandel_worker.js)
 			// sources: http://www.html5rocks.com/en/tutorials/workers/basics/
 			// https://developer.mozilla.org/en-US/docs/Web/Guide/Performance/Using_web_workers
 		actualDepthArray : [],
@@ -92,7 +92,6 @@
 		row : 0,
 			// the actual row of the canvas
 			// this needs because we draw lines
-		flag : false,
 	};
 
 	mandel.setCanvasSize = function(x){
@@ -244,7 +243,7 @@
 							mandel.tipIterationDisplay = true;
 								// let's show the next tip about the iteration
 						}
-						mandel.mandelbrot();
+						mandel.drawer();
 					}
 				}
 				else {
@@ -280,7 +279,7 @@
 						mandel.tipIterationDisplay = true;
 							// let's show the next tip about the iteration
 					}
-					mandel.mandelbrot();
+					mandel.drawer();
 				}  	 	
 	   	}
 		       
@@ -313,17 +312,17 @@
 
 	mandel.workerEvent = function(e) {
 		mandel.actualDepthArray = e.data;
-			// the worker sent back the array of depths, we need to put it to the canvas
+			// the worker sent back the array of depths, that 
+			// we need to put it to the canvas
 		mandel.copyArrayToCanvas(mandel.actualDepthArray, mandel.imgData);
-		var row = mandel.row;			
-		mandel.ctx.putImageData(mandel.imgData, 0, row);
+		mandel.ctx.putImageData(mandel.imgData, 0, mandel.row);
 		mandel.row += 1;
 		if (mandel.row > mandel.canvasSize) {
-
-			mandel.ready = true; // stop drawing the lines
+			mandel.ready = true;
+				// the canvas is full, we have to stop drawing the lines
 		}
 		else {
-			// set the calculation to the next line
+			// step next line
 			if (!mandel.bigNumberMode) {
 				mandel.bComplexIterated -= mandel.step;
 			} 
@@ -331,8 +330,10 @@
 				mandel.bComplexIterated = math.subtract(mandel.bComplexIterated, mandel.step);
 			}
 			mandel.sendMessageToWorker();
+				// this will an event, when the worker finishes the calculatons 
+				// and sends back the result;
+				// and the circle starts againg
 		}
-		
 	}
 
 	mandel.getRadioValue = function(divId){
@@ -343,7 +344,8 @@
 			}
 		}		
 	}
-	mandel.initialize = function(){
+
+	mandel.setDefaultValues = function(){
 		this.range = 4; 
 			// if you only want to test bignumber, 
 			// add this value to this.range: 9.321363125813775e-14;
@@ -364,52 +366,39 @@
 		this.setColorScheme();
 		this.setDepthInputToDefault();
 		this.setMaxDepth();
-		this.row = 0;
-		
 	}
 	mandel.restart = function(){
-		this.initialize();
-		this.mandelbrot();
+		this.setDefaultValues();
+		this.drawer();
 	}
 
-	mandel.mandelbrot = function(){ // entry point for the calculation and drawing
+	mandel.drawer = function(){ // entry point for the calculation and drawing
 		mandelbrotIntro();
 		initFromMouseCoordinates();
-		mandel.row = 0;
 		mandel.worker = new Worker("mandel_worker.js");
 		mandel.worker.addEventListener('message', mandel.workerEvent, false);
 		mandel.sendMessageToWorker();
-
-		// var message = {	aComplexIterated : aComplexIterated,
-		// 								bComplexIterated : bComplexIterated,
-		// 								canvasSize : this.canvasSize,
-		// 								bigNumberMode : mandel.bigNumberMode,
-		// 								step : step, 
-		// 								maxDepth : this.maxDepth
-		// 							};
-
-
 		return;
 
 		function mandelbrotIntro(){
 			if (!mandel.ready) { 
 				// if mandelbrot is already active, it must be stopped
-				mandel.worker.removeEventListener('message', mandel.workerEvent, false);
-				mandel.worker.terminate();
-				//mandel.flag = true;
+				mandel.terminateWorker();
+					// the worker must be terminate if we want to start an
+					// other event cycle while the current event cycle is running
 			}
 			else mandel.ready = false; 
-			//mandel.flag = false;
 				// the show is being started; it is a status flag
+				// it will be set true by the event handler, when the canvas is full
 			mandel.setMaxDepth();
 				// if Depth input is changed, it must be actualized	
 			mandel.depthArray = []; 
 				// set/reset the depth array that contains all the depth values of
 				// the points of the canvas
 			mandel.colorSchemeDemoModeOn = false; // if demo mode is on, it must be finished
-
+			mandel.row = 0;
+				// set/reset the value of the row
 			var actualCanvasSize = mandel.getInputCanvasSize();
-			
 			if (actualCanvasSize !== mandel.canvasSize){ // Canvas size has been changed
 				mandel.setCanvasSize(actualCanvasSize);
 				mandel.setMouseCoordinatesToCanvas();
@@ -426,6 +415,11 @@
 			// it returns an object: {arrays, sheme};
 			// the arrays is an array with RGBA codes, e.g. [255, 255, 255, 255], 
 			// the scheme is an object: {schemeName, RGBColorNumbers, calculatorFunction}
+			
+			function terminateWorker(){
+				mandel.worker.removeEventListener('message', mandel.workerEvent, false);
+					mandel.worker.terminate();
+			}
 		}
 		function initFromMouseCoordinates(){
 			var aLeftUpper;
@@ -553,9 +547,8 @@
 
 	// ----------- end functions -----------------------------------------------------------
 	
-	mandel.initialize();
+	mandel.setDefaultValues();
 	mandel.setEvents();
-	mandel.worker.addEventListener('message', mandel.workerEvent, false);
-	mandel.mandelbrot();
+	mandel.drawer();
 
 	
