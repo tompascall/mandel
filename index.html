@@ -26,7 +26,7 @@
     	margin: 0;
     }
 		canvas{
-			border: 1px solid #999;
+			border: 2px groove #999;
 			padding: 0;
 			margin: 20px 0 0 20px;
 			display: inline-block;
@@ -54,6 +54,7 @@
 		#panel{
 			display: inline-block;
 			background-color: rgba(170, 170, 170, 0.4);
+			border: 2px groove #999;
 			padding: 10px;
 			margin: 20px 0 20px 20px;
 			position: absolute;
@@ -66,12 +67,14 @@
       margin-left: 63px;
     }
 		#upper_panel{
-			background: #bbb;
+			/*background: #bbb;*/
+			background-color: rgba(230, 230, 230, 0.4);
 			padding: 10px;
 			margin: 0;
 		}
 		#scheme_panel{
-			background: #bbb;
+			/*background: #bbb;*/
+			background-color: rgba(230, 230, 230, 0.4);
 			margin-bottom:10px;
 		}
     .canvas_side{
@@ -152,7 +155,7 @@
 			<strong>Canvas size: </strong><input id="inputCanvasSize" title="Adjust the size of the canvas by pixels. The canvas is a square. After modifying the canvas size and/or the iteration number, you have to push the Calculate button to set the new size." type="number" min="2" name="inputCanvasSize" tabindex="1">
 			<p><strong>Maximum iteration: </strong><input id="depthInput" title="The iteration means that a mathematical operation is repeated on a number again and again, as much times as the iteration number. The more iteration the more computing and the more detailed picture (see about page for more details). After modifying the iteration number and/or the canvas size, you have to push the Calculate button to enforce the changes." type="number" min="1" name="depth" value="20" tabindex="2"></p>
 			<button type="button" id="restart" title="Restarts the app, sets back the canvas size and the iteration number to the default values." onclick="mandel.restart()" tabindex="4">Restart</button>
-			<button type="button" id="calculate" title="The calculation is based on the values of the canvas size and iteration number. The calculation is automated, when you enlarge an area of the set by your mouse." onclick="mandel.mandelbrot()" tabindex="3">Calculate</button>
+			<button type="button" id="calculate" title="The calculation is based on the values of the canvas size and iteration number. The calculation is automated, when you enlarge an area of the set by your mouse." onclick="mandel.drawer()" tabindex="3">Calculate</button>
 			<p id="tip_mouse" class="tip"><span><strong>Tip:</strong></span> use your mouse to enlarge an area.</p>
 			<p id="tip_iteration" class="tip"><span><strong>Tip: </strong></span>The more iteration you use, the more detailed picture you get. After modifying the iteration number and/or the canvas size, you have to push the Calculate button to enforce the changes.</p>
 			<p id="tip_bignumber" class="tip"><span>Warning:</span> you are about to approach the limit, when the set cannot be represented by the means of standard javascript numbers. In this case the app will use the <a href="http://mathjs.org/">math.js</a> bignumbers, but this results <strong>much lower speed</strong>.</p>
@@ -168,7 +171,7 @@
 				<input class="canvas_side" type="radio" id="scheme5" name="scheme" value="5" tabindex="5">Million<br>
 				<input class="canvas_side" type="radio" id="scheme6" name="scheme" value="6" tabindex="5">Rainbow<br>
 				<input class="canvas_side" type="radio" id="scheme7" name="scheme" value="7" tabindex="5">Greeny<br>
-				<input class="canvas_side" type="radio" id="scheme8" name="scheme" value="8" tabindex="5">Deep Purple<br>
+				<input class="canvas_side" type="radio" id="scheme8" name="scheme" value="8" tabindex="5" checked="checked">Deep Purple<br>
 				<input class="canvas_side" type="radio" id="scheme9" name="scheme" value="9" tabindex="5">Golden Age<br>
 				<input class="canvas_side" type="radio" id="scheme10" name="scheme" value="10" tabindex="5">Hellfire<br>
 				<input class="canvas_side" type="radio" id="scheme11" name="scheme" value="11" tabindex="5">Green Thunder<br>
@@ -176,7 +179,7 @@
 				<input class="canvas_side" type="radio" id="scheme13" name="scheme" value="13" tabindex="5">Blues<br>
 				<input class="canvas_side" type="radio" id="scheme14" name="scheme" value="14" tabindex="5">Pink Fire<br/>
 				<input class="canvas_side" type="radio" id="scheme15" name="scheme" value="15" tabindex="5">Green Ice<br/>
-				<input class="canvas_side" type="radio" id="scheme16" name="scheme" value="16" tabindex="5" checked="checked">Spiral<br/>
+				<input class="canvas_side" type="radio" id="scheme16" name="scheme" value="16" tabindex="5">Spiral<br/>
 				<input class="canvas_side" type="radio" id="scheme17" name="scheme" value="17" tabindex="5">Foo<br/>
 			</div>
 			<button type="button" id="demo" title="The Demo scheme button shows you the logic of the given color scheme: what color belongs to the given iteration (from 1 to max. iteration). After modifying the iterration number or the canvas size, you have to push the button to enforce the changes. For more details see about page." onclick="mandel.demoScheme()" tabindex="6">Demo scheme</button>

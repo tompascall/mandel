@@ -1,5 +1,5 @@
 // mandel.js
-
+$( document ).ready(function() {
 
 	"use strict";
 
@@ -279,6 +279,7 @@
 						mandel.tipIterationDisplay = true;
 							// let's show the next tip about the iteration
 					}
+					//mandel.enlargementFromMouseCoordinates();
 					mandel.drawer();
 				}  	 	
 	   	}
@@ -346,15 +347,16 @@
 	}
 
 	mandel.setDefaultValues = function(){
-		this.range = 4; 
+		this.range = 5; 
 			// if you only want to test bignumber, 
 			// add this value to this.range: 9.321363125813775e-14;
-		this.aStartInActualRange = -2;
+		this.aStartInActualRange = -2.5;
 			// if you only want to test bignumber, 
 			// add this value to this.aStartInActualRange: -0.017355275925516306;
-		this.bStartInActualRange = 2; 
+		this.bStartInActualRange = 2.5; 
 			// if you only want to test bignumber, 
 			// add this value to this.bStartInActualRange: 1.0043295723343555;
+		this.bigNumberMode = false;
 		this.aComplexIterated = this.aStartInActualRange;
 		this.bComplexIterated = this.bStartInActualRange;
 		this.setInputCanvasSize(this.DEFAULT_CANVAS_SIZE);
@@ -374,7 +376,7 @@
 
 	mandel.drawer = function(){ // entry point for the calculation and drawing
 		mandelbrotIntro();
-		initFromMouseCoordinates();
+		mandel.enlargementFromMouseCoordinates();
 		mandel.worker = new Worker("mandel_worker.js");
 		mandel.worker.addEventListener('message', mandel.workerEvent, false);
 		mandel.sendMessageToWorker();
@@ -383,7 +385,7 @@
 		function mandelbrotIntro(){
 			if (!mandel.ready) { 
 				// if mandelbrot is already active, it must be stopped
-				mandel.terminateWorker();
+				terminateWorker();
 					// the worker must be terminate if we want to start an
 					// other event cycle while the current event cycle is running
 			}
@@ -395,7 +397,8 @@
 			mandel.depthArray = []; 
 				// set/reset the depth array that contains all the depth values of
 				// the points of the canvas
-			mandel.colorSchemeDemoModeOn = false; // if demo mode is on, it must be finished
+			mandel.colorSchemeDemoModeOn = false; 
+			// if demo mode is on, it must be finished
 			mandel.row = 0;
 				// set/reset the value of the row
 			var actualCanvasSize = mandel.getInputCanvasSize();
@@ -421,32 +424,60 @@
 					mandel.worker.terminate();
 			}
 		}
-		function initFromMouseCoordinates(){
-			var aLeftUpper;
-			var bLeftUpper;
-			var aRightBottom;
-			var bRightBottom;
-			var changer;
+	}
 
-			if (!mandel.bigNumberMode) {
-				aLeftUpper = mandel.aStartInActualRange + mandel.mouseDownX * mandel.step;
-				bLeftUpper = mandel.bStartInActualRange - mandel.mouseDownY * mandel.step;
-				aRightBottom = mandel.aStartInActualRange + mandel.mouseUpX * mandel.step;
-				bRightBottom = mandel.bStartInActualRange - mandel.mouseUpY * mandel.step;
-				
-				if (aLeftUpper > aRightBottom) {
-				changer = aLeftUpper;
-				aLeftUpper = aRightBottom;
-				aRightBottom = changer;
-					// if you create the new area from right to left
-				}
-				if (bLeftUpper < bRightBottom) {
-					changer = bLeftUpper;
-					bLeftUpper = bRightBottom;
-					bRightBottom = changer;
-					// if you create the new area from right to left
-				}
-				mandel.range = aRightBottom - aLeftUpper; // new range
+	mandel.enlargementFromMouseCoordinates = function(){
+		var complexScope = {};
+
+		if (!mandel.bigNumberMode) {
+			complexScope.aLeftUpper = mandel.aStartInActualRange + mandel.mouseDownX * mandel.step;
+			complexScope.bLeftUpper = mandel.bStartInActualRange - mandel.mouseDownY * mandel.step;
+			complexScope.aRightBottom = mandel.aStartInActualRange + mandel.mouseUpX * mandel.step;
+			complexScope.bRightBottom = mandel.bStartInActualRange - mandel.mouseUpY * mandel.step;
+			
+			handleReversedCoordinates();
+			
+			mandel.range = complexScope.aRightBottom - complexScope.aLeftUpper; // new range
+			
+			switchToBignumberModeIfNeed();
+		};
+
+		if (mandel.bigNumberMode) {
+			complexScope.aLeftUpper = math.add(mandel.aStartInActualRange, math.multiply(mandel.mouseDownX, mandel.step));
+			complexScope.bLeftUpper = math.subtract(mandel.bStartInActualRange, math.multiply(mandel.mouseDownY, mandel.step));
+			complexScope.aRightBottom = math.add(mandel.aStartInActualRange, math.multiply(mandel.mouseUpX, mandel.step));
+			complexScope.bRightBottom = math.subtract(mandel.bStartInActualRange, math.multiply(mandel.mouseUpY, mandel.step));
+
+			handleReversedCoordinates()
+
+			mandel.range = math.subtract(complexScope.aRightBottom, complexScope.aLeftUpper); // new range
+		}
+
+		mandel.aStartInActualRange = complexScope.aLeftUpper;
+		mandel.bStartInActualRange = complexScope.bLeftUpper;
+		mandel.aComplexIterated = mandel.aStartInActualRange;
+		mandel.bComplexIterated = mandel.bStartInActualRange;
+
+		mandel.setStep(); // new step based on the enlargement
+
+		mandel.setMouseCoordinatesToCanvas();
+		// the original values must be reset 
+
+		function handleReversedCoordinates(){
+			if (complexScope.aLeftUpper > complexScope.aRightBottom) {
+			complexScope.changer = complexScope.aLeftUpper;
+			complexScope.aLeftUpper = complexScope.aRightBottom;
+			complexScope.aRightBottom = complexScope.changer;
+				// if you create the new area from right to left
+			}
+			if (complexScope.bLeftUpper < complexScope.bRightBottom) {
+				complexScope.changer = complexScope.bLeftUpper;
+				complexScope.bLeftUpper = complexScope.bRightBottom;
+				complexScope.bRightBottom = complexScope.changer;
+				// if you create the new area from right to left
+			}
+		}
+		function switchToBignumberModeIfNeed(){
 				if (mandel.range < 1e-11) {
 					mandel.setTip("tip_bignumber", "block");
 					// show warning about the limit of the standard js numbers
@@ -467,42 +498,8 @@
 					mandel.setTip("tip_bignumber", "none");
 						// there is no need for the tip any more
 				}				
-			};
-
-			if (mandel.bigNumberMode) {
-				aLeftUpper = math.add(mandel.aStartInActualRange, math.multiply(mandel.mouseDownX, mandel.step));
-				bLeftUpper = math.subtract(mandel.bStartInActualRange, math.multiply(mandel.mouseDownY, mandel.step));
-				aRightBottom = math.add(mandel.aStartInActualRange, math.multiply(mandel.mouseUpX, mandel.step));
-				bRightBottom = math.subtract(mandel.bStartInActualRange, math.multiply(mandel.mouseUpY, mandel.step));
-
-				if (math.larger(aLeftUpper, aRightBottom)) {
-					changer = aLeftUpper;
-					aLeftUpper = aRightBottom;
-					aRightBottom = changer;
-						// if you create the new area from right to left
-				}
-				if (math.smaller(bLeftUpper, bRightBottom)) {
-					changer = bLeftUpper;
-					bLeftUpper = bRightBottom;
-					bRightBottom = changer;
-					// if you create the new area from right to left
-				}
-				mandel.range = math.subtract(aRightBottom, aLeftUpper); // new range
 			}
-
-			mandel.aStartInActualRange = aLeftUpper;
-			mandel.bStartInActualRange = bLeftUpper;
-			mandel.aComplexIterated = mandel.aStartInActualRange;
-			mandel.bComplexIterated = mandel.bStartInActualRange;
-
-			mandel.setStep(); // new step
-
-			mandel.setMouseCoordinatesToCanvas();
-			// the original values must be reset 
-			// in case there is no enlargement the next session
-		}
 	}
-
 	mandel.demoScheme = function() {
 		// this function shows the actual color scheme	 
 		
@@ -546,9 +543,11 @@
 	}
 
 	// ----------- end functions -----------------------------------------------------------
+
+		mandel.setDefaultValues();
+		mandel.setEvents();
+		mandel.drawer();
+});
 	
-	mandel.setDefaultValues();
-	mandel.setEvents();
-	mandel.drawer();
 
 	
