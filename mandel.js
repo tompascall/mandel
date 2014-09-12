@@ -120,7 +120,10 @@
 	mandel.setMouseCoordinatesToCanvas = function(){
 		this.mouseDownX = this.mouseDownY = 0;
 		this.mouseUpX = this.mouseUpY = this.canvasSize;
-			// ???
+		mandel.enlargement = false;
+			// the default is that mouse coordinates parallel to canvas size
+			// they are modified when enlargement happens
+			// after enlargement they must be reset
 	}
 	mandel.setColorScheme = function(){
 		this.colorScheme = this.getRadioValue("schemes");
@@ -294,7 +297,6 @@
 						mandel.tipIterationDisplay = true;
 							// let's show the next tip about the iteration
 					}
-					//mandel.enlargementFromMouseCoordinates();
 					mandel.drawer();
 				}  	 	
 	   	}
@@ -323,7 +325,6 @@
 				}
 			}
 		});
-	//	mandel.worker.addEventListener('message', mandel.workerEvent, false);
 	}
 
 	mandel.workerEvent = function(e) {
@@ -392,7 +393,6 @@
 
 	mandel.drawer = function(){ // entry point for the calculation and drawing
 		mandelbrotIntro();
-		mandel.enlargementFromMouseCoordinates();
 		mandel.worker = new Worker("mandel_worker.js");
 		mandel.worker.addEventListener('message', mandel.workerEvent, false);
 		mandel.sendMessageToWorker();
@@ -434,7 +434,8 @@
 			// it returns an object: {arrays, sheme};
 			// the arrays is an array with RGBA codes, e.g. [255, 255, 255, 255], 
 			// the scheme is an object: {schemeName, RGBColorNumbers, calculatorFunction}
-			
+			mandel.setComplexScopeToChanges();
+				
 			function terminateWorker(){
 				mandel.worker.removeEventListener('message', mandel.workerEvent, false);
 					mandel.worker.terminate();
@@ -442,7 +443,7 @@
 		}
 	}
 
-	mandel.enlargementFromMouseCoordinates = function(){
+	mandel.setComplexScopeToChanges = function(){
 		var complexScope = {};
 
 		if (!mandel.bigNumberMode) {
