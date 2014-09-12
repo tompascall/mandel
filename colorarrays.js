@@ -21,27 +21,17 @@ function createColorArrays(depth, colorSchemeIndex){
 	var colorSchemesArrays = [
 		// schemeName, RGBColorNumbers, depthToArray()	
 		["german", 765, germanDepthToArray],
-		["grey", 255, greyDepthToArray],
 		["yellowToBlack", 255, yellowToBlackDepthToArray],
 		["whiteToRed", 255, whiteToRedDepthToArray],
-		["yellowToBlue", 255, yellowToBlueDepthToArray],
-		["million", parseInt("FFFFFF", 16), millionDepthToArray],
-		["rainbow", parseInt("FFFFF", 16), rainbowDepthToArray],
 		["greeny", parseInt("FFFF", 16), greenyDepthToArray],
 		["deepPurple", parseInt("FFF", 16), deepPurpleDepthToArray],
-		["goldenAge", parseInt("FFF", 16), goldenAgeDepthToArray],
-		["hellfire", parseInt("FFF", 16), hellfireDepthToArray],
-		["greenThunder", parseInt("FFF", 16), greenThunderDepthToArray],
-		["bloodyDusk", parseInt("FFF", 16), bloodyDuskDepthToArray],
-		["blues", parseInt("FFF", 16), bluesDepthToArray],
-		["pinkFire", parseInt("FFFF", 16), pinkFireDepthToArray],
-		["greenIce", parseInt("FFFF", 16), greenIceDepthToArray],
 		["spiral", parseInt("FFFF", 16), spiralDepthToArray],
 		["foo", parseInt("4E20", 16), fooDepthToArray]	// 20000
 	]
 
 	var actualColorSchemeArray = colorSchemesArrays[colorSchemeIndex];
 	var colorScheme = createColorArrayObject(actualColorSchemeArray);
+	
 	function createColorArrayObject(schemeArray){
 		var colorArrayObject = {
 			schemeName: schemeArray[0],
@@ -67,7 +57,7 @@ function createColorArrays(depth, colorSchemeIndex){
 			// the color of the eye of the set
 		}
 		else if (colorCoord < colorScheme.RGBColorNumbers) {
-		 	colorArrays.arrays[i] = colorScheme.depthToArray(colorCoord);
+		 	colorArrays.arrays[i] = hslTransform(colorScheme.depthToArray(colorCoord));
 		}
 		else {
 			throw new Error("Coordinate is not allowed higher than " + 
@@ -76,6 +66,23 @@ function createColorArrays(depth, colorSchemeIndex){
 	}
 
 	return colorArrays;
+
+
+function hslTransform(rgba){
+	var hsl; 
+	var rgbFromHsl;
+	var temp;
+
+	hsl = chroma(rgba[0], rgba[1], rgba[2]).hsl();
+	hsl[0] += 0;
+	hsl[1] = 1;
+
+	rgbFromHsl = chroma(hsl, 'hsl').rgb();
+	rgba[0] = rgbFromHsl[0];
+	rgba[1] = rgbFromHsl[1];
+	rgba[2] = rgbFromHsl[2];
+	return rgba;
+}
 
 	function germanDepthToArray(coord){ //between 0-765
 
@@ -90,19 +97,6 @@ function createColorArrays(depth, colorSchemeIndex){
 		}
 	}
 
-	function greyDepthToArray(coord){ //between 0-255
-		return [colorScheme.RGBColorNumbers - coord, colorScheme.RGBColorNumbers - 
-				coord, colorScheme.RGBColorNumbers - coord, 255]; 
-	}
-
-	function redToBlackDepthToArray(coord){ //between 0-255
-		return [colorScheme.RGBColorNumbers - coord, 0, 0, 255]; 
-	}
-
-	function greenToBlackDepthToArray(coord){ //between 0-255
-		return [0, colorScheme.RGBColorNumbers - coord, 0, 255]; 
-	}
-
 	function yellowToBlackDepthToArray(coord){ //between 0-255
 		return [colorScheme.RGBColorNumbers - coord, colorScheme.RGBColorNumbers - 
 				coord, 0, 255]; 
@@ -111,34 +105,6 @@ function createColorArrays(depth, colorSchemeIndex){
 	function whiteToRedDepthToArray(coord){ //between 0-255
 		return [colorScheme.RGBColorNumbers, colorScheme.RGBColorNumbers - 
 				coord, colorScheme.RGBColorNumbers - coord, 255]; 
-	}
-
-	function whiteToGreenDepthToArray(coord){ //between 0-255
-		return [colorScheme.RGBColorNumbers - 
-			coord, colorScheme.RGBColorNumbers, colorScheme.RGBColorNumbers - coord, 255]; 
-	}
-
-	function yellowToBlueDepthToArray(coord){ //between 0-255
-			return [colorScheme.RGBColorNumbers - coord, colorScheme.RGBColorNumbers - 
-				coord, coord, 255]; 
-	}
-
-	function millionDepthToArray(coord){ // between 0-Math.pow(255, 3)
-		var red, green, blue;
-		
-		red = coord & 255;
-		green = (coord & parseInt("00FF00", 16)) >>> 8;
-		blue = (coord & parseInt("FF0000", 16)) >>> 16;
-		return [red, green, blue, 255];			 
-	}
-
-	function rainbowDepthToArray(coord){ // between 0-Math.pow(255, 3)
-		var red, green, blue;
-		
-		red = coord & 255;
-		green = (coord & parseInt("0FF00", 16)) >>> 8; //8 -> two hexa digits
-		blue = (coord & parseInt("FF000", 16)) >>> 12;
-		return [red, green, blue, 255]; 
 	}
 
 	function greenyDepthToArray(coord){ // between 0-Math.pow(255, 3)
@@ -159,49 +125,6 @@ function createColorArrays(depth, colorSchemeIndex){
 		return [red, green, blue, 255]; 
 	}
 
-	function goldenAgeDepthToArray(coord){
-		var red, green, blue;
-		
-		red = coord & parseInt("0FF", 16);
-		green = coord & parseInt("0FF", 16);
-		blue = (coord & parseInt("FF0", 16)) >>> 4;
-		return [red, green, blue, 255]; 
-	}
-
-	function hellfireDepthToArray(coord){
-		var red, green, blue;
-
-		red = (coord & parseInt("FF0", 16)) >>> 4;
-		green = coord & parseInt("0FF", 16);
-		blue = coord & parseInt("0FF", 16);
-		return [red, green, blue, 255]; 	
-	}
-
-	function greenThunderDepthToArray(coord){
-		var red, green, blue;
-		
-		red = (coord & parseInt("FF0", 16)) >>> 4;
-		green = coord & parseInt("0FF", 16);
-		blue = (coord & parseInt("FF0", 16)) >>> 4;
-		return [red, green, blue, 255]; 
-	}
-
-	function bloodyDuskDepthToArray(coord){
-		var red, green, blue;
-		
-		red = coord & parseInt("0FF", 16);
-		green = (coord & parseInt("FF0", 16)) >>> 4;
-		blue = (coord & parseInt("FF0", 16)) >>> 4;
-		return [red, green, blue, 255]; 
-	}
-	function bluesDepthToArray(coord){
-		var red, green, blue;
-		
-		red = (coord & parseInt("FF0", 16)) >>> 4;
-		green = (coord & parseInt("FF0", 16)) >>> 4;
-		blue = coord & parseInt("0FF", 16);
-		return [red, green, blue, 255]; 
-	}
 	function spiralDepthToArray(coord){
 		var red, green, blue;
 		var deg = Math.PI/360;
@@ -214,24 +137,6 @@ function createColorArrays(depth, colorSchemeIndex){
 		blue = Math.floor(255 / colorScheme.RGBColorNumbers * coord);
 		return [red, green, blue, 255];
 	}
-	function pinkFireDepthToArray(coord){
-		var red, green, blue;
-		var deg = Math.PI/360;
-		
-		red = (255 >>> 1) + Math.cos(deg * coord) * (255 >>> 1); 
-		blue = (255 >>> 1) + Math.sin(deg * coord) * (255 >>> 1);
-		green = Math.floor(255 / colorScheme.RGBColorNumbers * coord);
-		return [red, green, blue, 255]; 
-	}
-	function greenIceDepthToArray(coord){
-		var red, green, blue;
-		var deg = Math.PI/360;
-			
-		blue = (255 >>> 1) + Math.cos(deg * coord) * (255 >>> 1); 
-		green = (255 >>> 1) + Math.sin(deg * coord) * (255 >>> 1); 
-		red = Math.floor(255 / colorScheme.RGBColorNumbers * coord);
-		return [red, green, blue, 255]; 
-	}
 	function fooDepthToArray(coord){
 		var red, green, blue;
 		var deg = Math.PI/360;
@@ -241,4 +146,98 @@ function createColorArrays(depth, colorSchemeIndex){
 		blue =  Math.floor(255 / colorScheme.RGBColorNumbers * coord);
 		return [red, green, blue, 255];
 	}
+	// function greyDepthToArray(coord){ //between 0-255
+	// 	return [colorScheme.RGBColorNumbers - coord, colorScheme.RGBColorNumbers - 
+	// 			coord, colorScheme.RGBColorNumbers - coord, 255]; 
+	// }
+
+	// function redToBlackDepthToArray(coord){ //between 0-255
+	// 	return [colorScheme.RGBColorNumbers - coord, 0, 0, 255]; 
+	// }
+
+	// function greenToBlackDepthToArray(coord){ //between 0-255
+	// 	return [0, colorScheme.RGBColorNumbers - coord, 0, 255]; 
+	// }
+	// function whiteToGreenDepthToArray(coord){ //between 0-255
+	// 	return [colorScheme.RGBColorNumbers - 
+	// 		coord, colorScheme.RGBColorNumbers, colorScheme.RGBColorNumbers - coord, 255]; 
+	// }
+	// function millionDepthToArray(coord){ // between 0-Math.pow(255, 3)
+	// 	var red, green, blue;
+		
+	// 	red = coord & 255;
+	// 	green = (coord & parseInt("00FF00", 16)) >>> 8;
+	// 	blue = (coord & parseInt("FF0000", 16)) >>> 16;
+	// 	return [red, green, blue, 255];			 
+	// }
+
+	// function rainbowDepthToArray(coord){ // between 0-Math.pow(255, 3)
+	// 	var red, green, blue;
+		
+	// 	red = coord & 255;
+	// 	green = (coord & parseInt("0FF00", 16)) >>> 8; //8 -> two hexa digits
+	// 	blue = (coord & parseInt("FF000", 16)) >>> 12;
+	// 	return [red, green, blue, 255]; 
+	// }
+	// function goldenAgeDepthToArray(coord){
+	// 	var red, green, blue;
+		
+	// 	red = coord & parseInt("0FF", 16);
+	// 	green = coord & parseInt("0FF", 16);
+	// 	blue = (coord & parseInt("FF0", 16)) >>> 4;
+	// 	return [red, green, blue, 255]; 
+	// }
+
+	// function hellfireDepthToArray(coord){
+	// 	var red, green, blue;
+
+	// 	red = (coord & parseInt("FF0", 16)) >>> 4;
+	// 	green = coord & parseInt("0FF", 16);
+	// 	blue = coord & parseInt("0FF", 16);
+	// 	return [red, green, blue, 255]; 	
+	// }
+
+	// function greenThunderDepthToArray(coord){
+	// 	var red, green, blue;
+		
+	// 	red = (coord & parseInt("FF0", 16)) >>> 4;
+	// 	green = coord & parseInt("0FF", 16);
+	// 	blue = (coord & parseInt("FF0", 16)) >>> 4;
+	// 	return [red, green, blue, 255]; 
+	// }
+
+	// function bloodyDuskDepthToArray(coord){
+	// 	var red, green, blue;
+		
+	// 	red = coord & parseInt("0FF", 16);
+	// 	green = (coord & parseInt("FF0", 16)) >>> 4;
+	// 	blue = (coord & parseInt("FF0", 16)) >>> 4;
+	// 	return [red, green, blue, 255]; 
+	// }
+	// function bluesDepthToArray(coord){
+	// 	var red, green, blue;
+		
+	// 	red = (coord & parseInt("FF0", 16)) >>> 4;
+	// 	green = (coord & parseInt("FF0", 16)) >>> 4;
+	// 	blue = coord & parseInt("0FF", 16);
+	// 	return [red, green, blue, 255]; 
+	// }
+	// function pinkFireDepthToArray(coord){
+	// 	var red, green, blue;
+	// 	var deg = Math.PI/360;
+		
+	// 	red = (255 >>> 1) + Math.cos(deg * coord) * (255 >>> 1); 
+	// 	blue = (255 >>> 1) + Math.sin(deg * coord) * (255 >>> 1);
+	// 	green = Math.floor(255 / colorScheme.RGBColorNumbers * coord);
+	// 	return [red, green, blue, 255]; 
+	// }
+	// function greenIceDepthToArray(coord){
+	// 	var red, green, blue;
+	// 	var deg = Math.PI/360;
+			
+	// 	blue = (255 >>> 1) + Math.cos(deg * coord) * (255 >>> 1); 
+	// 	green = (255 >>> 1) + Math.sin(deg * coord) * (255 >>> 1); 
+	// 	red = Math.floor(255 / colorScheme.RGBColorNumbers * coord);
+	// 	return [red, green, blue, 255]; 
+	// }
 }

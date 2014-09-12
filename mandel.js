@@ -216,18 +216,21 @@
 		}			
 	}
 	function colorTransform(){
-		var chromaInstance;
-		var hsl, rgb;
+		//var chromaInstance;
+		//var hsl; 
+		//var rgbFromHsl;
 		rgba.r = mandel.colorArrays.arrays[depth][0];
 		rgba.g = mandel.colorArrays.arrays[depth][1];
 		rgba.b = mandel.colorArrays.arrays[depth][2];
 		rgba.a = mandel.colorArrays.arrays[depth][3];
 
-		chromaInstance = chroma(20, 0, 0, 'rgb');//(rgba.r, rgba.g, rgba.b);
-		hsl = chromaInstance.hsl();
-		hsl[0] += 30;
-		chromaInstance = chroma(hsl, 'hsl');
-		rgb = chromaInstance.rgb();
+		// hsl = chroma(rgba.r, rgba.g, rgba.b).hsl();
+		// hsl[0] += 30;
+
+		// rgbFromHsl = chroma(hsl, 'hsl').rgb();
+		// rgba.r = rgbFromHsl[0];
+		// rgba.g = rgbFromHsl[1];
+		// rgba.b = rgbFromHsl[2];
 	}
 }
 	mandel.setEvents = function(){
