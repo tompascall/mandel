@@ -1,5 +1,4 @@
 // mandel.js
-$( document ).ready(function() {
 
 	"use strict";
 
@@ -197,19 +196,35 @@ $( document ).ready(function() {
 
 	mandel.copyArrayToCanvas = function(array, imgData){
 	var depth;
+	var rgba = {};
 	var length = array.length;
 	for (var lineX = 0; lineX < length; lineX++) {
 		depth = array[lineX];
-		imgData.data[lineX * 4 + 0] = mandel.colorArrays.arrays[depth][0];
-		imgData.data[lineX * 4 + 1] = mandel.colorArrays.arrays[depth][1];
-		imgData.data[lineX * 4 + 2] = mandel.colorArrays.arrays[depth][2];
-		imgData.data[lineX * 4 + 3] = mandel.colorArrays.arrays[depth][3];
+		colorTransform();
+		imgData.data[lineX * 4 + 0] = rgba.r;
+		imgData.data[lineX * 4 + 1] = rgba.g;
+		imgData.data[lineX * 4 + 2] = rgba.b;
+		imgData.data[lineX * 4 + 3] = rgba.a;
 
 		if (!mandel.ready) {
 			mandel.depthArray.push(depth);	
 			// saving the depth data of the point
 			// for later color manipulation
 		}			
+	}
+	function colorTransform(){
+		var chromaInstance;
+		var hsl, rgb;
+		rgba.r = mandel.colorArrays.arrays[depth][0];
+		rgba.g = mandel.colorArrays.arrays[depth][1];
+		rgba.b = mandel.colorArrays.arrays[depth][2];
+		rgba.a = mandel.colorArrays.arrays[depth][3];
+
+		chromaInstance = chroma(20, 0, 0, 'rgb');//(rgba.r, rgba.g, rgba.b);
+		hsl = chromaInstance.hsl();
+		hsl[0] += 30;
+		chromaInstance = chroma(hsl, 'hsl');
+		rgb = chromaInstance.rgb();
 	}
 }
 	mandel.setEvents = function(){
@@ -357,6 +372,7 @@ $( document ).ready(function() {
 			// if you only want to test bignumber, 
 			// add this value to this.bStartInActualRange: 1.0043295723343555;
 		this.bigNumberMode = false;
+		this.setTip("tip_bignumber", "none");
 		this.aComplexIterated = this.aStartInActualRange;
 		this.bComplexIterated = this.bStartInActualRange;
 		this.setInputCanvasSize(this.DEFAULT_CANVAS_SIZE);
@@ -547,7 +563,7 @@ $( document ).ready(function() {
 		mandel.setDefaultValues();
 		mandel.setEvents();
 		mandel.drawer();
-});
+
 	
 
 	
