@@ -233,11 +233,11 @@
 				mandel.setColorScheme();
 				mandel.setColorArrays();
 					// actualize the color scheme
-				if (!mandel.colorSchemeDemoModeOn) {
+				//if (!mandel.colorSchemeDemoModeOn) {
 					mandel.copyArrayToCanvas(mandel.depthArray, savedImgData);
 						mandel.ctx.putImageData(savedImgData, 0, 0);
 						// actualize the canvas based on the new scheme	
-				}
+				//}
 			}
 		} );
 
@@ -249,11 +249,11 @@
 				mandel.setColorScheme();
 				mandel.setColorArrays();
 					// actualize the color scheme
-				if (!mandel.colorSchemeDemoModeOn) {
+				//if (!mandel.colorSchemeDemoModeOn) {
 					mandel.copyArrayToCanvas(mandel.depthArray, savedImgData);
 						mandel.ctx.putImageData(savedImgData, 0, 0);
 						// actualize the canvas based on the new scheme	
-				}
+				//}
 			}
 		} );
 
@@ -558,9 +558,10 @@
 				// it is true while mandelbrot is not in progress
 			this.demoSchemeIsRunning = true;
 				// it is true while demoScheme() is in progress
-
+			this.depthArray = [];
 			var actualDepthInput = this.getDepthInput();
-			if (this.maxDepth !== actualDepthInput) { // if the depth input has been set
+			if (this.maxDepth !== actualDepthInput) { 
+				// if the depth input has been set
 				this.maxDepth = actualDepthInput;
 			}
 			this.setColorArrays();
@@ -585,6 +586,8 @@
 					this.imgData.data[lineX * 4 + 1] = this.colorArrays.arrays[colorArraysIndex][1];
 					this.imgData.data[lineX * 4 + 2] = this.colorArrays.arrays[colorArraysIndex][2];
 					this.imgData.data[lineX * 4 + 3] = 255;
+					
+					this.depthArray.push(colorArraysIndex);	
 				}
 				this.ctx.putImageData(this.imgData, 0, lineY);
 			}
