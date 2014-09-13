@@ -91,6 +91,8 @@
 		row : 0,
 			// the actual row of the canvas
 			// this needs because we draw lines
+		hue : 0,
+		saturation: 1,
 	};
 
 	mandel.setCanvasSize = function(x){
@@ -129,7 +131,7 @@
 		this.colorScheme = this.getRadioValue("schemes");
 	}
 	mandel.setColorArrays = function(){
-		this.colorArrays = createColorArrays(this.maxDepth, this.colorScheme);
+		this.colorArrays = createColorArrays(this.maxDepth, this.colorScheme, this.hue, this.saturation);
 		  // the createColorArrays function is in colorarrays.js
 	}
 	mandel.setDepthInputToDefault = function(){ 
@@ -203,11 +205,10 @@
 	var length = array.length;
 	for (var lineX = 0; lineX < length; lineX++) {
 		depth = array[lineX];
-		colorTransform();
-		imgData.data[lineX * 4 + 0] = rgba.r;
-		imgData.data[lineX * 4 + 1] = rgba.g;
-		imgData.data[lineX * 4 + 2] = rgba.b;
-		imgData.data[lineX * 4 + 3] = rgba.a;
+		imgData.data[lineX * 4 + 0] = mandel.colorArrays.arrays[depth][0];
+		imgData.data[lineX * 4 + 1] = mandel.colorArrays.arrays[depth][1];
+		imgData.data[lineX * 4 + 2] = mandel.colorArrays.arrays[depth][2];
+		imgData.data[lineX * 4 + 3] = 255;
 
 		if (!mandel.ready) {
 			mandel.depthArray.push(depth);	
@@ -215,28 +216,46 @@
 			// for later color manipulation
 		}			
 	}
-	function colorTransform(){
-		//var chromaInstance;
-		//var hsl; 
-		//var rgbFromHsl;
-		rgba.r = mandel.colorArrays.arrays[depth][0];
-		rgba.g = mandel.colorArrays.arrays[depth][1];
-		rgba.b = mandel.colorArrays.arrays[depth][2];
-		rgba.a = mandel.colorArrays.arrays[depth][3];
-
-		// hsl = chroma(rgba.r, rgba.g, rgba.b).hsl();
-		// hsl[0] += 30;
-
-		// rgbFromHsl = chroma(hsl, 'hsl').rgb();
-		// rgba.r = rgbFromHsl[0];
-		// rgba.g = rgbFromHsl[1];
-		// rgba.b = rgbFromHsl[2];
-	}
 }
-	mandel.setEvents = function(){
-		$( "#hue" ).slider({ min: 0, max: 360, step: 1, value: 0 });
+	mandel.initSliders = function(){
+		$( "#hue" ).slider({ min: 0, max: 360, step: 1});
 
-		$( "#saturation" ).slider({ min: 0, max: 100, value: 50, step: 1 });
+		$( "#saturation" ).slider({ min: 0, max: 100, step: 1 });
+	}		
+
+	mandel.setEvents = function(){
+
+		$( "#hue" ).on( "slide", function( event, ui ) {
+			var savedImgData = mandel.ctx.createImageData(mandel.canvasSize, mandel.canvasSize);
+			mandel.hue = ui.value;
+			if (mandel.ready) { 
+				// if drawing the set is finished
+				mandel.setColorScheme();
+				mandel.setColorArrays();
+					// actualize the color scheme
+				if (!mandel.colorSchemeDemoModeOn) {
+					mandel.copyArrayToCanvas(mandel.depthArray, savedImgData);
+						mandel.ctx.putImageData(savedImgData, 0, 0);
+						// actualize the canvas based on the new scheme	
+				}
+			}
+		} );
+
+		$( "#saturation" ).on( "slide", function( event, ui ) {
+			var savedImgData = mandel.ctx.createImageData(mandel.canvasSize, mandel.canvasSize);
+			mandel.saturation = ui.value / 100;
+			if (mandel.ready) { 
+				// if drawing the set is finished
+				mandel.setColorScheme();
+				mandel.setColorArrays();
+					// actualize the color scheme
+				if (!mandel.colorSchemeDemoModeOn) {
+					mandel.copyArrayToCanvas(mandel.depthArray, savedImgData);
+						mandel.ctx.putImageData(savedImgData, 0, 0);
+						// actualize the canvas based on the new scheme	
+				}
+			}
+		} );
 
 		$("#mandelCanvas").mousedown(function(e){
 			// this function gets the coordinates of  
@@ -360,6 +379,12 @@
 		}
 	}
 
+	mandel.setSliderValues = function(){
+		$( "#hue" ).slider( "option", "value", 0 );
+		$( "#saturation" ).slider( "option", "value", 100 );
+		mandel.hue = 0;
+		mandel.saturation = 1;
+	}
 	mandel.getRadioValue = function(divId){
 		var radioDiv = document.getElementById(divId);
 		for (var i = 0; i < radioDiv.childElementCount; i++){
@@ -392,6 +417,7 @@
 		this.setColorScheme();
 		this.setDepthInputToDefault();
 		this.setMaxDepth();
+		this.setSliderValues();
 	}
 	mandel.restart = function(){
 		this.setDefaultValues();
@@ -568,8 +594,9 @@
 
 	// ----------- end functions -----------------------------------------------------------
 
-		mandel.setDefaultValues();
+		mandel.initSliders();
 		mandel.setEvents();
+		mandel.setDefaultValues();
 		mandel.drawer();
 
 	

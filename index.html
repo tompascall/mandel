@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>mandelbrot</title>
 	<meta charset="UTF-8" name="viewport" content="width=400">
 	<meta name="description" content="a tiny application to study the Mandelbrot set">
-	<meta name="keywords" content="Mandelbrot,Mandelbrot set,fractal,graphical representation,javascript app">
+	<meta name="keywords" content="Mandelbrot,Mandelbrot set, Mandelbrot set explorer,fractal,graphical representation,javascript app">
 	<meta name="author" content="tompascall">
 	<meta property="og:url" content="http://mandel.tompascall.com" /> 
 	<meta property="og:title" content="Mandelbrot set" />
@@ -12,6 +11,7 @@
 	<meta property="og:image" content="http://mandel.tompascall.com/sample.png" />
 	<meta property="og:type" content="website" />
 	<meta property="fb:app_id" content="267930040075239"/>
+	<title>mandelbrot</title>
 	<link rel="stylesheet" type="text/css" href="libraries/jquery-ui-1.11.1.custom/jquery-ui.css">
 	<style>		
     body{
@@ -175,7 +175,7 @@
 	<!-- facebook recommend button -->
 
 	<div id="head">
-		<h3>Mandelbrot set</h3>
+		<h3>Mandelbrot Set Explorer</h3>
 	</div>
 
 	<canvas id="mandelCanvas">
@@ -195,13 +195,14 @@
 		<div id="scheme_panel">
 			<p class="title"><strong>Color schemes</strong></p>
 			<div id="schemes">
-				<input class="canvas_side" type="radio" id="scheme0" name="scheme" value="0" tabindex="5">German<br>
-				<input class="canvas_side" type="radio" id="scheme2" name="scheme" value="1"  tabindex="5">Yellow to black<br>
-				<input class="canvas_side" type="radio" id="scheme3" name="scheme" value="2" tabindex="5">White to red<br>
-				<input class="canvas_side" type="radio" id="scheme7" name="scheme" value="3" tabindex="5">Greeny<br>
-				<input class="canvas_side" type="radio" id="scheme8" name="scheme" value="4" tabindex="5" checked="checked">Deep Purple<br>
-				<input class="canvas_side" type="radio" id="scheme16" name="scheme" value="5" tabindex="5">Spiral<br/>
-				<input class="canvas_side" type="radio" id="scheme17" name="scheme" value="6" tabindex="5">Foo<br/>
+				<input class="canvas_side" type="radio" id="scheme0" name="scheme" value="0" tabindex="5">RGB Lines<br>
+				<input class="canvas_side" type="radio" id="scheme1" name="scheme" value="1"  tabindex="5">Color to black<br>
+				<input class="canvas_side" type="radio" id="scheme2" name="scheme" value="2" tabindex="5">White to Color<br>
+				<input class="canvas_side" type="radio" id="scheme3" name="scheme" value="3" tabindex="5">Shift<br>
+				<input class="canvas_side" type="radio" id="scheme4" name="scheme" value="4" tabindex="5" checked="checked">Small Shift<br>
+				<input class="canvas_side" type="radio" id="scheme5" name="scheme" value="5" tabindex="5">Spiral<br/>
+				<input class="canvas_side" type="radio" id="scheme6" name="scheme" value="6" tabindex="5">Small Spiral<br/>
+				<input class="canvas_side" type="radio" id="scheme7" name="scheme" value="7" tabindex="5">HSL Colors<br/>
 			</div>
 			<p class="title"><strong>Hue</strong></p>
 			<div id="hue"></div>

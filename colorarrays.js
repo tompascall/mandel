@@ -10,7 +10,7 @@
 
 "use strict";
 
-function createColorArrays(depth, colorSchemeIndex){
+function createColorArrays(depth, colorSchemeIndex, hue, saturation){
 
 	var ENDLESS_RED = 255; 
 	var ENDLESS_GREEN = 255;
@@ -20,13 +20,14 @@ function createColorArrays(depth, colorSchemeIndex){
 
 	var colorSchemesArrays = [
 		// schemeName, RGBColorNumbers, depthToArray()	
-		["german", 765, germanDepthToArray],
-		["yellowToBlack", 255, yellowToBlackDepthToArray],
-		["whiteToRed", 255, whiteToRedDepthToArray],
-		["greeny", parseInt("FFFF", 16), greenyDepthToArray],
-		["deepPurple", parseInt("FFF", 16), deepPurpleDepthToArray],
+		["RGBLines", 765, RGBLinesDepthToArray],
+		["colorToBlack", 255, colorToBlackDepthToArray],
+		["whiteToColor", 255, whiteToColorDepthToArray],
+		["Shift", parseInt("FFFF", 16), shiftDepthToArray],
+		["smallShift", parseInt("FFF", 16), smallShiftDepthToArray],
 		["spiral", parseInt("FFFF", 16), spiralDepthToArray],
-		["foo", parseInt("4E20", 16), fooDepthToArray]	// 20000
+		["smallSpiral", parseInt("4E20", 16), smallSpiralDepthToArray], // 20000
+		["hslColors", 20000, hslColorsDepthToArray],	
 	]
 
 	var actualColorSchemeArray = colorSchemesArrays[colorSchemeIndex];
@@ -71,11 +72,10 @@ function createColorArrays(depth, colorSchemeIndex){
 function hslTransform(rgba){
 	var hsl; 
 	var rgbFromHsl;
-	var temp;
 
 	hsl = chroma(rgba[0], rgba[1], rgba[2]).hsl();
-	hsl[0] += 0;
-	hsl[1] = 1;
+	hsl[0] = (hsl[0] + hue) % 360;
+	hsl[1] = saturation;
 
 	rgbFromHsl = chroma(hsl, 'hsl').rgb();
 	rgba[0] = rgbFromHsl[0];
@@ -84,7 +84,7 @@ function hslTransform(rgba){
 	return rgba;
 }
 
-	function germanDepthToArray(coord){ //between 0-765
+	function RGBLinesDepthToArray(coord){ //between 0-765
 
 		if (coord <= 255) { // to be on the Red section (RGBLine/3)
 			return [255, 255, 255 - coord, 255]; // I don't want to screw the alpha channel
@@ -97,26 +97,26 @@ function hslTransform(rgba){
 		}
 	}
 
-	function yellowToBlackDepthToArray(coord){ //between 0-255
+	function colorToBlackDepthToArray(coord){ //between 0-255
 		return [colorScheme.RGBColorNumbers - coord, colorScheme.RGBColorNumbers - 
 				coord, 0, 255]; 
 	}
 
-	function whiteToRedDepthToArray(coord){ //between 0-255
+	function whiteToColorDepthToArray(coord){ //between 0-255
 		return [colorScheme.RGBColorNumbers, colorScheme.RGBColorNumbers - 
 				coord, colorScheme.RGBColorNumbers - coord, 255]; 
 	}
 
-	function greenyDepthToArray(coord){ // between 0-Math.pow(255, 3)
+	function shiftDepthToArray(coord){ // between 0-Math.pow(255, 3)
 			var red, green, blue;
 			
-			green = coord & parseInt("00F0", 16);
+			green = coord & parseInt("00FF", 16);
 			red = (coord & parseInt("0FF0", 16)) >>> 4;
 			blue = (coord & parseInt("FF00", 16)) >>> 8;
 			return [red, green, blue, 255]; 	
 		}
 
-	function deepPurpleDepthToArray(coord){
+	function smallShiftDepthToArray(coord){
 		var red, green, blue;
 		
 		red = coord & parseInt("0FF", 16);
@@ -137,7 +137,7 @@ function hslTransform(rgba){
 		blue = Math.floor(255 / colorScheme.RGBColorNumbers * coord);
 		return [red, green, blue, 255];
 	}
-	function fooDepthToArray(coord){
+	function smallSpiralDepthToArray(coord){
 		var red, green, blue;
 		var deg = Math.PI/360;
 		
@@ -145,6 +145,24 @@ function hslTransform(rgba){
 		green = (255 >>> 1) + Math.sin(deg * coord) * (255 >>> 1);
 		blue =  Math.floor(255 / colorScheme.RGBColorNumbers * coord);
 		return [red, green, blue, 255];
+	}
+
+	function hslColorsDepthToArray(coord){
+		var deg = 360 / colorScheme.RGBColorNumbers;
+		var hsl; 
+		var rgbFromHsl;
+		var rgba = [];
+
+		hsl = chroma("red").hsl();
+		hsl[0] = hsl[0] + deg * coord;
+		hsl[1] = 1;
+
+		rgbFromHsl = chroma(hsl, 'hsl').rgb();
+		rgba[0] = rgbFromHsl[0];
+		rgba[1] = rgbFromHsl[1];
+		rgba[2] = rgbFromHsl[2];
+		rgba[3] = 255;
+		return rgba;
 	}
 	// function greyDepthToArray(coord){ //between 0-255
 	// 	return [colorScheme.RGBColorNumbers - coord, colorScheme.RGBColorNumbers - 
