@@ -4,7 +4,7 @@
 
 "use strict";
 
-importScripts('libraries/math/math.min.js');
+importScripts('libraries/mathjs/dist/math.min.js');
 
 math.config({
   	number: 'bignumber',  // Default type of number: 'number' (default) or 'bignumber'
