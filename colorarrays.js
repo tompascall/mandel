@@ -58,7 +58,7 @@ function createColorArrays(depth, colorSchemeIndex, hue, saturation){
 			// the color of the eye of the set
 		}
 		else if (colorCoord < colorScheme.RGBColorNumbers) {
-		 	colorArrays.arrays[i] = hslTransform(colorScheme.depthToArray(colorCoord));
+		 		colorArrays.arrays[i] = hslTransform(colorScheme.depthToArray(colorCoord));	 	
 		}
 		else {
 			throw new Error("Coordinate is not allowed higher than " + 
@@ -69,19 +69,37 @@ function createColorArrays(depth, colorSchemeIndex, hue, saturation){
 	return colorArrays;
 
 
-function hslTransform(rgba){
-	var hsl; 
+function hslTransform(color){
+	var hsl;
+	var rgb = []; 
 	var rgbFromHsl;
 
-	hsl = chroma(rgba[0], rgba[1], rgba[2]).hsl();
-	hsl[0] = (hsl[0] + hue) % 360;
-	hsl[1] = saturation;
+	if (colorScheme.schemeName !== "hslColors") {
+		hsl = chroma(color[0], color[1], color[2]).hsl();
+		hsl[0] = (hsl[0] + hue) % 360;
+		hsl[1] = saturation;
 
-	rgbFromHsl = chroma(hsl, 'hsl').rgb();
-	rgba[0] = rgbFromHsl[0];
-	rgba[1] = rgbFromHsl[1];
-	rgba[2] = rgbFromHsl[2];
-	return rgba;
+		rgbFromHsl = chroma(hsl, 'hsl').rgb();
+		color[0] = rgbFromHsl[0];
+		color[1] = rgbFromHsl[1];
+		color[2] = rgbFromHsl[2];
+		color[3] = 255;
+		return color;
+	}
+	else {
+		// color is in hsl format
+		// there is no need rgb conversion to hsl
+		
+		color[0] = (color[0] + hue) % 360;
+		color[1] = saturation;
+
+		rgbFromHsl = chroma(color, 'hsl').rgb();
+		color[0] = rgbFromHsl[0];
+		color[1] = rgbFromHsl[1];
+		color[2] = rgbFromHsl[2];
+		color[3] = 255;
+		return color;
+	}
 }
 
 	function RGBLinesDepthToArray(coord){ //between 0-765
@@ -147,22 +165,34 @@ function hslTransform(rgba){
 		return [red, green, blue, 255];
 	}
 
+	// function hslColorsDepthToArray(coord){
+	// 	var deg = 360 / colorScheme.RGBColorNumbers;
+	// 	var hsl; 
+	// 	var rgbFromHsl;
+	// 	var rgba = [];
+
+	// 	hsl = chroma("red").hsl();
+	// 	hsl[0] = hsl[0] + deg * coord;
+	// 	hsl[1] = 1;
+
+	// 	rgbFromHsl = chroma(hsl, 'hsl').rgb();
+	// 	rgba[0] = rgbFromHsl[0];
+	// 	rgba[1] = rgbFromHsl[1];
+	// 	rgba[2] = rgbFromHsl[2];
+	// 	rgba[3] = 255;
+	// 	return rgba;
+	// }
+
 	function hslColorsDepthToArray(coord){
 		var deg = 360 / colorScheme.RGBColorNumbers;
 		var hsl; 
 		var rgbFromHsl;
-		var rgba = [];
 
 		hsl = chroma("red").hsl();
 		hsl[0] = hsl[0] + deg * coord;
 		hsl[1] = 1;
 
-		rgbFromHsl = chroma(hsl, 'hsl').rgb();
-		rgba[0] = rgbFromHsl[0];
-		rgba[1] = rgbFromHsl[1];
-		rgba[2] = rgbFromHsl[2];
-		rgba[3] = 255;
-		return rgba;
+		return hsl;
 	}
 	// function greyDepthToArray(coord){ //between 0-255
 	// 	return [colorScheme.RGBColorNumbers - coord, colorScheme.RGBColorNumbers - 
