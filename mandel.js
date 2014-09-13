@@ -234,6 +234,10 @@
 	}
 }
 	mandel.setEvents = function(){
+		$( "#hue" ).slider({ min: 0, max: 360, step: 1, value: 0 });
+
+		$( "#saturation" ).slider({ min: 0, max: 100, value: 50, step: 1 });
+
 		$("#mandelCanvas").mousedown(function(e){
 			// this function gets the coordinates of  
 			// mouse pointer over the canvas
