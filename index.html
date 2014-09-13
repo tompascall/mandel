@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>mandelbrot</title>
 	<meta charset="UTF-8" name="viewport" content="width=400">
 	<meta name="description" content="a tiny application to study the Mandelbrot set">
-	<meta name="keywords" content="Mandelbrot,Mandelbrot set,fractal,graphical representation,javascript app">
+	<meta name="keywords" content="Mandelbrot,Mandelbrot set, Mandelbrot set explorer,fractal,graphical representation,javascript app">
 	<meta name="author" content="tompascall">
 	<meta property="og:url" content="http://mandel.tompascall.com" /> 
 	<meta property="og:title" content="Mandelbrot set" />
@@ -12,6 +11,8 @@
 	<meta property="og:image" content="http://mandel.tompascall.com/sample.png" />
 	<meta property="og:type" content="website" />
 	<meta property="fb:app_id" content="267930040075239"/>
+	<title>mandelbrot</title>
+	<link rel="stylesheet" type="text/css" href="libraries/jquery-ui-1.11.1.custom/jquery-ui.min.css">
 	<style>		
     body{
       background-image: url("repeatable-bkg.jpg");
@@ -67,13 +68,11 @@
       margin-left: 63px;
     }
 		#upper_panel{
-			/*background: #bbb;*/
 			background-color: rgba(230, 230, 230, 0.4);
 			padding: 10px;
 			margin: 0;
 		}
 		#scheme_panel{
-			/*background: #bbb;*/
 			background-color: rgba(230, 230, 230, 0.4);
 			margin-bottom:10px;
 		}
@@ -115,6 +114,39 @@
 		.tip span{
 			color: red;
 		}
+		#hue{
+			margin: 0 20px;
+		}
+		#saturation{
+			margin: 0 20px 20px 20px;
+		}
+		.ui-slider .ui-slider-handle{
+			width: 1.2em;
+			height: 0.5em;
+		}
+		.ui-slider-horizontal {
+		height: .2em;
+		border: 1px solid #777;
+		}
+		.ui-slider-horizontal .ui-slider-handle {
+			top: -.2em;
+			margin-left: -.6em;
+		}
+		.ui-slider-horizontal .ui-slider-range {
+			top: 0;
+			height: 100%;
+		}
+		.ui-slider-horizontal .ui-slider-range-min {
+			left: 0;
+		}
+		.ui-slider-horizontal .ui-slider-range-max {
+			right: 0;
+		}
+		.title, .slider_title{
+			padding-top: 5px; 
+			text-align: center;
+		}
+
 		@media only screen and (max-width: 480px), only screen and (max-device-width: 480px){
 			#demo{
 				display: inline-block;
@@ -143,7 +175,7 @@
 	<!-- facebook recommend button -->
 
 	<div id="head">
-		<h3>Mandelbrot set</h3>
+		<h3>Mandelbrot Set Explorer</h3>
 	</div>
 
 	<canvas id="mandelCanvas">
@@ -161,27 +193,22 @@
 			<p id="tip_bignumber" class="tip"><span>Warning:</span> you are about to approach the limit, when the set cannot be represented by the means of standard javascript numbers. In this case the app will use the <a href="http://mathjs.org/">math.js</a> bignumbers, but this results <strong>much lower speed</strong>.</p>
 		</div>
 		<div id="scheme_panel">
-			<p style="padding-top: 5px; text-align: center"><strong>Color schemes</strong></p>
+			<p class="title"><strong>Color schemes</strong></p>
 			<div id="schemes">
-				<input class="canvas_side" type="radio" id="scheme0" name="scheme" value="0" tabindex="5">German<br>
-				<input class="canvas_side" type="radio" id="scheme1" name="scheme" value="1" tabindex="5">Grey<br>
-				<input class="canvas_side" type="radio" id="scheme2" name="scheme" value="2"  tabindex="5">Yellow to black<br>
-				<input class="canvas_side" type="radio" id="scheme3" name="scheme" value="3" tabindex="5">White to red<br>
-				<input class="canvas_side" type="radio" id="scheme4" name="scheme" value="4" tabindex="5">Yellow to Blue<br>
-				<input class="canvas_side" type="radio" id="scheme5" name="scheme" value="5" tabindex="5">Million<br>
-				<input class="canvas_side" type="radio" id="scheme6" name="scheme" value="6" tabindex="5">Rainbow<br>
-				<input class="canvas_side" type="radio" id="scheme7" name="scheme" value="7" tabindex="5">Greeny<br>
-				<input class="canvas_side" type="radio" id="scheme8" name="scheme" value="8" tabindex="5" checked="checked">Deep Purple<br>
-				<input class="canvas_side" type="radio" id="scheme9" name="scheme" value="9" tabindex="5">Golden Age<br>
-				<input class="canvas_side" type="radio" id="scheme10" name="scheme" value="10" tabindex="5">Hellfire<br>
-				<input class="canvas_side" type="radio" id="scheme11" name="scheme" value="11" tabindex="5">Green Thunder<br>
-				<input class="canvas_side" type="radio" id="scheme12" name="scheme" value="12" tabindex="5">Bloody Dusk<br>
-				<input class="canvas_side" type="radio" id="scheme13" name="scheme" value="13" tabindex="5">Blues<br>
-				<input class="canvas_side" type="radio" id="scheme14" name="scheme" value="14" tabindex="5">Pink Fire<br/>
-				<input class="canvas_side" type="radio" id="scheme15" name="scheme" value="15" tabindex="5">Green Ice<br/>
-				<input class="canvas_side" type="radio" id="scheme16" name="scheme" value="16" tabindex="5">Spiral<br/>
-				<input class="canvas_side" type="radio" id="scheme17" name="scheme" value="17" tabindex="5">Foo<br/>
+				<input class="canvas_side" type="radio" id="scheme0" name="scheme" value="0" tabindex="5">RGB Lines<br>
+				<input class="canvas_side" type="radio" id="scheme1" name="scheme" value="1"  tabindex="5">Color to black<br>
+				<input class="canvas_side" type="radio" id="scheme2" name="scheme" value="2" tabindex="5">White to Color<br>
+				<input class="canvas_side" type="radio" id="scheme3" name="scheme" value="3" tabindex="5">Shift<br>
+				<input class="canvas_side" type="radio" id="scheme4" name="scheme" value="4" tabindex="5" checked="checked">Small Shift<br>
+				<input class="canvas_side" type="radio" id="scheme5" name="scheme" value="5" tabindex="5">Spiral<br/>
+				<input class="canvas_side" type="radio" id="scheme6" name="scheme" value="6" tabindex="5">Small Spiral<br/>
+				<input class="canvas_side" type="radio" id="scheme7" name="scheme" value="7" tabindex="5">HSL Colors<br/>
 			</div>
+			<p class="title"><strong>Hue</strong></p>
+			<div id="hue"></div>
+			<p class="title"><strong>Saturation</strong></p>
+			<div id="saturation"></div>
+			<br>
 			<button type="button" id="demo" title="The Demo scheme button shows you the logic of the given color scheme: what color belongs to the given iteration (from 1 to max. iteration). After modifying the iterration number or the canvas size, you have to push the button to enforce the changes. For more details see about page." onclick="mandel.demoScheme()" tabindex="6">Demo scheme</button>
 			<button id="about" onclick="window.location='about.html'" tabindex="7">About</button>
 		</div>
@@ -194,8 +221,10 @@
 	</div>
 	
 
-	<script src="jquery/jquery-2.1.1.min.js"></script>
-	<script src="math/math.min.js"></script>
+	<script src="libraries/jquery/jquery-2.1.1.min.js"></script>
+	<script src="libraries/jquery-ui-1.11.1.custom/jquery-ui.min.js"></script>
+	<script src="libraries/mathjs/dist/math.min.js"></script>
+	<script src="libraries/chroma.js/chroma.min.js"></script>
 	<script src="colorarrays.js"></script>
 	<script src="mandel.js"></script>
 	

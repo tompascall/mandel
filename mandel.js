@@ -1,5 +1,4 @@
 // mandel.js
-//$( document ).ready(function() {
 
 	"use strict";
 
@@ -92,6 +91,8 @@
 		row : 0,
 			// the actual row of the canvas
 			// this needs because we draw lines
+		hue : 0,
+		saturation: 1,
 	};
 
 	mandel.setCanvasSize = function(x){
@@ -130,7 +131,7 @@
 		this.colorScheme = this.getRadioValue("schemes");
 	}
 	mandel.setColorArrays = function(){
-		this.colorArrays = createColorArrays(this.maxDepth, this.colorScheme);
+		this.colorArrays = createColorArrays(this.maxDepth, this.colorScheme, this.hue, this.saturation);
 		  // the createColorArrays function is in colorarrays.js
 	}
 	mandel.setDepthInputToDefault = function(){ 
@@ -200,13 +201,14 @@
 
 	mandel.copyArrayToCanvas = function(array, imgData){
 	var depth;
+	var rgba = {};
 	var length = array.length;
 	for (var lineX = 0; lineX < length; lineX++) {
 		depth = array[lineX];
 		imgData.data[lineX * 4 + 0] = mandel.colorArrays.arrays[depth][0];
 		imgData.data[lineX * 4 + 1] = mandel.colorArrays.arrays[depth][1];
 		imgData.data[lineX * 4 + 2] = mandel.colorArrays.arrays[depth][2];
-		imgData.data[lineX * 4 + 3] = mandel.colorArrays.arrays[depth][3];
+		imgData.data[lineX * 4 + 3] = 255;
 
 		if (!mandel.ready) {
 			mandel.depthArray.push(depth);	
@@ -215,7 +217,46 @@
 		}			
 	}
 }
+	mandel.initSliders = function(){
+		$( "#hue" ).slider({ min: 0, max: 360, step: 1});
+
+		$( "#saturation" ).slider({ min: 0, max: 100, step: 1 });
+	}		
+
 	mandel.setEvents = function(){
+
+		$( "#hue" ).on( "slide", function( event, ui ) {
+			var savedImgData = mandel.ctx.createImageData(mandel.canvasSize, mandel.canvasSize);
+			mandel.hue = ui.value;
+			if (mandel.ready) { 
+				// if drawing the set is finished
+				mandel.setColorScheme();
+				mandel.setColorArrays();
+					// actualize the color scheme
+				if (!mandel.colorSchemeDemoModeOn) {
+					mandel.copyArrayToCanvas(mandel.depthArray, savedImgData);
+						mandel.ctx.putImageData(savedImgData, 0, 0);
+						// actualize the canvas based on the new scheme	
+				}
+			}
+		} );
+
+		$( "#saturation" ).on( "slide", function( event, ui ) {
+			var savedImgData = mandel.ctx.createImageData(mandel.canvasSize, mandel.canvasSize);
+			mandel.saturation = ui.value / 100;
+			if (mandel.ready) { 
+				// if drawing the set is finished
+				mandel.setColorScheme();
+				mandel.setColorArrays();
+					// actualize the color scheme
+				if (!mandel.colorSchemeDemoModeOn) {
+					mandel.copyArrayToCanvas(mandel.depthArray, savedImgData);
+						mandel.ctx.putImageData(savedImgData, 0, 0);
+						// actualize the canvas based on the new scheme	
+				}
+			}
+		} );
+
 		$("#mandelCanvas").mousedown(function(e){
 			// this function gets the coordinates of  
 			// mouse pointer over the canvas
@@ -338,6 +379,12 @@
 		}
 	}
 
+	mandel.setSliderValues = function(){
+		$( "#hue" ).slider( "option", "value", 0 );
+		$( "#saturation" ).slider( "option", "value", 100 );
+		mandel.hue = 0;
+		mandel.saturation = 1;
+	}
 	mandel.getRadioValue = function(divId){
 		var radioDiv = document.getElementById(divId);
 		for (var i = 0; i < radioDiv.childElementCount; i++){
@@ -358,6 +405,7 @@
 			// if you only want to test bignumber, 
 			// add this value to this.bStartInActualRange: 1.0043295723343555;
 		this.bigNumberMode = false;
+		this.setTip("tip_bignumber", "none");
 		this.aComplexIterated = this.aStartInActualRange;
 		this.bComplexIterated = this.bStartInActualRange;
 		this.setInputCanvasSize(this.DEFAULT_CANVAS_SIZE);
@@ -369,6 +417,7 @@
 		this.setColorScheme();
 		this.setDepthInputToDefault();
 		this.setMaxDepth();
+		this.setSliderValues();
 	}
 	mandel.restart = function(){
 		this.setDefaultValues();
@@ -545,10 +594,11 @@
 
 	// ----------- end functions -----------------------------------------------------------
 
-		mandel.setDefaultValues();
+		mandel.initSliders();
 		mandel.setEvents();
+		mandel.setDefaultValues();
 		mandel.drawer();
-//});
+
 	
 
 	
