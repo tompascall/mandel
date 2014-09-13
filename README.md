@@ -29,3 +29,5 @@
 <p>You can download the project from <a href="https://github.com/tompascall/mandel">here</a>.</p>
 
 <p>In my experience it is <strong>the best choice to run the app on Firefox</strong>. Chrome is really slow, the other browsers are about twice faster. IE is suprisingly fast, but it has the drawback that you cannot save the picture by right clicking on it, while Chrome and Firefox works well as regards saving the canvas. Safari is quite fast too, but you cannot save the picture.</p>
+
+<p>You can try the app <a href="http://mandel.tompascall.com/">here</a>.
