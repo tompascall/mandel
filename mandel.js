@@ -93,6 +93,7 @@
 			// this needs because we draw lines
 		hue : 0,
 		saturation: 1,
+		lightness: 0.5,
 	};
 
 	mandel.setCanvasSize = function(x){
@@ -131,7 +132,7 @@
 		this.colorScheme = this.getRadioValue("schemes");
 	}
 	mandel.setColorArrays = function(){
-		this.colorArrays = createColorArrays(this.maxDepth, this.colorScheme, this.hue, this.saturation);
+		this.colorArrays = createColorArrays(this.maxDepth, this.colorScheme, this.hue, this.saturation, this.lightness);
 		  // the createColorArrays function is in colorarrays.js
 	}
 	mandel.setDepthInputToDefault = function(){ 
@@ -221,6 +222,8 @@
 		$( "#hue" ).slider({ min: 0, max: 360, step: 1});
 
 		$( "#saturation" ).slider({ min: 0, max: 100, step: 1 });
+
+		$( "#lightness" ).slider({ min: 0, max: 100, step: 1 });
 	}		
 
 	mandel.setEvents = function(){
@@ -244,6 +247,22 @@
 		$( "#saturation" ).on( "slide", function( event, ui ) {
 			var savedImgData = mandel.ctx.createImageData(mandel.canvasSize, mandel.canvasSize);
 			mandel.saturation = ui.value / 100;
+			if (mandel.ready) { 
+				// if drawing the set is finished
+				mandel.setColorScheme();
+				mandel.setColorArrays();
+					// actualize the color scheme
+				//if (!mandel.colorSchemeDemoModeOn) {
+					mandel.copyArrayToCanvas(mandel.depthArray, savedImgData);
+						mandel.ctx.putImageData(savedImgData, 0, 0);
+						// actualize the canvas based on the new scheme	
+				//}
+			}
+		} );
+
+		$( "#lightness" ).on( "slide", function( event, ui ) {
+			var savedImgData = mandel.ctx.createImageData(mandel.canvasSize, mandel.canvasSize);
+			mandel.lightness = ui.value / 100;
 			if (mandel.ready) { 
 				// if drawing the set is finished
 				mandel.setColorScheme();
@@ -382,8 +401,10 @@
 	mandel.setSliderValues = function(){
 		$( "#hue" ).slider( "option", "value", 0 );
 		$( "#saturation" ).slider( "option", "value", 100 );
+		$( "#lightness" ).slider( "option", "value", 50 );
 		mandel.hue = 0;
 		mandel.saturation = 1;
+		mandel.lightness = 0.5;
 	}
 	mandel.getRadioValue = function(divId){
 		var radioDiv = document.getElementById(divId);
