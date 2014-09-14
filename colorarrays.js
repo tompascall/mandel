@@ -10,7 +10,7 @@
 
 "use strict";
 
-function createColorArrays(depth, colorSchemeIndex, hue, saturation, lightness){
+function createColorArrays(depth, colorSchemeIndex, hue, saturation){
 
 	var ENDLESS_RED = 255; 
 	var ENDLESS_GREEN = 255;
@@ -78,7 +78,6 @@ function hslTransform(color){
 		hsl = chroma(color[0], color[1], color[2]).hsl();
 		hsl[0] = (hsl[0] + hue) % 360;
 		hsl[1] = saturation;
-		hsl[2] = lightness;
 
 		rgbFromHsl = chroma(hsl, 'hsl').rgb();
 		color[0] = rgbFromHsl[0];
@@ -93,7 +92,6 @@ function hslTransform(color){
 		
 		color[0] = (color[0] + hue) % 360;
 		color[1] = saturation;
-		color[2] = lightness;
 
 		rgbFromHsl = chroma(color, 'hsl').rgb();
 		color[0] = rgbFromHsl[0];
