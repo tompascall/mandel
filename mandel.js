@@ -598,6 +598,7 @@
 
 	// ----------- end functions -----------------------------------------------------------
 
+
 		mandel.initSliders();
 		mandel.setEvents();
 		mandel.setDefaultValues();
