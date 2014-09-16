@@ -53,8 +53,8 @@
 			// we use them for enlergement, calculate the new range, step etc.
 		leftClick : false,
 			// it will be false if in is not clicked with left mouse button
-		ready : true,
-			// ???
+		calculationReady : true,
+			// when we are not in between calculation
 		colorSchemeDemoModeOn : false,
 			// it will be true, while we are in colorScheme Demo
 		demoSchemeIsRunning : false,
@@ -80,7 +80,7 @@
 			// it is also a tip flag for the iteration tip
 		bigNumberMode : false,
 			// this is a flag if we are in bigNumber mode
-		worker : null,
+		worker : new Worker("mandel_worker.js"),
 			// web worker for calculations (mandel_worker.js)
 			// sources: http://www.html5rocks.com/en/tutorials/workers/basics/
 			// https://developer.mozilla.org/en-US/docs/Web/Guide/Performance/Using_web_workers
@@ -93,7 +93,54 @@
 			// this needs because we draw lines
 		hue : 0,
 		saturation: 1,
+		backup : {
+			states : []
+		},
+			// this object will contain the former state of 
+			// the object values to step back
 	};
+
+	mandel.copyStateToBackup = function(state){
+		state.aStartInActualRange = this.aStartInActualRange;
+		state.bStartInActualRange = this.bStartInActualRange;
+		state.aComplexIterated = this.aStartInActualRange;
+		state.bComplexIterated = this.bStartInActualRange;
+		state.canvasSize = this.canvasSize;
+		state.bigNumberMode = this.bigNumberMode;
+		state.step = this.step;
+		state.maxDepth = this.maxDepth;
+	}
+	mandel.backupState = function(state){
+		this.aStartInActualRange = state.aStartInActualRange;
+		this.bStartInActualRange = state.bStartInActualRange;
+		this.aComplexIterated = state.aComplexIterated;
+		this.bComplexIterated = state.bComplexIterated;
+		this.canvasSize = state.canvasSize;
+		this.bigNumberMode = state.bigNumberMode;
+		this.step = state.step;
+		this.maxDepth = state.maxDepth;
+	}
+	mandel.clearBackup = function(){
+		this.backup.states = [];
+	}
+	mandel.updateBackup = function(){
+		var state = {};
+		this.copyStateToBackup(state);
+		this.backup.states.push(state);
+	}
+	mandel.back = function(){
+		var state; 
+		if (this.backup.states.length > 1) {
+			// if it is not the first state
+			state = this.backup.states.pop();
+			this.backupState(state);
+			this.setColorArrays();
+			this.setDepthInput(this.maxDepth);
+			this.setInputCanvasSize(this.canvasSize);
+			this.setCanvasSize(this.canvasSize);
+			this.drawer("from_back");
+		}
+	}
 
 	mandel.setCanvasSize = function(x){
 		this.canvasSize = this.c.width = this.c.height = x;
@@ -134,9 +181,8 @@
 		this.colorArrays = createColorArrays(this.maxDepth, this.colorScheme, this.hue, this.saturation);
 		  // the createColorArrays function is in colorarrays.js
 	}
-	mandel.setDepthInputToDefault = function(){ 
-			document.getElementById("depthInput").value = this.DEFAULT_DEPTH.toString();
-				// init depth-input HTML element (i.e. max. iteration)
+	mandel.setDepthInput = function(depth){
+		document.getElementById("depthInput").value = depth.toString();
 	}
 	mandel.getDepthInput = function(){
 		 return Number(document.getElementById("depthInput").value);
@@ -210,7 +256,7 @@
 		imgData.data[lineX * 4 + 2] = mandel.colorArrays.arrays[depth][2];
 		imgData.data[lineX * 4 + 3] = 255;
 
-		if (!mandel.ready) {
+		if (!mandel.calculationReady) {
 			mandel.depthArray.push(depth);	
 			// saving the depth data of the point
 			// for later color manipulation
@@ -223,12 +269,13 @@
 		$( "#saturation" ).slider({ min: 0, max: 100, step: 1 });
 	}		
 
+	
 	mandel.setEvents = function(){
 
 		$( "#hue" ).on( "slide", function( event, ui ) {
 			var savedImgData = mandel.ctx.createImageData(mandel.canvasSize, mandel.canvasSize);
 			mandel.hue = ui.value;
-			if (mandel.ready) { 
+			if (mandel.calculationReady) { 
 				// if drawing the set is finished
 				mandel.setColorScheme();
 				mandel.setColorArrays();
@@ -244,7 +291,7 @@
 		$( "#saturation" ).on( "slide", function( event, ui ) {
 			var savedImgData = mandel.ctx.createImageData(mandel.canvasSize, mandel.canvasSize);
 			mandel.saturation = ui.value / 100;
-			if (mandel.ready) { 
+			if (mandel.calculationReady) { 
 				// if drawing the set is finished
 				mandel.setColorScheme();
 				mandel.setColorArrays();
@@ -335,7 +382,7 @@
 			// actualizes color schemes when setting the radio buttons
 			var savedImgData = mandel.ctx.createImageData(mandel.canvasSize, mandel.canvasSize); 
 				// the whole canvas
-			if (mandel.ready) { 
+			if (mandel.calculationReady) { 
 				// if drawing the set is finished
 				mandel.setColorScheme();
 				mandel.setColorArrays();
@@ -352,6 +399,8 @@
 				}
 			}
 		});
+
+		mandel.worker.addEventListener('message', mandel.workerEvent, false);
 	}
 
 	mandel.workerEvent = function(e) {
@@ -362,7 +411,7 @@
 		mandel.ctx.putImageData(mandel.imgData, 0, mandel.row);
 		mandel.row += 1;
 		if (mandel.row > mandel.canvasSize) {
-			mandel.ready = true;
+			mandel.calculationReady = true;
 				// the canvas is full, we have to stop drawing the lines
 		}
 		else {
@@ -416,34 +465,38 @@
 		this.setStep();
 		this.setMouseCoordinatesToCanvas(); 
 		this.setColorScheme();
-		this.setDepthInputToDefault();
+		this.setDepthInput(this.DEFAULT_DEPTH);
 		this.setMaxDepth();
 		this.setSliderValues();
+		this.clearBackup();
 	}
 	mandel.restart = function(){
 		this.setDefaultValues();
 		this.drawer();
 	}
 
-	mandel.drawer = function(){ // entry point for the calculation and drawing
+	mandel.drawer = function(controller){ // entry point for the calculation and drawing
 		mandelbrotIntro();
-		mandel.worker = new Worker("mandel_worker.js");
-		mandel.worker.addEventListener('message', mandel.workerEvent, false);
+		// mandel.worker = new Worker("mandel_worker.js");
+		// mandel.worker.addEventListener('message', mandel.workerEvent, false);
 		mandel.sendMessageToWorker();
 		return;
 
 		function mandelbrotIntro(){
-			if (!mandel.ready) { 
-				// if mandelbrot is already active, it must be stopped
+			if (!mandel.calculationReady) { 
+				// if calculation is already active, it must be stopped
 				terminateWorker();
 					// the worker must be terminate if we want to start an
 					// other event cycle while the current event cycle is running
+				mandel.worker = new Worker("mandel_worker.js");
+				mandel.worker.addEventListener('message', mandel.workerEvent, false);
+					// start a new worker and set up event again
 			}
-			else mandel.ready = false; 
+			else {
+				mandel.calculationReady = false;
+			}
 				// the show is being started; it is a status flag
-				// it will be set true by the event handler, when the canvas is full
-			mandel.setMaxDepth();
-				// if Depth input is changed, it must be actualized	
+				// it will be set true by the worker event handler, when drawing is ready
 			mandel.depthArray = []; 
 				// set/reset the depth array that contains all the depth values of
 				// the points of the canvas
@@ -451,6 +504,31 @@
 			// if demo mode is on, it must be finished
 			mandel.row = 0;
 				// set/reset the value of the row
+
+			if (controller !== "from_back"){
+				// if calling the drawer is not from mandel.back()
+				// because in that case there is no need to udating based on UI changes
+				mandel.updateBackup();
+				mandel.updateUIChanges();
+					// create backup from the state of the set
+				mandel.setComplexScopeToChanges();
+					
+			}
+			else {
+				// mandel.setMouseCoordinatesToCanvas();
+			};
+				
+			function terminateWorker(){
+				mandel.worker.removeEventListener('message', mandel.workerEvent, false);
+				mandel.worker.terminate();
+			}
+		}
+	}
+
+	mandel.updateUIChanges = function(){
+		mandel.setMaxDepth();
+				// if Depth input is changed, it must be actualized	
+			
 			var actualCanvasSize = mandel.getInputCanvasSize();
 			if (actualCanvasSize !== mandel.canvasSize){ // Canvas size has been changed
 				mandel.setCanvasSize(actualCanvasSize);
@@ -460,23 +538,17 @@
 				mandel.setStep();
 				mandel.setImgData();
 			}
+		
 			mandel.setColorScheme();
 			mandel.setColorArrays();
+
 			// Create mandel.colorArrays based on the scheme and mandel.maxDepth
 			// It's length is mandel.maxDepth
 			// The createColorArrays function is located in colorarrays.js
 			// it returns an object: {arrays, sheme};
 			// the arrays is an array with RGBA codes, e.g. [255, 255, 255, 255], 
 			// the scheme is an object: {schemeName, RGBColorNumbers, calculatorFunction}
-			mandel.setComplexScopeToChanges();
-				
-			function terminateWorker(){
-				mandel.worker.removeEventListener('message', mandel.workerEvent, false);
-					mandel.worker.terminate();
-			}
-		}
 	}
-
 	mandel.setComplexScopeToChanges = function(){
 		var complexScope = {};
 
@@ -554,7 +626,7 @@
 	mandel.demoScheme = function() {
 		// this function shows the actual color scheme	 
 		
-		if (this.ready) {
+		if (this.calculationReady) {
 			this.colorSchemeDemoModeOn = true;
 				// it is true while mandelbrot is not in progress
 			this.demoSchemeIsRunning = true;
