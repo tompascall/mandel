@@ -100,7 +100,7 @@
 			// the object values to step back
 	};
 
-	mandel.copyStateToBackup = function(state){
+	mandel.copyState = function(state){
 		state.aStartInActualRange = this.aStartInActualRange;
 		state.bStartInActualRange = this.bStartInActualRange;
 		state.aComplexIterated = this.aStartInActualRange;
@@ -108,6 +108,7 @@
 		state.canvasSize = this.canvasSize;
 		state.bigNumberMode = this.bigNumberMode;
 		state.step = this.step;
+		state.range = this.range;
 		state.maxDepth = this.maxDepth;
 	}
 	mandel.backupState = function(state){
@@ -118,6 +119,7 @@
 		this.canvasSize = state.canvasSize;
 		this.bigNumberMode = state.bigNumberMode;
 		this.step = state.step;
+		this.range = state.range;
 		this.maxDepth = state.maxDepth;
 	}
 	mandel.clearBackup = function(){
@@ -125,7 +127,10 @@
 	}
 	mandel.updateBackup = function(){
 		var state = {};
-		this.copyStateToBackup(state);
+		var buff = [];
+		// TODO: compare the former and the present state if there are any changing
+		// if there aren't, do nothing
+		this.copyState(state);
 		this.backup.states.push(state);
 	}
 	mandel.back = function(){
@@ -138,6 +143,7 @@
 			this.setDepthInput(this.maxDepth);
 			this.setInputCanvasSize(this.canvasSize);
 			this.setCanvasSize(this.canvasSize);
+			this.setMouseCoordinatesToCanvas();
 			this.drawer("from_back");
 		}
 	}
