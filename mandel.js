@@ -101,37 +101,80 @@
 	};
 
 	mandel.copyState = function(state){
-		state.aStartInActualRange = this.aStartInActualRange;
-		state.bStartInActualRange = this.bStartInActualRange;
-		state.aComplexIterated = this.aStartInActualRange;
-		state.bComplexIterated = this.bStartInActualRange;
-		state.canvasSize = this.canvasSize;
-		state.bigNumberMode = this.bigNumberMode;
-		state.step = this.step;
-		state.range = this.range;
-		state.maxDepth = this.maxDepth;
+
+		state[0] = this.bigNumberMode;
+		state[1] = this.canvasSize;
+		state[2] = this.maxDepth;
+		state[3] = this.aStartInActualRange;
+		state[4] = this.bStartInActualRange;
+		state[5] = this.aStartInActualRange;
+		state[6] = this.bStartInActualRange;
+		state[7] = this.step;
+		state[8] = this.range;
+
+		if (this.backup.states.length > 0){
+			if (notEqualStates()){
+				this.backup.states.push(state);
+			}
+		}
+		else {
+			this.backup.states.push(state);
+		}
+		
+
+		function notEqualStates(){
+			var previous = mandel.backup.states[mandel.backup.states.length - 1];
+
+			if (state[0] !== previous[0]) {
+				return true;
+				// if either of them is in bigNumberMode and the other one is not
+			}	
+			for (var i = 1; i < state.length; i++){
+				// we have already tested bigNumberMode
+				// so it is enough to start with 1
+				if (notEquals(state[i], previous[i], state[0], previous[0])) {
+					return true;
+				}
+			}
+			return false;
+
+			function notEquals(state, previous, stateBig, previousBig){
+				if (stateBig && previousBig) {
+					if (math.unequal(state, previous)){
+						return true;
+					}
+				}
+				else {
+					if (state !== previous){
+						return true;
+					}
+				}
+				return false;
+			}
+		}
 	}
 	mandel.backupState = function(state){
-		this.aStartInActualRange = state.aStartInActualRange;
-		this.bStartInActualRange = state.bStartInActualRange;
-		this.aComplexIterated = state.aComplexIterated;
-		this.bComplexIterated = state.bComplexIterated;
-		this.canvasSize = state.canvasSize;
-		this.bigNumberMode = state.bigNumberMode;
-		this.step = state.step;
-		this.range = state.range;
-		this.maxDepth = state.maxDepth;
+
+		this.bigNumberMode = state[0];
+		this.canvasSize = state[1];
+		this.maxDepth = state[2];
+		this.aStartInActualRange = state[3];
+		this.bStartInActualRange = state[4];
+		this.aComplexIterated = state[5];
+		this.bComplexIterated = state[6];
+		this.step = state[7];
+		this.range = state[8];
+
 	}
 	mandel.clearBackup = function(){
 		this.backup.states = [];
 	}
 	mandel.updateBackup = function(){
-		var state = {};
-		var buff = [];
+		var state = [];		
+
 		// TODO: compare the former and the present state if there are any changing
 		// if there aren't, do nothing
 		this.copyState(state);
-		this.backup.states.push(state);
 	}
 	mandel.back = function(){
 		var state; 
