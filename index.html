@@ -45,6 +45,13 @@
       right: 20px;
       text-align: right;
 		}
+		a{
+			text-decoration: none;
+			color: red;
+		}
+		p{
+			margin: 10px 0 10px 0;
+		}
 		#head{
 			padding: 10px;
 			background-color: rgba(255, 255, 255, 0.2);
@@ -67,9 +74,6 @@
 		#demo{
 			margin: 10px 0 10px 10px;
 		}
-		#about{
-      margin-left: 63px;
-    }
 		#upper_panel{
 			background-color: rgba(230, 230, 230, 0.4);
 			padding: 10px;
@@ -81,24 +85,28 @@
 			margin-bottom:10px;
 			padding-top: 1px;
 		}
+		#bottom_panel{
+			background-color: rgba(230, 230, 230, 0.4);
+			margin-bottom:10px;
+			padding: 10px;
+		}
     .canvas_side{
       margin-right: 10px;
       margin-left: 10px;
 		}
-		#calculate, #restart{
+		#calculate, #restart, #back{
 			display:inline;
 		}
 		#calculate{
-			margin-left: 63px;
+			margin-left: 65px;
 			color: red;
 		}
-		a{
-			text-decoration: none;
-			color: red;
+		#restart, #about{
+			margin-top: 0;
 		}
-		p{
-			margin: 10px 0 10px 0;
-		}
+		#about{
+      margin-left: 65px;
+    }
 		.tip{
 			background: white;
 			margin-bottom: 0;
@@ -188,15 +196,22 @@
 		<div id="panel">
 			<div id="upper_panel">		
 				<strong>Canvas size: </strong><input id="inputCanvasSize" title="Adjust the size of the canvas by pixels. The canvas is a square. After modifying the canvas size and/or the iteration number, you have to push the Calculate button to set the new size." type="number" min="2" name="inputCanvasSize" tabindex="1">
+				
 				<p><strong>Maximum iteration: </strong><input id="depthInput" title="The iteration means that a mathematical operation is repeated on a number again and again, as much times as the iteration number. The more iteration the more computing and the more detailed picture (see about page for more details). After modifying the iteration number and/or the canvas size, you have to push the Calculate button to enforce the changes." type="number" min="1" name="depth" value="20" tabindex="2"></p>
-				<button type="button" id="restart" title="Restarts the app, sets back the canvas size and the iteration number to the default values." onclick="mandel.restart()" tabindex="4">Restart</button>
+				
+				<button type="button" id="back" title="Backs to the former values." onclick="mandel.restart()" tabindex="4">Back</button>
+				
 				<button type="button" id="calculate" title="The calculation is based on the values of the canvas size and iteration number. The calculation is automated, when you enlarge an area of the set by your mouse." onclick="mandel.drawer()" tabindex="3">Calculate</button>
+				
 				<p id="tip_mouse" class="tip"><span><strong>Tip:</strong></span> use your mouse to enlarge an area.</p>
+				
 				<p id="tip_iteration" class="tip"><span><strong>Tip: </strong></span>The more iteration you use, the more detailed picture you get. After modifying the iteration number and/or the canvas size, you have to push the Calculate button to enforce the changes.</p>
+				
 				<p id="tip_bignumber" class="tip"><span>Warning:</span> you are about to approach the limit, when the set cannot be represented by the means of standard javascript numbers. In this case the app will use the <a href="http://mathjs.org/">math.js</a> bignumbers, but this results <strong>much lower speed</strong>.</p>
 			</div>
 			<div id="scheme_panel">
 				<p class="title"><strong>Color schemes</strong></p>
+				
 				<div id="schemes">
 					<input class="canvas_side" type="radio" id="scheme0" name="scheme" value="0" tabindex="5">RGB Lines<br>
 					<input class="canvas_side" type="radio" id="scheme1" name="scheme" value="1"  tabindex="5">Color to black<br>
@@ -207,18 +222,31 @@
 					<input class="canvas_side" type="radio" id="scheme6" name="scheme" value="6" tabindex="5">Small Spiral<br/>
 					<input class="canvas_side" type="radio" id="scheme7" name="scheme" value="7" tabindex="5">HSL Colors<br/>
 				</div>
+				
 				<p class="title"><strong>Hue</strong></p>
+				
 				<div id="hue"></div>
+				
 				<p class="title"><strong>Saturation</strong></p>
+				
 				<div id="saturation"></div>
+				
 				<br>
+				
 				<button type="button" id="demo" title="The Demo scheme button shows you the logic of the given color scheme: what color belongs to the given iteration (from 1 to max. iteration). After modifying the iterration number or the canvas size, you have to push the button to enforce the changes. For more details see about page." onclick="mandel.demoScheme()" tabindex="6">Demo scheme</button>
-				<button id="about" onclick="window.location='about.html'" tabindex="7">About</button>
 			</div>
-			
+
+			<div id="bottom_panel">
+				<button type="button" id="restart" title="Restarts the app, sets back the canvas size and the iteration number to the default values." onclick="mandel.restart()" tabindex="7">Restart</button>
+
+				<button id="about" onclick="window.location='about.html'" tabindex="8">About</button>
+			</div>
+
 			<div id="social_buttons">
 				<div class="fb-like" data-href="http://mandel.tompascall.com" data-layout="button" data-action="recommend" data-show-faces="false" data-share="true"></div>
+				
 				<div class="g-plusone" data-size="small" data-annotation="none"></div>
+				
 				<a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">Tweet</a>				
 			</div>
 		</div>
