@@ -165,6 +165,7 @@
 			// if it is not the first state
 			state = this.backup.states.pop();
 			this.restoreState(state);
+			this.handleBignumberWarning();
 			this.setColorArrays();
 			this.setDepthInput(this.maxDepth);
 			this.setInputCanvasSize(this.canvasSize);
@@ -480,13 +481,13 @@
 	mandel.setDefaultValues = function(){
 		this.range = 5; 
 			// if you only want to test bignumber, 
-			// add this value to this.range: 9.321363125813775e-14;
+			// add this value to this.range: 3.377631507817114e-11;
 		this.aStartInActualRange = -2.5;
 			// if you only want to test bignumber, 
-			// add this value to this.aStartInActualRange: -0.017355275925516306;
+			// add this value to this.aStartInActualRange: -1.2555621711060319;
 		this.bStartInActualRange = 2.5; 
 			// if you only want to test bignumber, 
-			// add this value to this.bStartInActualRange: 1.0043295723343555;
+			// add this value to this.bStartInActualRange: -0.40098714274827146;
 		this.bigNumberMode = false;
 		this.setTip("tip_bignumber", "none");
 		this.aComplexIterated = this.aStartInActualRange;
@@ -633,10 +634,8 @@
 			}
 		}
 		function switchToBignumberModeIfNeed(){
-				if (mandel.range < 1e-11) {
-					mandel.setTip("tip_bignumber", "block");
-					// show warning about the limit of the standard js numbers
-				}
+				mandel.handleBignumberWarning();
+				
 				if (mandel.range < 5e-13) {
 					mandel.bigNumberMode = true;
 					mandel.aStartInActualRange = math.eval(mandel.aStartInActualRange.toString());
@@ -650,11 +649,21 @@
 						// after this you cannot calculate with these properties
 						// as before, but you have to apply the math.js functions
 						// e.g. add(x, y)
-					mandel.setTip("tip_bignumber", "none");
-						// there is no need for the tip any more
+					
 				}				
 			}
 	}
+	mandel.handleBignumberWarning = function(){
+		if (mandel.range <= 1e-11 && mandel.range >= 5e-13) {
+			mandel.setTip("tip_bignumber", "block");
+			// show warning about the limit of the standard js numbers
+		}
+		else if (mandel.range < 5e-13 || mandel.range > 1e-11) {
+			mandel.setTip("tip_bignumber", "none");
+				// there is no need for the tip any more
+		}	
+	}
+		
 	mandel.demoScheme = function() {
 		// this function shows the actual color scheme	 
 		
