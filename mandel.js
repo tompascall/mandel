@@ -50,7 +50,7 @@
 		mouseUpX : 0,
 		mouseUpY : 0,
 			// the mouse coordinates when you enlarge an area of the set
-			// we use them for enlergement, calculate the new range, step etc.
+			// we use them for enlargement, calculate the new range, step etc.
 		leftClick : false,
 			// it will be false if in is not clicked with left mouse button
 		calculationReady : true,
@@ -94,94 +94,77 @@
 		hue : 0,
 		saturation: 1,
 		backup : {
-			states : []
+			states : [],
 		},
 			// this object will contain the former state of 
 			// the object values to step back
+		enlargement : false,
+			// a flag that signs if there is an enlargement
 	};
 
-	mandel.copyState = function(state){
+	mandel.saveState = function(state){
 
-		state[0] = this.bigNumberMode;
-		state[1] = this.canvasSize;
-		state[2] = this.maxDepth;
-		state[3] = this.aStartInActualRange;
-		state[4] = this.bStartInActualRange;
-		state[5] = this.aStartInActualRange;
-		state[6] = this.bStartInActualRange;
-		state[7] = this.step;
-		state[8] = this.range;
+		state.UI = {
+			inputCanvasSize : this.getInputCanvasSize(),
+			depthInput : this.getDepthInput()
+		};
 
 		if (this.backup.states.length > 0){
-			if (notEqualStates()){
-				this.backup.states.push(state);
+			if (modifiedUI() || mandel.enlargement){
+				state.bigNumberMode = this.bigNumberMode;
+				state.canvasSize = this.canvasSize;
+				state.maxDepth = this.maxDepth;
+				state.aStartInActualRange = this.aStartInActualRange;
+				state.bStartInActualRange = this.bStartInActualRange;
+				state.aComplexIterated = this.aStartInActualRange;
+				state.bComplexIterated = this.bStartInActualRange;
+				state.step = this.step;
+				state.range = this.range;
+
+				this.backup.states.push(state);	
 			}
 		}
 		else {
 			this.backup.states.push(state);
 		}
 		
-
-		function notEqualStates(){
-			var previous = mandel.backup.states[mandel.backup.states.length - 1];
-
-			if (state[0] !== previous[0]) {
-				return true;
-				// if either of them is in bigNumberMode and the other one is not
-			}	
-			for (var i = 1; i < state.length; i++){
-				// we have already tested bigNumberMode
-				// so it is enough to start with 1
-				if (notEquals(state[i], previous[i], state[0], previous[0])) {
-					return true;
-				}
-			}
-			return false;
-
-			function notEquals(state, previous, stateBig, previousBig){
-				if (stateBig && previousBig) {
-					if (math.unequal(state, previous)){
-						return true;
-					}
-				}
-				else {
-					if (state !== previous){
-						return true;
-					}
-				}
-				return false;
-			}
+		function modifiedUI(){
+			var previousUI = mandel.backup.states[mandel.backup.states.length - 1].UI;
+			var UIkeys = Object.keys(previousUI);
+				// returns the keys of the UI object
+			var modified = false;
+			UIkeys.forEach(function(key){
+				if (previousUI[key] !== state.UI[key]) modified = true;
+			});
+			return modified;
 		}
 	}
-	mandel.backupState = function(state){
+	mandel.restoreState = function(state){
 
-		this.bigNumberMode = state[0];
-		this.canvasSize = state[1];
-		this.maxDepth = state[2];
-		this.aStartInActualRange = state[3];
-		this.bStartInActualRange = state[4];
-		this.aComplexIterated = state[5];
-		this.bComplexIterated = state[6];
-		this.step = state[7];
-		this.range = state[8];
+		this.bigNumberMode = state.bigNumberMode;
+		this.canvasSize = state.canvasSize;
+		this.maxDepth = state.maxDepth;
+		this.aStartInActualRange = state.aStartInActualRange;
+		this.bStartInActualRange = state.bStartInActualRange;
+		this.aComplexIterated = state.aComplexIterated;
+		this.bComplexIterated = state.bComplexIterated;
+		this.step = state.step;
+		this.range = state.range;
 
 	}
 	mandel.clearBackup = function(){
 		this.backup.states = [];
 	}
 	mandel.updateBackup = function(){
-		var state = [];		
-
-		// TODO: compare the former and the present state if there are any changing
-		// if there aren't, do nothing
-		this.copyState(state);
+		var state = {};		
+		this.saveState(state);
 	}
 	mandel.back = function(){
 		var state; 
 		if (this.backup.states.length > 1) {
 			// if it is not the first state
 			state = this.backup.states.pop();
-			this.backupState(state);
+			this.restoreState(state);
 			this.setColorArrays();
 			this.setDepthInput(this.maxDepth);
 			this.setInputCanvasSize(this.canvasSize);
@@ -218,7 +201,6 @@
 	mandel.setMouseCoordinatesToCanvas = function(){
 		this.mouseDownX = this.mouseDownY = 0;
 		this.mouseUpX = this.mouseUpY = this.canvasSize;
-		mandel.enlargement = false;
 			// the default is that mouse coordinates parallel to canvas size
 			// they are modified when enlargement happens
 			// after enlargement they must be reset
@@ -384,7 +366,8 @@
 							mandel.tipIterationDisplay = true;
 								// let's show the next tip about the iteration
 						}
-						mandel.drawer();
+						mandel.enlargement = true;
+						mandel.drawer("enlargement");
 					}
 				}
 				else {
@@ -420,7 +403,8 @@
 						mandel.tipIterationDisplay = true;
 							// let's show the next tip about the iteration
 					}
-					mandel.drawer();
+					mandel.enlargement = true;
+					mandel.drawer("enlargement");
 				}  	 	
 	   	}
 		       
@@ -554,17 +538,16 @@
 			mandel.row = 0;
 				// set/reset the value of the row
 
+			if (controller !== "enlargement") {
+				mandel.enlargement = false;
+			}
 			if (controller !== "from_back"){
 				// if calling the drawer is not from mandel.back()
 				// because in that case there is no need to udating based on UI changes
-				mandel.updateBackup();
+				mandel.updateBackup();					
 				mandel.updateUIChanges();
 					// create backup from the state of the set
 				mandel.setComplexScopeToChanges();
-					
-			}
-			else {
-				// mandel.setMouseCoordinatesToCanvas();
 			};
 				
 			function terminateWorker(){
