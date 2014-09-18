@@ -12,6 +12,7 @@
 	<meta property="og:type" content="website" />
 	<meta property="fb:app_id" content="267930040075239"/>
 	<title>mandelbrot</title>
+	<link rel="stylesheet" type="text/css" href="css/normalize.css">
 	<link rel="stylesheet" type="text/css" href="libraries/jquery-ui-1.11.1.custom/jquery-ui.min.css">
 	<style>		
     body{
@@ -41,8 +42,6 @@
 		input[type=number]{
 			font-size: 0.8em;
 			width: 80px;
-			position: absolute;
-      right: 20px;
       text-align: right;
 		}
 		a{
@@ -61,15 +60,21 @@
 
 		#mandelCanvas{
 			display: inline-block;
+			vertical-align: top;
+		}
+		#inputCanvasSize{
+			margin-left: 125px;
+		}
+		#depthInput{
+			margin-left: 79px;
 		}
 		#panel{
-			display: inline-block;
+		display: inline-block;
 			background-color: rgba(170, 170, 170, 0.4);
 			border: 2px groove #999;
 			padding: 10px;
 			margin: 20px 0 20px 20px;
-			position: absolute;
-			width: 335px;
+			width: 330px;
 		}
 		#demo{
 			margin: 10px 0 10px 10px;
@@ -107,7 +112,7 @@
    
     }
     #about, #calculate{
-    	margin-left: 63px;
+    	margin-left: 62px;
     }
 		.tip{
 			background: white;
