@@ -1,0 +1,141 @@
+/* index.css */
+
+   body{
+      background-image: url("../img/repeatable-bkg.jpg");
+      font-size: 0.8em;
+     }
+  canvas{
+      border: 2px groove #999;
+      padding: 0;
+      margin: 20px 0 0 20px;
+      display: inline-block;
+    }
+    
+    input[type=number]{
+      width: 80px;
+      text-align: right;
+    }
+    p{
+      margin: 10px 0 10px 0;
+    }
+    #mandelCanvas{
+      display: inline-block;
+      vertical-align: top;
+    }
+    #inputCanvasSize{
+      margin-left: 125px;
+    }
+    #depthInput{
+      margin-left: 79px;
+    }
+    #panel{
+    display: inline-block;
+      background-color: rgba(170, 170, 170, 0.4);
+      border: 2px groove #999;
+      padding: 10px;
+      margin: 20px 0 20px 20px;
+      width: 330px;
+    }
+    #demo{
+      margin: 10px 0 10px 10px;
+    }
+    #upper_panel{
+      background-color: rgba(230, 230, 230, 0.4);
+      padding: 10px;
+      margin: 0;
+      margin-bottom: 10px;
+    }
+    #scheme_panel{
+      background-color: rgba(230, 230, 230, 0.4);
+      margin-bottom:10px;
+      padding-top: 1px;
+    }
+    #bottom_panel{
+      background-color: rgba(230, 230, 230, 0.4);
+      margin-bottom:10px;
+      padding: 10px;
+    }
+    .canvas_side{
+      margin-right: 10px;
+      margin-left: 10px;
+    }
+    #calculate, #restart, #back{
+      display:inline;
+    }
+    #calculate{
+      color: red;
+    }
+    #restart, #about{
+      margin-top: 0;
+    }
+    #about{
+   
+    }
+    #about, #calculate{
+      margin-left: 62px;
+    }
+    .tip{
+      background: white;
+      margin-bottom: 0;
+      padding: 5px;
+    }
+    #tip_mouse{
+      display : block;
+    }
+    #tip_iteration{
+      display: none;
+    }
+    #tip_bignumber{
+      display: none;
+      background: white;
+      margin-bottom: 0;
+      padding: 5px; 
+    }
+    .tip span{
+      color: red;
+    }
+    #hue{
+      margin: 0 20px;
+    }
+    #saturation{
+      margin: 0 20px;
+    }
+    .ui-slider .ui-slider-handle{
+      width: 1.2em;
+      height: 0.5em;
+    }
+    .ui-slider-horizontal {
+    height: .2em;
+    border: 1px solid #777;
+    }
+    .ui-slider-horizontal .ui-slider-handle {
+      top: -.2em;
+      margin-left: -.6em;
+    }
+    .ui-slider-horizontal .ui-slider-range {
+      top: 0;
+      height: 100%;
+    }
+    .ui-slider-horizontal .ui-slider-range-min {
+      left: 0;
+    }
+    .ui-slider-horizontal .ui-slider-range-max {
+      right: 0;
+    }
+    .title, .slider_title{
+      padding-top: 5px; 
+      text-align: center;
+    }
+
+    @media only screen and (max-width: 480px), only screen and (max-device-width: 480px){
+      #demo{
+        display: inline-block;
+        margin-left: 10px;
+      }
+      #panel{
+        display: block;
+      }
+      #social_buttons{
+        display: inline-block;
+      }
+    }

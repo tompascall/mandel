@@ -13,173 +13,10 @@
 	<meta property="fb:app_id" content="267930040075239"/>
 	<title>mandelbrot</title>
 	<link rel="stylesheet" type="text/css" href="css/normalize.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<link rel="stylesheet" type="text/css" href="libraries/jquery-ui-1.11.1.custom/jquery-ui.min.css">
-	<style>		
-    body{
-      background-image: url("repeatable-bkg.jpg");
-      font-family: courier;
-      margin: 0;
-     	padding: 0;
-     	font-size: 0.8em;
-    }
-    h3{    	
-    	padding: 0;
-    	margin: 0;
-    }
-		canvas{
-			border: 2px groove #999;
-			padding: 0;
-			margin: 20px 0 0 20px;
-			display: inline-block;
-		}
-		button{
-      margin: 10px 0 0px 0;
-      background: #ccc;
-      font-family: courier;
-    	font-size: 0.8em;
-    	width: 120px;
-		}
-		input[type=number]{
-			font-size: 0.8em;
-			width: 80px;
-      text-align: right;
-		}
-		a{
-			text-decoration: none;
-			color: red;
-		}
-		p{
-			margin: 10px 0 10px 0;
-		}
-		#head{
-			padding: 10px;
-			background-color: rgba(255, 255, 255, 0.2);
-			margin: 0;
-			text-align: center;
-		}
+	<link rel="stylesheet" type="text/css" href="css/index.css">
 
-		#mandelCanvas{
-			display: inline-block;
-			vertical-align: top;
-		}
-		#inputCanvasSize{
-			margin-left: 125px;
-		}
-		#depthInput{
-			margin-left: 79px;
-		}
-		#panel{
-		display: inline-block;
-			background-color: rgba(170, 170, 170, 0.4);
-			border: 2px groove #999;
-			padding: 10px;
-			margin: 20px 0 20px 20px;
-			width: 330px;
-		}
-		#demo{
-			margin: 10px 0 10px 10px;
-		}
-		#upper_panel{
-			background-color: rgba(230, 230, 230, 0.4);
-			padding: 10px;
-			margin: 0;
-			margin-bottom: 10px;
-		}
-		#scheme_panel{
-			background-color: rgba(230, 230, 230, 0.4);
-			margin-bottom:10px;
-			padding-top: 1px;
-		}
-		#bottom_panel{
-			background-color: rgba(230, 230, 230, 0.4);
-			margin-bottom:10px;
-			padding: 10px;
-		}
-    .canvas_side{
-      margin-right: 10px;
-      margin-left: 10px;
-		}
-		#calculate, #restart, #back{
-			display:inline;
-		}
-		#calculate{
-			color: red;
-		}
-		#restart, #about{
-			margin-top: 0;
-		}
-		#about{
-   
-    }
-    #about, #calculate{
-    	margin-left: 62px;
-    }
-		.tip{
-			background: white;
-			margin-bottom: 0;
-			padding: 5px;
-		}
-		#tip_mouse{
-			display : block;
-		}
-		#tip_iteration{
-			display: none;
-		}
-		#tip_bignumber{
-			display: none;
-			background: white;
-			margin-bottom: 0;
-			padding: 5px;	
-		}
-		.tip span{
-			color: red;
-		}
-		#hue{
-			margin: 0 20px;
-		}
-		#saturation{
-			margin: 0 20px;
-		}
-		.ui-slider .ui-slider-handle{
-			width: 1.2em;
-			height: 0.5em;
-		}
-		.ui-slider-horizontal {
-		height: .2em;
-		border: 1px solid #777;
-		}
-		.ui-slider-horizontal .ui-slider-handle {
-			top: -.2em;
-			margin-left: -.6em;
-		}
-		.ui-slider-horizontal .ui-slider-range {
-			top: 0;
-			height: 100%;
-		}
-		.ui-slider-horizontal .ui-slider-range-min {
-			left: 0;
-		}
-		.ui-slider-horizontal .ui-slider-range-max {
-			right: 0;
-		}
-		.title, .slider_title{
-			padding-top: 5px; 
-			text-align: center;
-		}
-
-		@media only screen and (max-width: 480px), only screen and (max-device-width: 480px){
-			#demo{
-				display: inline-block;
-				margin-left: 10px;
-			}
-			#panel{
-				display: block;
-			}
-			#social_buttons{
-				display: inline-block;
-			}
-		}
-	</style>
 </head>
 
 <body>
@@ -263,8 +100,8 @@
 	<script src="libraries/jquery-ui-1.11.1.custom/jquery-ui.min.js"></script>
 	<script src="libraries/mathjs/dist/math.min.js"></script>
 	<script src="libraries/chroma.js/chroma.min.js"></script>
-	<script src="colorarrays.js"></script>
-	<script src="mandel.js"></script>
+	<script src="src/colorarrays.js"></script>
+	<script src="src/mandel.js"></script>
 	
 	<script>
 	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

@@ -80,7 +80,7 @@
 			// it is also a tip flag for the iteration tip
 		bigNumberMode : false,
 			// this is a flag if we are in bigNumber mode
-		worker : new Worker("mandel_worker.js"),
+		worker : new Worker("src/mandel_worker.js"),
 			// web worker for calculations (mandel_worker.js)
 			// sources: http://www.html5rocks.com/en/tutorials/workers/basics/
 			// https://developer.mozilla.org/en-US/docs/Web/Guide/Performance/Using_web_workers
