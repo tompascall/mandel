@@ -6,6 +6,7 @@
 	<meta name="description" content="a tiny application to study the Mandelbrot set">
 	<meta name="keywords" content="Mandelbrot,Mandelbrot set,fractal,graphical representation,javascript app">
 	<meta name="author" content="tompascall">
+	<link rel="stylesheet" type="text/css" href="css/normalize.css">
   <link rel="stylesheet" type="text/css" href="css/main.css">
 	<link rel="stylesheet" type="text/css" href="css/about.css">
 </head>
@@ -15,7 +16,6 @@
 		<h3>Mandelbrot Set Explorer</h3>
 	</div>
 	<div id="about">
-		<button class="back" onclick="window.location='index.html'">Back</button>
 		<p>This is a basic application for studying the <a href="http://en.wikipedia.org/wiki/Mandelbrot_set">Mandelbrot set</a>. As Wikipedia says "The Mandelbrot set is the set of complex numbers 'c' for which the sequence ( c , c² + c , (c²+c)² + c , ((c²+c)²+c)² + c , (((c²+c)²+c)²+c)² + c , ...) does not approach infinity." So this mathematical operation (we add the square of a complex number to the complex number, than we also do the same with the result of this operation) is iterated on a complex number again and again.</p> 
 
 		<p>The graphical representation of the set is based on the fact, that a complex number can be visually represented as a pair of numbers (a, b) forming a vector. This pair of numbers can be considered as horizontal and vertical coordinates of the complex plane. The complex plane can be paralleled to the canvas, the coordinates of the vector can be paralleled to the coordinates of a point in the canvas.</p>

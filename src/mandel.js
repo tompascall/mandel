@@ -80,7 +80,7 @@
 			// it is also a tip flag for the iteration tip
 		bigNumberMode : false,
 			// this is a flag if we are in bigNumber mode
-		worker : new Worker("src/mandel_worker.js"),
+		worker : null,
 			// web worker for calculations (mandel_worker.js)
 			// sources: http://www.html5rocks.com/en/tutorials/workers/basics/
 			// https://developer.mozilla.org/en-US/docs/Web/Guide/Performance/Using_web_workers
@@ -102,6 +102,9 @@
 			// a flag that signs if there is an enlargement
 	};
 
+	mandel.setupWorker = function(){
+		this.worker = new Worker("src/mandel_worker.js");
+	}
 	mandel.saveState = function(state){
 
 		state.UI = {
@@ -522,7 +525,7 @@
 				terminateWorker();
 					// the worker must be terminate if we want to start an
 					// other event cycle while the current event cycle is running
-				mandel.worker = new Worker("mandel_worker.js");
+				mandel.setupWorker();
 				mandel.worker.addEventListener('message', mandel.workerEvent, false);
 					// start a new worker and set up event again
 			}
@@ -712,6 +715,7 @@
 	// ----------- end functions -----------------------------------------------------------
 
 
+		mandel.setupWorker();
 		mandel.initSliders();
 		mandel.setEvents();
 		mandel.setDefaultValues();
