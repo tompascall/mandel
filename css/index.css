@@ -23,10 +23,10 @@
       vertical-align: top;
     }
     #inputCanvasSize{
-      margin-left: 73px;
+      margin-left: 126px;
     }
     #depthInput{
-      margin-left: 5px;
+      margin-left: 80px;
     }
     #panel{
     display: inline-block;
@@ -72,7 +72,7 @@
    
     }
     #about, #calculate{
-      margin-left: 58px;
+      margin-left: 62px;
     }
     .tip{
       background: white;
