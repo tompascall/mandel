@@ -22,12 +22,11 @@
       display: inline-block;
       vertical-align: top;
     }
-    #inputCanvasSize{
-      margin-left: 126px;
+    #inputCanvasSize, #depthInput{
+      position: absolute;
+      right: 10px;
     }
-    #depthInput{
-      margin-left: 80px;
-    }
+
     #panel{
     display: inline-block;
       background-color: rgba(170, 170, 170, 0.4);
@@ -44,6 +43,7 @@
       padding: 10px;
       margin: 0;
       margin-bottom: 10px;
+      position: relative;
     }
     #scheme_panel{
       background-color: rgba(230, 230, 230, 0.4);
@@ -54,6 +54,7 @@
       background-color: rgba(230, 230, 230, 0.4);
       margin-bottom:10px;
       padding: 10px;
+      position: relative;
     }
     .canvas_side{
       margin-right: 10px;
@@ -72,7 +73,8 @@
    
     }
     #about, #calculate{
-      margin-left: 62px;
+      position: absolute;
+      right: 10px;
     }
     .tip{
       background: white;
