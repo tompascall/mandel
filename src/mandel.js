@@ -482,13 +482,13 @@
 	}
 
 	mandel.setDefaultValues = function(){
-		this.range = 5; 
+		this.range = 2.7312985206862095e-11;//5; 
 			// if you only want to test bignumber, 
 			// add this value to this.range: 3.377631507817114e-11;
-		this.aStartInActualRange = -2.5;
+		this.aStartInActualRange = 0.2759906328437107;//-2.5;
 			// if you only want to test bignumber, 
 			// add this value to this.aStartInActualRange: -1.2555621711060319;
-		this.bStartInActualRange = 2.5; 
+		this.bStartInActualRange = -0.007370171103871569;//2.5; 
 			// if you only want to test bignumber, 
 			// add this value to this.bStartInActualRange: -0.40098714274827146;
 		this.bigNumberMode = false;
