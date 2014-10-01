@@ -175,6 +175,7 @@
 			this.setDepthInput(this.maxDepth);
 			this.setInputCanvasSize(this.canvasSize);
 			this.setCanvasSize(this.canvasSize);
+      this.setImgData();
 			this.setMouseCoordinatesToCanvas();
 			this.drawer("from_back");
 		}
@@ -309,7 +310,13 @@
 
 	mandel.setEvents = function(){
 
-		$( "#hue" ).on( "slide", function( event, ui ) {
+		$(document).keypress(function(e) {
+      if(e.which == 13) {
+        mandel.drawer("enter");
+      }
+    });
+
+    $( "#hue" ).on( "slide", function( event, ui ) {
 			var savedImgData = mandel.ctx.createImageData(mandel.canvasSize, mandel.canvasSize);
 			mandel.hue = ui.value;
 			if (mandel.calculationReady) {
@@ -549,7 +556,11 @@
 			}
 			if (controller !== "from_back"){
 				// if calling the drawer is not from mandel.back()
+<<<<<<< HEAD
 				// because in that case there is no need to updating based on UI changes
+=======
+				// because in that case there is no need to udating based on UI changes
+>>>>>>> restore
 				mandel.updateBackup();
 				mandel.updateUIChanges();
 					// create backup from the state of the set
