@@ -168,24 +168,6 @@ colors.createColorArrays = function(depth, colorSchemeIndex, hue, saturation){
 		return [red, green, blue, 255];
 	}
 
-	// function hslColorsDepthToArray(coord){
-	// 	var deg = 360 / colorScheme.RGBColorNumbers;
-	// 	var hsl;
-	// 	var rgbFromHsl;
-	// 	var rgba = [];
-
-	// 	hsl = chroma("red").hsl();
-	// 	hsl[0] = hsl[0] + deg * coord;
-	// 	hsl[1] = 1;
-
-	// 	rgbFromHsl = chroma(hsl, 'hsl').rgb();
-	// 	rgba[0] = rgbFromHsl[0];
-	// 	rgba[1] = rgbFromHsl[1];
-	// 	rgba[2] = rgbFromHsl[2];
-	// 	rgba[3] = 255;
-	// 	return rgba;
-	// }
-
 	function hslColorsDepthToArray(coord){
 		var deg = 360 / colorScheme.RGBColorNumbers;
 		var hsl;
@@ -197,98 +179,45 @@ colors.createColorArrays = function(depth, colorSchemeIndex, hue, saturation){
 
 		return hsl;
 	}
-	// function greyDepthToArray(coord){ //between 0-255
-	// 	return [colorScheme.RGBColorNumbers - coord, colorScheme.RGBColorNumbers -
-	// 			coord, colorScheme.RGBColorNumbers - coord, 255];
-	// }
-
-	// function redToBlackDepthToArray(coord){ //between 0-255
-	// 	return [colorScheme.RGBColorNumbers - coord, 0, 0, 255];
-	// }
-
-	// function greenToBlackDepthToArray(coord){ //between 0-255
-	// 	return [0, colorScheme.RGBColorNumbers - coord, 0, 255];
-	// }
-	// function whiteToGreenDepthToArray(coord){ //between 0-255
-	// 	return [colorScheme.RGBColorNumbers -
-	// 		coord, colorScheme.RGBColorNumbers, colorScheme.RGBColorNumbers - coord, 255];
-	// }
-	// function millionDepthToArray(coord){ // between 0-Math.pow(255, 3)
-	// 	var red, green, blue;
-
-	// 	red = coord & 255;
-	// 	green = (coord & parseInt("00FF00", 16)) >>> 8;
-	// 	blue = (coord & parseInt("FF0000", 16)) >>> 16;
-	// 	return [red, green, blue, 255];
-	// }
-
-	// function rainbowDepthToArray(coord){ // between 0-Math.pow(255, 3)
-	// 	var red, green, blue;
-
-	// 	red = coord & 255;
-	// 	green = (coord & parseInt("0FF00", 16)) >>> 8; //8 -> two hexa digits
-	// 	blue = (coord & parseInt("FF000", 16)) >>> 12;
-	// 	return [red, green, blue, 255];
-	// }
-	// function goldenAgeDepthToArray(coord){
-	// 	var red, green, blue;
-
-	// 	red = coord & parseInt("0FF", 16);
-	// 	green = coord & parseInt("0FF", 16);
-	// 	blue = (coord & parseInt("FF0", 16)) >>> 4;
-	// 	return [red, green, blue, 255];
-	// }
-
-	// function hellfireDepthToArray(coord){
-	// 	var red, green, blue;
-
-	// 	red = (coord & parseInt("FF0", 16)) >>> 4;
-	// 	green = coord & parseInt("0FF", 16);
-	// 	blue = coord & parseInt("0FF", 16);
-	// 	return [red, green, blue, 255];
-	// }
-
-	// function greenThunderDepthToArray(coord){
-	// 	var red, green, blue;
-
-	// 	red = (coord & parseInt("FF0", 16)) >>> 4;
-	// 	green = coord & parseInt("0FF", 16);
-	// 	blue = (coord & parseInt("FF0", 16)) >>> 4;
-	// 	return [red, green, blue, 255];
-	// }
-
-	// function bloodyDuskDepthToArray(coord){
-	// 	var red, green, blue;
-
-	// 	red = coord & parseInt("0FF", 16);
-	// 	green = (coord & parseInt("FF0", 16)) >>> 4;
-	// 	blue = (coord & parseInt("FF0", 16)) >>> 4;
-	// 	return [red, green, blue, 255];
-	// }
-	// function bluesDepthToArray(coord){
-	// 	var red, green, blue;
-
-	// 	red = (coord & parseInt("FF0", 16)) >>> 4;
-	// 	green = (coord & parseInt("FF0", 16)) >>> 4;
-	// 	blue = coord & parseInt("0FF", 16);
-	// 	return [red, green, blue, 255];
-	// }
-	// function pinkFireDepthToArray(coord){
-	// 	var red, green, blue;
-	// 	var deg = Math.PI/360;
-
-	// 	red = (255 >>> 1) + Math.cos(deg * coord) * (255 >>> 1);
-	// 	blue = (255 >>> 1) + Math.sin(deg * coord) * (255 >>> 1);
-	// 	green = Math.floor(255 / colorScheme.RGBColorNumbers * coord);
-	// 	return [red, green, blue, 255];
-	// }
-	// function greenIceDepthToArray(coord){
-	// 	var red, green, blue;
-	// 	var deg = Math.PI/360;
-
-	// 	blue = (255 >>> 1) + Math.cos(deg * coord) * (255 >>> 1);
-	// 	green = (255 >>> 1) + Math.sin(deg * coord) * (255 >>> 1);
-	// 	red = Math.floor(255 / colorScheme.RGBColorNumbers * coord);
-	// 	return [red, green, blue, 255];
-	// }
 }
+
+colors.demoScheme = function() {
+    // this function shows the actual color scheme
+
+    if (mandel.calculationReady) {
+      mandel.colorSchemeDemoModeOn = true;
+        // it is true while mandelbrot is not in progress
+      mandel.demoSchemeIsRunning = true;
+        // it is true while demoScheme() is in progress
+      mandel.depthArray = [];
+      var actualDepthInput = mandelUI.getDepthInput();
+      if (mandel.maxDepth !== actualDepthInput) {
+        // if the depth input has been set
+        mandel.maxDepth = actualDepthInput;
+      }
+      mandel.setColorArrays();
+      canvas.setCanvasSize();
+      mandel.setMouseCoordinatesToCanvas();
+      mandel.setStep();
+      canvas.setImgData();
+
+      var sectionNumber = mandel.colorArrays.arrays.length;
+      var ratio = canvas.canvasSize / mandel.colorArrays.scheme.RGBColorNumbers;
+      var sectionLength = (mandel.colorArrays.scheme.RGBColorNumbers / sectionNumber);
+      var colorArraysIndex;
+
+      for (var lineY = 0; lineY < canvas.canvasSize; lineY++) {
+        for (var lineX = 0; lineX < canvas.canvasSize; lineX++){
+          colorArraysIndex = Math.floor(lineX / ratio / sectionLength);
+          canvas.imgData.data[lineX * 4] = mandel.colorArrays.arrays[colorArraysIndex][0];
+          canvas.imgData.data[lineX * 4 + 1] = mandel.colorArrays.arrays[colorArraysIndex][1];
+          canvas.imgData.data[lineX * 4 + 2] = mandel.colorArrays.arrays[colorArraysIndex][2];
+          canvas.imgData.data[lineX * 4 + 3] = 255;
+
+          mandel.depthArray.push(colorArraysIndex);
+        }
+        canvas.ctx.putImageData(canvas.imgData, 0, lineY);
+      }
+      mandel.demoSchemeIsRunning = false;
+    }
+  }

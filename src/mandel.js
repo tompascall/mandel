@@ -321,7 +321,7 @@
         else if (!mandel.demoSchemeIsRunning) {
           // if not just right in the middle of actualizing color schemes
           // in demoScheme mode
-          mandel.demoScheme();
+          colors.demoScheme();
         }
       }
     });
@@ -443,28 +443,29 @@
 
   mandel.updateUIChanges = function(){
     mandel.setMaxDepth();
-        // if Depth input is changed, it must be actualized
+      // if Depth input is changed, it must be actualized
 
-      var actualCanvasSize = mandelUI.getInputCanvasSize();
-      if (actualCanvasSize !== canvas.canvasSize){ // Canvas size has been changed
-        canvas.setCanvasSize();
-        mandel.setMouseCoordinatesToCanvas();
-        // drawing is based on mouse coordinates
-        // in order to enlargement;
-        mandel.setStep();
-        canvas.setImgData();
-      }
+    var actualCanvasSize = mandelUI.getInputCanvasSize();
+    if (actualCanvasSize !== canvas.canvasSize){ // Canvas size has been changed
+      canvas.setCanvasSize();
+      mandel.setMouseCoordinatesToCanvas();
+      // drawing is based on mouse coordinates
+      // in order to enlargement;
+      mandel.setStep();
+      canvas.setImgData();
+    }
 
-      mandel.setColorScheme();
-      mandel.setColorArrays();
+    mandel.setColorScheme();
+    mandel.setColorArrays();
 
-      // Create mandel.colorArrays based on the scheme and mandel.maxDepth
-      // It's length is mandel.maxDepth
-      // The createColorArrays function is located in colorarrays.js
-      // it returns an object: {arrays, sheme};
-      // the arrays is an array with RGBA codes, e.g. [255, 255, 255, 255],
-      // the scheme is an object: {schemeName, RGBColorNumbers, calculatorFunction}
+    // Create mandel.colorArrays based on the scheme and mandel.maxDepth
+    // It's length is mandel.maxDepth
+    // The createColorArrays function is located in colorarrays.js
+    // it returns an object: {arrays, sheme};
+    // the arrays is an array with RGBA codes, e.g. [255, 255, 255, 255],
+    // the scheme is an object: {schemeName, RGBColorNumbers, calculatorFunction}
   }
+
   mandel.setComplexScopeToChanges = function(){
     var complexScope = {};
 
@@ -482,6 +483,8 @@
     };
 
     if (mandel.bigNumberMode) {
+      // it is not in a simple else, because switchToBignumberModeIfNeed()
+      // may switch bignumber mode on
       complexScope.aLeftUpper = math.add(mandel.aStartInActualRange, math.multiply(mandel.mouseDownX, mandel.step));
       complexScope.bLeftUpper = math.subtract(mandel.bStartInActualRange, math.multiply(mandel.mouseDownY, mandel.step));
       complexScope.aRightBottom = math.add(mandel.aStartInActualRange, math.multiply(mandel.mouseUpX, mandel.step));
@@ -516,66 +519,24 @@
         // if you create the new area from right to left
       }
     }
+    
     function switchToBignumberModeIfNeed(){
-        bigManager.handleBignumberWarning();
+      bigManager.handleBignumberWarning();
 
-        if (mandel.range < 5e-13) {
-          mandel.bigNumberMode = true;
-          mandel.aStartInActualRange = math.eval(mandel.aStartInActualRange.toString());
-          mandel.bStartInActualRange = math.eval(mandel.bStartInActualRange.toString());
-          mandel.step = math.eval(mandel.step.toString());
-          mandel.mouseDownY = math.eval(mandel.mouseDownY.toString());
-          mandel.mouseDownX = math.eval(mandel.mouseDownX.toString());
-          mandel.mouseUpY = math.eval(mandel.mouseUpY.toString());
-          mandel.mouseUpX = math.eval(mandel.mouseUpX.toString());
-            // this turns the numbers into math.js bignumbers
-            // after this you cannot calculate with these properties
-            // as before, but you have to apply the math.js functions
-            // e.g. add(x, y)
-
-        }
+      if (mandel.range < 5e-13) {
+        mandel.bigNumberMode = true;
+        mandel.aStartInActualRange = math.eval(mandel.aStartInActualRange.toString());
+        mandel.bStartInActualRange = math.eval(mandel.bStartInActualRange.toString());
+        mandel.step = math.eval(mandel.step.toString());
+        mandel.mouseDownY = math.eval(mandel.mouseDownY.toString());
+        mandel.mouseDownX = math.eval(mandel.mouseDownX.toString());
+        mandel.mouseUpY = math.eval(mandel.mouseUpY.toString());
+        mandel.mouseUpX = math.eval(mandel.mouseUpX.toString());
+          // this turns the numbers into math.js bignumbers
+          // after this you cannot calculate with these properties
+          // as before, but you have to apply the math.js functions
+          // e.g. add(x, y)
       }
-  }
-
-
-  mandel.demoScheme = function() {
-    // this function shows the actual color scheme
-
-    if (mandel.calculationReady) {
-      mandel.colorSchemeDemoModeOn = true;
-        // it is true while mandelbrot is not in progress
-      mandel.demoSchemeIsRunning = true;
-        // it is true while demoScheme() is in progress
-      mandel.depthArray = [];
-      var actualDepthInput = mandelUI.getDepthInput();
-      if (mandel.maxDepth !== actualDepthInput) {
-        // if the depth input has been set
-        mandel.maxDepth = actualDepthInput;
-      }
-      mandel.setColorArrays();
-      canvas.setCanvasSize();
-      mandel.setMouseCoordinatesToCanvas();
-      mandel.setStep();
-      canvas.setImgData();
-
-      var sectionNumber = mandel.colorArrays.arrays.length;
-      var ratio = canvas.canvasSize / mandel.colorArrays.scheme.RGBColorNumbers;
-      var sectionLength = (mandel.colorArrays.scheme.RGBColorNumbers / sectionNumber);
-      var colorArraysIndex;
-
-      for (var lineY = 0; lineY < canvas.canvasSize; lineY++) {
-        for (var lineX = 0; lineX < canvas.canvasSize; lineX++){
-          colorArraysIndex = Math.floor(lineX / ratio / sectionLength);
-          canvas.imgData.data[lineX * 4] = mandel.colorArrays.arrays[colorArraysIndex][0];
-          canvas.imgData.data[lineX * 4 + 1] = mandel.colorArrays.arrays[colorArraysIndex][1];
-          canvas.imgData.data[lineX * 4 + 2] = mandel.colorArrays.arrays[colorArraysIndex][2];
-          canvas.imgData.data[lineX * 4 + 3] = 255;
-
-          mandel.depthArray.push(colorArraysIndex);
-        }
-        canvas.ctx.putImageData(canvas.imgData, 0, lineY);
-      }
-      mandel.demoSchemeIsRunning = false;
     }
   }
 
