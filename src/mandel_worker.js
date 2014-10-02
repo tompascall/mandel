@@ -1,6 +1,8 @@
 // mandel_worker.js
 // worker for mandel.js
 // for local testing launch chrome width --allow-file-access-from-files
+// sources: http://www.html5rocks.com/en/tutorials/workers/basics/
+// https://developer.mozilla.org/en-US/docs/Web/Guide/Performance/Using_web_workers
 
 "use strict";
 
@@ -11,10 +13,10 @@ math.config({
   	precision: 64         // Number of significant digits for BigNumbers
 	});
 		// configuring math.js
-		
+
 
 self.addEventListener('message', function(e) {
-  
+
 	var aComplexIterated;
 	var bComplexIterated;
 	var step;
@@ -33,7 +35,7 @@ self.addEventListener('message', function(e) {
 		}
 
   var sendMessage = mandelWorker(aComplexIterated, bComplexIterated, message.canvasSize, message.bigNumberMode, step, message.maxDepth);
-  
+
   self.postMessage(sendMessage);
 }, false);
 
@@ -52,14 +54,14 @@ function mandelWorker(aComplexIterated, bComplexIterated, canvasSize, bigNumberM
 
 	for (var lineX = 0; lineX < canvasSize; lineX++) {
 			actualDepth = 0;
-			
+
 			if (!bigNumberMode) {
 				mandelCalcNotBigNumber(cStartNumber); // modifies mandel.actualDepth
 			}
 			else {
 				mandelCalcBigNumber(cStartNumber);
 			}
-			
+
 				actualDepthArray.push(actualDepth);
 
 			if (!bigNumberMode) {
@@ -67,7 +69,7 @@ function mandelWorker(aComplexIterated, bComplexIterated, canvasSize, bigNumberM
 			}
 			else {
 				cStartNumber.a = math.add(cStartNumber.a, step);
-			}				
+			}
 	}
 	return actualDepthArray;
 
@@ -78,7 +80,7 @@ function mandelWorker(aComplexIterated, bComplexIterated, canvasSize, bigNumberM
 					// don't need to calculate the square root
 				var z;
 				while ((cLength <= 4) && (actualDepth !== maxDepth)) {
-						// if the square of the lenght larger than 4, 
+						// if the square of the lenght larger than 4,
 						// it will escape to infinity
 					z = {};
 					z.a = cNumber.a * cNumber.a - cNumber.b * cNumber.b;
@@ -87,7 +89,7 @@ function mandelWorker(aComplexIterated, bComplexIterated, canvasSize, bigNumberM
 					z.b += cStartNumber.b;
 					cNumber = z;
 					cLength = cNumber.a * cNumber.a + cNumber.b * cNumber.b;
-					actualDepth++;	
+					actualDepth++;
 				}
 	}
 
@@ -98,7 +100,7 @@ function mandelWorker(aComplexIterated, bComplexIterated, canvasSize, bigNumberM
 			// don't need to calculate the square root
 		var z;
 		while (math.smallerEq(cLength, 4) && (actualDepth !== maxDepth)) {
-				// if the square of the lenght larger than 4, 
+				// if the square of the lenght larger than 4,
 				// it will escape to infinity
 			z = {};
 			z.a = math.subtract(math.square(cNumber.a), math.square(cNumber.b));
@@ -108,7 +110,7 @@ function mandelWorker(aComplexIterated, bComplexIterated, canvasSize, bigNumberM
 			z.b = math.add(z.b, cStartNumber.b);
 			cNumber = z;
 			cLength = math.add(math.square(cNumber.a), math.square(cNumber.b));
-			actualDepth++;	
+			actualDepth++;
 		}
-	}			
+	}
 }
