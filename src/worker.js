@@ -3,18 +3,18 @@
 
 "use strict";
 
-var worker = {};
+var calcWorker = {};
 
-worker.setupWorker = function(workerObject, workerPath, messageProcessor){
-  workerObject.worker = new Worker(workerPath);
-  workerObject.worker.addEventListener('message', messageProcessor, false);
+calcWorker.setupWorker = function(workerPath, messageProcessor){
+  calcWorker.worker = new Worker(workerPath);
+  calcWorker.worker.addEventListener('message', messageProcessor, false);
 }
 
-worker.terminateWorker = function(workerObject, messageProcessor){
-  workerObject.worker.removeEventListener('message', messageProcessor, false);
-  workerObject.worker.terminate();
+calcWorker.terminateWorker = function(messageProcessor){
+  calcWorker.worker.removeEventListener('message', messageProcessor, false);
+  calcWorker.worker.terminate();
 }
 
-worker.sendMessage = function(workerObject, jsonMessage){
-   workerObject.worker.postMessage(jsonMessage);
+calcWorker.sendMessage = function(jsonMessage){
+   calcWorker.worker.postMessage(jsonMessage);
 }

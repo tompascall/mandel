@@ -18,7 +18,7 @@ backup.saveState = function(state){
 
     if (backup.states.length > 0){
       if (modifiedUI() || mandel.enlargement){
-        state.bigNumberMode = mandel.bigNumberMode;
+        state.bigNumberMode = bigManager.bigNumberMode;
         state.canvasSize = canvas.canvasSize;
         state.maxDepth = mandel.maxDepth;
         state.aStartInActualRange = mandel.aStartInActualRange;
@@ -48,7 +48,7 @@ backup.saveState = function(state){
   }
 
   backup.restoreState = function(state){
-    mandel.bigNumberMode = state.bigNumberMode;
+    bigManager.bigNumberMode = state.bigNumberMode;
     canvas.canvasSize = state.canvasSize;
     mandel.maxDepth = state.maxDepth;
     mandel.aStartInActualRange = state.aStartInActualRange;

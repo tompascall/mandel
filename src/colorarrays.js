@@ -10,8 +10,31 @@
 
 "use strict";
 
-var colors = {};
+var colors = {
+	colorScheme : 0,
+    // the index of the colorscheme
+  colorArrays : null,
+    // the colorscheme based on the colorscheme index
+  colorSchemeDemoModeOn : false,
+    // it will be true, while we are in colorScheme Demo
+  demoSchemeIsRunning : false,
+    // it is true while demoScheme() is running
+};
 
+colors.setColorScheme = function(){
+ 	colors.colorScheme = mandelUI.getRadioValue("schemes");
+}
+
+colors.setColorArrays = function(){
+  colors.colorArrays = colors.createColorArrays(mandel.maxDepth, colors.colorScheme, mandel.hue, mandel.saturation);
+    // the createColorArrays function is in colorarrays.js     
+    // colorArrays based on the scheme and mandel.maxDepth
+    // It's length is mandel.maxDepth
+    // The createColorArrays function is located in colorarrays.js
+    // it returns an object: {arrays, sheme};
+    // the arrays is an array with RGBA codes, e.g. [255, 255, 255, 255],
+    // the scheme is an object: {schemeName, RGBColorNumbers, calculatorFunction}
+}
 
 colors.createColorArrays = function(depth, colorSchemeIndex, hue, saturation){
 
@@ -185,9 +208,9 @@ colors.demoScheme = function() {
     // this function shows the actual color scheme
 
     if (mandel.calculationReady) {
-      mandel.colorSchemeDemoModeOn = true;
+      colors.colorSchemeDemoModeOn = true;
         // it is true while mandelbrot is not in progress
-      mandel.demoSchemeIsRunning = true;
+      colors.demoSchemeIsRunning = true;
         // it is true while demoScheme() is in progress
       mandel.depthArray = [];
       var actualDepthInput = mandelUI.getDepthInput();
@@ -195,29 +218,29 @@ colors.demoScheme = function() {
         // if the depth input has been set
         mandel.maxDepth = actualDepthInput;
       }
-      mandel.setColorArrays();
+      colors.setColorArrays();
       canvas.setCanvasSize();
       mandel.setMouseCoordinatesToCanvas();
       mandel.setStep();
       canvas.setImgData();
 
-      var sectionNumber = mandel.colorArrays.arrays.length;
-      var ratio = canvas.canvasSize / mandel.colorArrays.scheme.RGBColorNumbers;
-      var sectionLength = (mandel.colorArrays.scheme.RGBColorNumbers / sectionNumber);
+      var sectionNumber = colors.colorArrays.arrays.length;
+      var ratio = canvas.canvasSize / colors.colorArrays.scheme.RGBColorNumbers;
+      var sectionLength = (colors.colorArrays.scheme.RGBColorNumbers / sectionNumber);
       var colorArraysIndex;
 
       for (var lineY = 0; lineY < canvas.canvasSize; lineY++) {
         for (var lineX = 0; lineX < canvas.canvasSize; lineX++){
           colorArraysIndex = Math.floor(lineX / ratio / sectionLength);
-          canvas.imgData.data[lineX * 4] = mandel.colorArrays.arrays[colorArraysIndex][0];
-          canvas.imgData.data[lineX * 4 + 1] = mandel.colorArrays.arrays[colorArraysIndex][1];
-          canvas.imgData.data[lineX * 4 + 2] = mandel.colorArrays.arrays[colorArraysIndex][2];
+          canvas.imgData.data[lineX * 4] = colors.colorArrays.arrays[colorArraysIndex][0];
+          canvas.imgData.data[lineX * 4 + 1] = colors.colorArrays.arrays[colorArraysIndex][1];
+          canvas.imgData.data[lineX * 4 + 2] = colors.colorArrays.arrays[colorArraysIndex][2];
           canvas.imgData.data[lineX * 4 + 3] = 255;
 
           mandel.depthArray.push(colorArraysIndex);
         }
         canvas.ctx.putImageData(canvas.imgData, 0, lineY);
       }
-      mandel.demoSchemeIsRunning = false;
+      colors.demoSchemeIsRunning = false;
     }
   }
