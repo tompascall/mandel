@@ -53,7 +53,7 @@ colors.createColorArrays = function(depth, colorSchemeIndex, hue, saturation){
 		["smallShift", parseInt("FFF", 16), smallShiftDepthToArray],
 		["spiral", parseInt("FFFF", 16), spiralDepthToArray],
 		["smallSpiral", parseInt("4E20", 16), smallSpiralDepthToArray], // 20000
-		["hslColors", 20000, hslColorsDepthToArray],
+		["hslColors", 360, hslColorsDepthToArray],
 	]
 
 	var actualColorSchemeArray = colorSchemesArrays[colorSchemeIndex];
@@ -107,7 +107,7 @@ colors.createColorArrays = function(depth, colorSchemeIndex, hue, saturation){
 
   		rgbFromHsl = chroma(hsl, 'hsl').rgb();
   		color[0] = rgbFromHsl[0];
-  		color[1] = rgbFromHsl[1];
+  		color[1] = rgbFromHsl[1]; 
   		color[2] = rgbFromHsl[2];
   		color[3] = 255;
   		return color;
