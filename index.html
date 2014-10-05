@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8" name="viewport" content="width=400">
-	<meta name="description" content="a tiny application to study the Mandelbrot set">
-	<meta name="keywords" content="Mandelbrot,Mandelbrot set, Mandelbrot set explorer,fractal,graphical representation,javascript app">
-	<meta name="author" content="tompascall">
-	<meta property="og:url" content="http://mandel.tompascall.com" /> 
-	<meta property="og:title" content="Mandelbrot set" />
-	<meta property="og:description" content="This is a basic application for studying the Mandelbrot set" /> 
-	<meta property="og:image" content="http://mandel.tompascall.com/sample.png" />
-	<meta property="og:type" content="website" />
-	<meta property="fb:app_id" content="267930040075239"/>
-	<title>mandelbrot</title>
-	<link rel="stylesheet" type="text/css" href="css/normalize.css">
-	<link rel="stylesheet" type="text/css" href="css/main.css">
-	<link rel="stylesheet" type="text/css" href="libraries/jquery-ui-1.11.1.custom/jquery-ui.min.css">
-	<link rel="stylesheet" type="text/css" href="css/index.css">
+  <meta charset="UTF-8" name="viewport" content="width=400">
+  <meta name="description" content="a tiny application to study the Mandelbrot set">
+  <meta name="keywords" content="Mandelbrot,Mandelbrot set, Mandelbrot set explorer,fractal,graphical representation,javascript app">
+  <meta name="author" content="tompascall">
+  <meta property="og:url" content="http://mandel.tompascall.com" />
+  <meta property="og:title" content="Mandelbrot set" />
+  <meta property="og:description" content="This is a basic application for studying the Mandelbrot set" />
+  <meta property="og:image" content="http://mandel.tompascall.com/sample.png" />
+  <meta property="og:type" content="website" />
+  <meta property="fb:app_id" content="267930040075239"/>
+  <title>mandelbrot</title>
+  <link rel="stylesheet" type="text/css" href="css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="css/main.css">
+  <link rel="stylesheet" type="text/css" href="libraries/jquery-ui-1.11.1.custom/jquery-ui.min.css">
+  <link rel="stylesheet" type="text/css" href="css/index.css">
 
 </head>
 
 <body>
-	
-	<div id="fb-root"></div>
+
+  <div id="fb-root"></div>
 <script>(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) return;
@@ -29,93 +29,99 @@
   js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=267930040075239&version=v2.0";
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));</script>
-	<!-- facebook recommend button -->
+  <!-- facebook recommend button -->
 
-	<div id="head">
-		<h3>Mandelbrot Set Explorer</h3>
-	</div>
-		<canvas id="mandelCanvas">
-			This is a tiny application to study the Mandelbrot set. The app gives a graphical representation of the set. You have a lot of color schemes to try. It is possible to enlarge an area of the set by marking out the area with your mouse. You can set the size of the canvas and the value of the maximum iteration. n my experience it is the best choice to run the app on Firefox. <strong>Sorry, but your browser does not support the HTML5 canvas tag.  Please try the app on an other browser.</strong>
-		</canvas>
-		<div id="panel">
-			<div id="upper_panel">		
-				<strong>Canvas size: </strong><input id="inputCanvasSize" title="Adjust the size of the canvas by pixels. The canvas is a square. After modifying the canvas size and/or the iteration number, you have to push the Calculate button to set the new size." type="number" min="2" name="inputCanvasSize" tabindex="1">
-				
-				<p><strong>Maximum iteration: </strong><input id="depthInput" title="The iteration means that a mathematical operation is repeated on a number again and again, as much times as the iteration number. The more iteration the more computing and the more detailed picture (see about page for more details). After modifying the iteration number and/or the canvas size, you have to push the Calculate button to enforce the changes." type="number" min="1" name="depth" value="20" tabindex="2"></p>
-				
-				<button type="button" id="back" title="Backs to the former complex scope" onclick="mandel.back()" tabindex="4">Back</button>
-				
-				<button type="button" id="calculate" title="The calculation is based on the values of the canvas size and iteration number. The calculation is automated, when you enlarge an area of the set by your mouse." onclick="mandel.drawer()" tabindex="3">Calculate</button>
-				
-				<p id="tip_mouse" class="tip"><span><strong>Tip:</strong></span> use your mouse to enlarge an area.</p>
-				
-				<p id="tip_iteration" class="tip"><span><strong>Tip: </strong></span>The more iteration you use, the more detailed picture you get. After modifying the iteration number and/or the canvas size, you have to push the Calculate button to enforce the changes.</p>
-				
-				<p id="tip_bignumber" class="tip"><span>Warning:</span> you are about to approach the limit, when the set cannot be represented by the means of standard javascript numbers. In this case the app will use the <a href="http://mathjs.org/">math.js</a> bignumbers, but this results in <strong>much lower speed</strong>.</p>
-			</div>
-			<div id="scheme_panel">
-				<p class="title"><strong>Color schemes</strong></p>
-				
-				<div id="schemes">
-					<input class="canvas_side" type="radio" id="scheme0" name="scheme" value="0" tabindex="5">RGB Lines<br>
-					<input class="canvas_side" type="radio" id="scheme1" name="scheme" value="1"  tabindex="5">Color to black<br>
-					<input class="canvas_side" type="radio" id="scheme2" name="scheme" value="2" tabindex="5">White to Color<br>
-					<input class="canvas_side" type="radio" id="scheme3" name="scheme" value="3" tabindex="5">Shift<br>
-					<input class="canvas_side" type="radio" id="scheme4" name="scheme" value="4" tabindex="5" checked="checked">Small Shift<br>
-					<input class="canvas_side" type="radio" id="scheme5" name="scheme" value="5" tabindex="5">Spiral<br/>
-					<input class="canvas_side" type="radio" id="scheme6" name="scheme" value="6" tabindex="5">Small Spiral<br/>
-					<input class="canvas_side" type="radio" id="scheme7" name="scheme" value="7" tabindex="5">HSL Colors<br/>
-				</div>
-				
-				<p class="title"><strong>Hue</strong></p>
-				
-				<div id="hue"></div>
-				
-				<p class="title"><strong>Saturation</strong></p>
-				
-				<div id="saturation"></div>
-				
-				<br>
-				
-				<button type="button" id="demo" title="The Demo scheme button shows you the logic of the given color scheme: what color belongs to the given iteration (from 1 to max. iteration). After modifying the iterration number or the canvas size, you have to push the button to enforce the changes. For more details see about page." onclick="mandel.demoScheme()" tabindex="8">Demo</button>
-			</div>
+  <div id="head">
+    <h3>Mandelbrot Set Explorer</h3>
+  </div>
+    <canvas id="mandelCanvas">
+      This is a tiny application to study the Mandelbrot set. The app gives a graphical representation of the set. You have a lot of color schemes to try. It is possible to enlarge an area of the set by marking out the area with your mouse. You can set the size of the canvas and the value of the maximum iteration. n my experience it is the best choice to run the app on Firefox. <strong>Sorry, but your browser does not support the HTML5 canvas tag.  Please try the app on an other browser.</strong>
+    </canvas>
+    <div id="panel">
+      <div id="upper_panel">
+        <strong>Canvas size: </strong><input id="inputCanvasSize" title="Adjust the size of the canvas by pixels. The canvas is a square. After modifying the canvas size and/or the iteration number, you have to push the Calculate button to set the new size." type="number" min="2" name="inputCanvasSize" tabindex="1">
 
-			<div id="bottom_panel">
-				<button type="button" id="restart" title="Restarts the app, sets back the canvas size and the iteration number to the default values." onclick="mandel.restart()" tabindex="9">Restart</button>
+        <p><strong>Maximum iteration: </strong><input id="depthInput" title="The iteration means that a mathematical operation is repeated on a number again and again, as much times as the iteration number. The more iteration the more computing and the more detailed picture (see about page for more details). After modifying the iteration number and/or the canvas size, you have to push the Calculate button to enforce the changes." type="number" min="1" name="depth" value="20" tabindex="2"></p>
 
-				<button id="about" onclick="window.location='about.html'" tabindex="10">About</button>
-			</div>
+        <button type="button" id="back" title="Backs to the former complex scope" onclick="backup.back()" tabindex="4">Back</button>
 
-			<div id="social_buttons">
-				<div class="fb-like" data-href="http://mandel.tompascall.com" data-layout="button" data-action="recommend" data-show-faces="false" data-share="true"></div>
-				
-				<div class="g-plusone" data-size="small" data-annotation="none"></div>
-				
-				<a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">Tweet</a>				
-			</div>
-		</div>
+        <button type="button" id="calculate" title="The calculation is based on the values of the canvas size and iteration number. The calculation is automated, when you enlarge an area of the set by your mouse." onclick="mandel.drawer()" tabindex="3">Calculate</button>
+
+        <p id="tip_mouse" class="tip"><span><strong>Tip:</strong></span> use your mouse to enlarge an area.</p>
+
+        <p id="tip_iteration" class="tip"><span><strong>Tip: </strong></span>The more iteration you use, the more detailed picture you get. After modifying the iteration number and/or the canvas size, you have to push the Calculate button to enforce the changes.</p>
+
+        <p id="tip_bignumber" class="tip"><span>Warning:</span> you are about to approach the limit, when the set cannot be represented by the means of standard javascript numbers. In this case the app will use the <a href="http://mathjs.org/">math.js</a> bignumbers, but this results in <strong>much lower speed</strong>.</p>
+      </div>
+      <div id="scheme_panel">
+        <p class="title"><strong>Color schemes</strong></p>
+
+        <div id="schemes">
+          <input class="canvas_side" type="radio" id="scheme0" name="scheme" value="0" tabindex="5">RGB Lines<br>
+          <input class="canvas_side" type="radio" id="scheme1" name="scheme" value="1"  tabindex="5">Color to black<br>
+          <input class="canvas_side" type="radio" id="scheme2" name="scheme" value="2" tabindex="5">White to Color<br>
+          <input class="canvas_side" type="radio" id="scheme3" name="scheme" value="3" tabindex="5">Shift<br>
+          <input class="canvas_side" type="radio" id="scheme4" name="scheme" value="4" tabindex="5" checked="checked">Small Shift<br>
+          <input class="canvas_side" type="radio" id="scheme5" name="scheme" value="5" tabindex="5">Spiral<br/>
+          <input class="canvas_side" type="radio" id="scheme6" name="scheme" value="6" tabindex="5">Small Spiral<br/>
+          <input class="canvas_side" type="radio" id="scheme7" name="scheme" value="7" tabindex="5">HSL Colors<br/>
+        </div>
+
+        <p class="title"><strong>Hue</strong></p>
+
+        <div id="hue"></div>
+
+        <p class="title"><strong>Saturation</strong></p>
+
+        <div id="saturation"></div>
+
+        <br>
+
+        <button type="button" id="demo" title="The Demo scheme button shows you the logic of the given color scheme: what color belongs to the given iteration (from 1 to max. iteration). After modifying the iterration number or the canvas size, you have to push the button to enforce the changes. For more details see about page." onclick="colors.demoScheme()" tabindex="8">Demo</button>
+      </div>
+
+      <div id="bottom_panel">
+        <button type="button" id="restart" title="Restarts the app, sets back the canvas size and the iteration number to the default values." onclick="mandel.restart()" tabindex="9">Restart</button>
+
+        <button id="about" onclick="window.location='about.html'" tabindex="10">About</button>
+      </div>
+
+      <div id="social_buttons">
+        <div class="fb-like" data-href="http://mandel.tompascall.com" data-layout="button" data-action="recommend" data-show-faces="false" data-share="true"></div>
+
+        <div class="g-plusone" data-size="small" data-annotation="none"></div>
+
+        <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">Tweet</a>
+      </div>
+    </div>
 
 
-	<script src="libraries/jquery/jquery-2.1.1.min.js"></script>
-	<script src="libraries/jquery-ui-1.11.1.custom/jquery-ui.min.js"></script>
-	<script src="libraries/mathjs/dist/math.min.js"></script>
-	<script src="libraries/chroma.js/chroma.min.js"></script>
-	<script src="src/colorarrays.js"></script>
-	<script src="src/mandel.js"></script>
-	
-	<script>
-	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  <script src="libraries/jquery/jquery-2.1.1.min.js"></script>
+  <script src="libraries/jquery-ui-1.11.1.custom/jquery-ui.min.js"></script>
+  <script src="libraries/mathjs/dist/math.min.js"></script>
+  <script src="libraries/chroma.js/chroma.min.js"></script>
+  <script src="src/complex-plane.js"></script>
+  <script src="src/bignumber-manager.js"></script>
+  <script src="src/canvas.js"></script>
+  <script src="src/manage-UI.js"></script>
+  <script src="src/colorarrays.js"></script>
+  <script src="src/worker-manager.js"></script>
+  <script src="src/backup.js"></script>
+  <script src="src/index.js"></script>
 
-	  ga('create', 'UA-49278705-2', 'auto');
-	  ga('send', 'pageview');
-	</script>
-		<!-- google analytics -->
-	<script src="https://apis.google.com/js/platform.js" async defer></script>
-		<!-- google + -->
-	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-			<!-- twitter -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-49278705-2', 'auto');
+    ga('send', 'pageview');
+  </script>
+    <!-- google analytics -->
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <!-- google + -->
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      <!-- twitter -->
 </body>
 </html>
