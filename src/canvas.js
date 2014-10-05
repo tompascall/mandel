@@ -13,7 +13,14 @@ var canvas = {
     // canvas context
   imgData : null,
     // canvas image data object, it will contain a line of the set
+  depthArray : [],
+    // an array that contains the depths of all the point in the canvas
+    // for setting the color schemes immediately, and
+    // may be later for saving the datas to files
+  leftClick : false,
+    // it will be false if in is not clicked with left mouse button
 };
+
 
 canvas.setCanvasEvents = function(){
   $("#mandelCanvas").mousedown(function(e){
@@ -21,9 +28,9 @@ canvas.setCanvasEvents = function(){
     // mouse pointer over the canvas
     // when you push down the left mouse button
     if (e.which === 1){
-      mandel.mouseDownX = e.pageX - this.offsetLeft;
-      mandel.mouseDownY = e.pageY - this.offsetTop;
-      mandel.leftClick = true;
+      mandelUI.mouseDownX = e.pageX - this.offsetLeft;
+      mandelUI.mouseDownY = e.pageY - this.offsetTop;
+      canvas.leftClick = true;
         // this is a flag, that the left button pushed
     }
   });
@@ -32,10 +39,10 @@ canvas.setCanvasEvents = function(){
     // this function gets the coordinates of
     // mouse pointer over the canvas
     // when you release the left mouse button
-    if (mandel.leftClick) {
-      mandel.mouseUpX = e.pageX - this.offsetLeft;
-      mandel.mouseUpY = e.pageY - this.offsetTop;
-      if (mandel.mouseUpX !== mandel.mouseDownX || mandel.mouseUpY !== mandel.mouseDownY){
+    if (canvas.leftClick) {
+      mandelUI.mouseUpX = e.pageX - this.offsetLeft;
+      mandelUI.mouseUpY = e.pageY - this.offsetTop;
+      if (mandelUI.mouseUpX !== mandelUI.mouseDownX || mandelUI.mouseUpY !== mandelUI.mouseDownY){
         // if you didn't click in the same point
         if (!colors.colorSchemeDemoModeOn) {
           if (mandelUI.tipMouseDisplay){
@@ -55,27 +62,27 @@ canvas.setCanvasEvents = function(){
         // this can be a possible breakpoint
         // it executes when you click down and up in the same point
       }
-      mandel.leftClick = false;
+      canvas.leftClick = false;
     }
   });
 
   canvas.c.addEventListener("touchstart", (function(e) {
       // this function is for mobile devices to handle the touch event
-    mandel.mouseDownX = e.changedTouches[0].pageX - this.offsetLeft;
-    mandel.mouseDownY = e.changedTouches[0].pageY  - this.offsetTop;
+    mandelUI.mouseDownX = e.changedTouches[0].pageX - this.offsetLeft;
+    mandelUI.mouseDownY = e.changedTouches[0].pageY  - this.offsetTop;
     e.preventDefault();
   }), false);
 
   canvas.c.addEventListener("touchend", (function(e) {
       // this function is for mobile devices to handle the touch event
-    mandel.mouseUpX = e.changedTouches[0].pageX - this.offsetLeft;
-    mandel.mouseUpY = e.changedTouches[0].pageY  - this.offsetTop;
+    mandelUI.mouseUpX = e.changedTouches[0].pageX - this.offsetLeft;
+    mandelUI.mouseUpY = e.changedTouches[0].pageY  - this.offsetTop;
     e.preventDefault();
-    if (Math.abs(mandel.mouseDownX - mandel.mouseUpX) > 40) {
+    if (Math.abs(mandelUI.mouseDownX - mandelUI.mouseUpX) > 40) {
         // if you only want to swipe, then there need no enlargement
         // we suppose that you want to swipe if the difference between
         // the down and up X coord. <= 40px
-      if (mandel.mouseUpX !== mandel.mouseDownX){
+      if (mandelUI.mouseUpX !== mandelUI.mouseDownX){
         if (mandelUI.tipMouseDisplay){
           mandelUI.setTip("tip_mouse", "none");
           mandelUI.tipMouseDisplay = false;
@@ -127,7 +134,7 @@ canvas.copyArrayToCanvas = function(array, imgData){
       imgData.data[lineX * 4 + 3] = 255;
 
       if (!mandel.calculationReady) {
-        mandel.depthArray.push(depth);
+        canvas.depthArray.push(depth);
         // saving the depth data of the point
         // for later color manipulation
       }

@@ -26,10 +26,10 @@ colors.setColorScheme = function(){
 }
 
 colors.setColorArrays = function(){
-  colors.colorArrays = colors.createColorArrays(mandel.maxDepth, colors.colorScheme, mandel.hue, mandel.saturation);
+  colors.colorArrays = colors.createColorArrays(mandelUI.maxDepth, colors.colorScheme, mandelUI.hue, mandelUI.saturation);
     // the createColorArrays function is in colorarrays.js     
-    // colorArrays based on the scheme and mandel.maxDepth
-    // It's length is mandel.maxDepth
+    // colorArrays based on the scheme and mandelUI.maxDepth
+    // It's length is mandelUI.maxDepth
     // The createColorArrays function is located in colorarrays.js
     // it returns an object: {arrays, sheme};
     // the arrays is an array with RGBA codes, e.g. [255, 255, 255, 255],
@@ -212,16 +212,16 @@ colors.demoScheme = function() {
         // it is true while mandelbrot is not in progress
       colors.demoSchemeIsRunning = true;
         // it is true while demoScheme() is in progress
-      mandel.depthArray = [];
+      canvas.depthArray = [];
       var actualDepthInput = mandelUI.getDepthInput();
-      if (mandel.maxDepth !== actualDepthInput) {
+      if (mandelUI.maxDepth !== actualDepthInput) {
         // if the depth input has been set
-        mandel.maxDepth = actualDepthInput;
+        mandelUI.maxDepth = actualDepthInput;
       }
       colors.setColorArrays();
       canvas.setCanvasSize();
-      mandel.setMouseCoordinatesToCanvas();
-      mandel.setStep();
+      mandelUI.setMouseCoordinatesToCanvas();
+      complexPlane.setStep();
       canvas.setImgData();
 
       var sectionNumber = colors.colorArrays.arrays.length;
@@ -237,7 +237,7 @@ colors.demoScheme = function() {
           canvas.imgData.data[lineX * 4 + 2] = colors.colorArrays.arrays[colorArraysIndex][2];
           canvas.imgData.data[lineX * 4 + 3] = 255;
 
-          mandel.depthArray.push(colorArraysIndex);
+          canvas.depthArray.push(colorArraysIndex);
         }
         canvas.ctx.putImageData(canvas.imgData, 0, lineY);
       }

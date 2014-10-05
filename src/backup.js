@@ -8,6 +8,23 @@ var backup = {
       // the object values to step back
 };
 
+backup.back = function(){
+  var state;
+  if (backup.states.length > 1) {
+    // if it is not the first state
+    state = backup.states.pop();
+    backup.restoreState(state);
+    bigManager.handleBignumberWarning();
+    colors.setColorArrays();
+    mandelUI.setDepthInput(mandelUI.maxDepth);
+    mandelUI.setInputCanvasSize(canvas.canvasSize);
+    canvas.setCanvasSize(canvas.canvasSize);
+    canvas.setImgData();
+    mandelUI.setMouseCoordinatesToCanvas();
+    mandel.drawer("from_back");
+  }
+}
+  
 backup.saveState = function(state){
 
     state.UI = {
@@ -20,13 +37,13 @@ backup.saveState = function(state){
       if (modifiedUI() || mandel.enlargement){
         state.bigNumberMode = bigManager.bigNumberMode;
         state.canvasSize = canvas.canvasSize;
-        state.maxDepth = mandel.maxDepth;
-        state.aStartInActualRange = mandel.aStartInActualRange;
-        state.bStartInActualRange = mandel.bStartInActualRange;
-        state.aComplexIterated = mandel.aStartInActualRange;
-        state.bComplexIterated = mandel.bStartInActualRange;
-        state.step = mandel.step;
-        state.range = mandel.range;
+        state.maxDepth = mandelUI.maxDepth;
+        state.aStartInActualRange = complexPlane.aStartInActualRange;
+        state.bStartInActualRange = complexPlane.bStartInActualRange;
+        state.aComplexIterated = complexPlane.aStartInActualRange;
+        state.bComplexIterated = complexPlane.bStartInActualRange;
+        state.step = complexPlane.step;
+        state.range = complexPlane.range;
 
         backup.states.push(state);
       }
@@ -50,13 +67,13 @@ backup.saveState = function(state){
   backup.restoreState = function(state){
     bigManager.bigNumberMode = state.bigNumberMode;
     canvas.canvasSize = state.canvasSize;
-    mandel.maxDepth = state.maxDepth;
-    mandel.aStartInActualRange = state.aStartInActualRange;
-    mandel.bStartInActualRange = state.bStartInActualRange;
-    mandel.aComplexIterated = state.aComplexIterated;
-    mandel.bComplexIterated = state.bComplexIterated;
-    mandel.step = state.step;
-    mandel.range = state.range;
+    mandelUI.maxDepth = state.maxDepth;
+    complexPlane.aStartInActualRange = state.aStartInActualRange;
+    complexPlane.bStartInActualRange = state.bStartInActualRange;
+    complexPlane.aComplexIterated = state.aComplexIterated;
+    complexPlane.bComplexIterated = state.bComplexIterated;
+    complexPlane.step = state.step;
+    complexPlane.range = state.range;
   }
 
   backup.clearBackup = function(){

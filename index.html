@@ -43,7 +43,7 @@
 
         <p><strong>Maximum iteration: </strong><input id="depthInput" title="The iteration means that a mathematical operation is repeated on a number again and again, as much times as the iteration number. The more iteration the more computing and the more detailed picture (see about page for more details). After modifying the iteration number and/or the canvas size, you have to push the Calculate button to enforce the changes." type="number" min="1" name="depth" value="20" tabindex="2"></p>
 
-        <button type="button" id="back" title="Backs to the former complex scope" onclick="mandel.back()" tabindex="4">Back</button>
+        <button type="button" id="back" title="Backs to the former complex scope" onclick="backup.back()" tabindex="4">Back</button>
 
         <button type="button" id="calculate" title="The calculation is based on the values of the canvas size and iteration number. The calculation is automated, when you enlarge an area of the set by your mouse." onclick="mandel.drawer()" tabindex="3">Calculate</button>
 
@@ -100,11 +100,12 @@
   <script src="libraries/jquery-ui-1.11.1.custom/jquery-ui.min.js"></script>
   <script src="libraries/mathjs/dist/math.min.js"></script>
   <script src="libraries/chroma.js/chroma.min.js"></script>
+  <script src="src/complex-plane.js"></script>
   <script src="src/bignumber-manager.js"></script>
   <script src="src/canvas.js"></script>
   <script src="src/manage-UI.js"></script>
   <script src="src/colorarrays.js"></script>
-  <script src="src/worker.js"></script>
+  <script src="src/worker-manager.js"></script>
   <script src="src/backup.js"></script>
   <script src="src/mandel.js"></script>
 
