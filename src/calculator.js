@@ -1,5 +1,13 @@
 // calculator.js
 
+"use strict";
+
+ math.config({
+    number: 'bignumber',  // Default type of number: 'number' (default) or 'bignumber'
+    precision: 64         // Number of significant digits for BigNumbers
+  });
+    // configuring math.js for bignumbers
+
 var calculator = {
   DEFAULT_DEPTH : 20,   
 

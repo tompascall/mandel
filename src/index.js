@@ -2,12 +2,6 @@
 
   "use strict";
 
-  math.config({
-    number: 'bignumber',  // Default type of number: 'number' (default) or 'bignumber'
-    precision: 64         // Number of significant digits for BigNumbers
-  });
-    // configuring math.js for bignumbers
-
   var mandel = {};
 
 
@@ -103,8 +97,7 @@
     }
   }
 
-  // ----------- end functions -----------------------------------------------------------
-
+  // ----------- end functions -----------------------------------------------------
 
   mandel.init();
   mandel.drawer();
