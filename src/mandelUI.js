@@ -34,9 +34,9 @@ mandelUI.setTip = function(tipID, display){
 
 mandelUI.setMaxDepth = function(){
   var d = mandelUI.getDepthInput();
-  mandelUI.maxDepth = d ? d : mandel.DEFAULT_DEPTH;
+  mandelUI.maxDepth = d ? d : calculator.DEFAULT_DEPTH;
     // if depthInput cannot be interpreted, then comes the default value
-  if (d !== mandel.DEFAULT_DEPTH && mandelUI.tipIterationDisplay) {
+  if (d !== calculator.DEFAULT_DEPTH && mandelUI.tipIterationDisplay) {
     mandelUI.setTip("tip_iteration", "none");
     mandelUI.tipIterationDisplay = false;
       // if the value of the iteration has already been set,
@@ -93,7 +93,7 @@ mandelUI.setUIEvents = function(){
   $( "#hue" ).on( "slide", function( event, ui ) {
     var savedImgData = canvas.ctx.createImageData(canvas.canvasSize, canvas.canvasSize);
     mandelUI.hue = ui.value;
-    if (mandel.calculationReady) {
+    if (calculator.calculationReady) {
       // if drawing the set is finished
       colors.setColorScheme();
       colors.setColorArrays();
@@ -107,7 +107,7 @@ mandelUI.setUIEvents = function(){
   $( "#saturation" ).on( "slide", function( event, ui ) {
     var savedImgData = canvas.ctx.createImageData(canvas.canvasSize, canvas.canvasSize);
     mandelUI.saturation = ui.value / 100;
-    if (mandel.calculationReady) {
+    if (calculator.calculationReady) {
       // if drawing the set is finished
       colors.setColorScheme();
       colors.setColorArrays();
@@ -122,7 +122,7 @@ mandelUI.setUIEvents = function(){
     // actualizes color schemes when setting the radio buttons
     var savedImgData = canvas.ctx.createImageData(canvas.canvasSize, canvas.canvasSize);
       // the whole canvas
-    if (mandel.calculationReady) {
+    if (calculator.calculationReady) {
       // if drawing the set is finished
       colors.setColorScheme();
       colors.setColorArrays();

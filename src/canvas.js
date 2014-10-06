@@ -53,7 +53,7 @@ canvas.setCanvasEvents = function(){
             mandelUI.tipIterationDisplay = true;
               // let's show the next tip about the iteration
           }
-          mandel.enlargement = true;
+          calculator.enlargement = true;
           mandel.drawer("enlargement");
         }
       }
@@ -90,7 +90,7 @@ canvas.setCanvasEvents = function(){
           mandelUI.tipIterationDisplay = true;
             // let's show the next tip about the iteration
         }
-        mandel.enlargement = true;
+        calculator.enlargement = true;
         mandel.drawer("enlargement");
       }
     }
@@ -133,7 +133,7 @@ canvas.copyArrayToCanvas = function(array, imgData){
       imgData.data[lineX * 4 + 2] = colors.colorArrays.arrays[depth][2];
       imgData.data[lineX * 4 + 3] = 255;
 
-      if (!mandel.calculationReady) {
+      if (!calculator.calculationReady) {
         canvas.depthArray.push(depth);
         // saving the depth data of the point
         // for later color manipulation

@@ -207,7 +207,7 @@ colors.createColorArrays = function(depth, colorSchemeIndex, hue, saturation){
 colors.demoScheme = function() {
     // this function shows the actual color scheme
 
-    if (mandel.calculationReady) {
+    if (calculator.calculationReady) {
       colors.colorSchemeDemoModeOn = true;
         // it is true while mandelbrot is not in progress
       colors.demoSchemeIsRunning = true;

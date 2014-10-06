@@ -56,7 +56,7 @@ function mandelWorker(aComplexIterated, bComplexIterated, canvasSize, bigNumberM
 			actualDepth = 0;
 
 			if (!bigNumberMode) {
-				mandelCalcNotBigNumber(cStartNumber); // modifies mandel.actualDepth
+				mandelCalcNotBigNumber(cStartNumber);
 			}
 			else {
 				mandelCalcBigNumber(cStartNumber);

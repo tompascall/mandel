@@ -34,7 +34,7 @@ backup.saveState = function(state){
     };
 
     if (backup.states.length > 0){
-      if (modifiedUI() || mandel.enlargement){
+      if (modifiedUI() || calculator.enlargement){
         state.bigNumberMode = bigManager.bigNumberMode;
         state.canvasSize = canvas.canvasSize;
         state.maxDepth = mandelUI.maxDepth;
