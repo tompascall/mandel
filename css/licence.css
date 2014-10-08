@@ -5,6 +5,7 @@ body{
 #back{
   background: #ccc;
   margin-bottom: 20px;
+  display: inline-block;
 }
 #licence{
   max-width: 800px;

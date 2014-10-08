@@ -70,7 +70,16 @@
       margin-top: 0;
     }
     #about{
-   
+      display: inline-block;
+      margin: 0 0 0 0;
+      background: #ccc;
+      font-family: courier;
+      width: 120px;
+      padding: 2px;
+      border: 2px outset;
+    }
+    .about-link{
+      margin: 0 35px;
     }
     #about, #calculate{
       position: absolute;
