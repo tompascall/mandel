@@ -21,11 +21,11 @@ var bigManager = {
 
 bigManager.handleBignumberWarning = function(){
     if (complexPlane.range <= 1e-11 && complexPlane.range >= 5e-13) {
-      mandelUI.setTip("tip_bignumber", "block");
+      mandelUI.setDisplay("tip_bignumber", "block");
       // show warning about the limit of the standard js numbers
     }
     else if (complexPlane.range < 5e-13 || complexPlane.range > 1e-11) {
-      mandelUI.setTip("tip_bignumber", "none");
+      mandelUI.setDisplay("tip_bignumber", "none");
         // there is no need for the tip any more
     }
   }

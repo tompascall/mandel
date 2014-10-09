@@ -27,8 +27,8 @@ var mandelUI = {
     // we use them for enlargement, calculate the new range and step.
 };
 
-mandelUI.setTip = function(tipID, display){
-  document.getElementById(tipID).style.display = display;
+mandelUI.setDisplay = function(id, display){
+  document.getElementById(id).style.display = display;
     // display on and off and element by ID
 }
 
@@ -37,7 +37,7 @@ mandelUI.setMaxDepth = function(){
   mandelUI.maxDepth = d ? d : calculator.DEFAULT_DEPTH;
     // if depthInput cannot be interpreted, then comes the default value
   if (d !== calculator.DEFAULT_DEPTH && mandelUI.tipIterationDisplay) {
-    mandelUI.setTip("tip_iteration", "none");
+    mandelUI.setDisplay("tip_iteration", "none");
     mandelUI.tipIterationDisplay = false;
       // if the value of the iteration has already been set,
       // there is no need for the tip about the iteration

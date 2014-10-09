@@ -46,10 +46,10 @@ canvas.setCanvasEvents = function(){
         // if you didn't click in the same point
         if (!colors.colorSchemeDemoModeOn) {
           if (mandelUI.tipMouseDisplay){
-            mandelUI.setTip("tip_mouse", "none");
+            mandelUI.setDisplay("tip_mouse", "none");
             mandelUI.tipMouseDisplay = false;
               // let's take the mouse-tip away
-            mandelUI.setTip("tip_iteration", "block");
+            mandelUI.setDisplay("tip_iteration", "block");
             mandelUI.tipIterationDisplay = true;
               // let's show the next tip about the iteration
           }
@@ -84,9 +84,9 @@ canvas.setCanvasEvents = function(){
         // the down and up X coord. <= 40px
       if (mandelUI.mouseUpX !== mandelUI.mouseDownX){
         if (mandelUI.tipMouseDisplay){
-          mandelUI.setTip("tip_mouse", "none");
+          mandelUI.setDisplay("tip_mouse", "none");
           mandelUI.tipMouseDisplay = false;
-          mandelUI.setTip("tip_iteration", "block");
+          mandelUI.setDisplay("tip_iteration", "block");
           mandelUI.tipIterationDisplay = true;
             // let's show the next tip about the iteration
         }

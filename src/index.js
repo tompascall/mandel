@@ -1,10 +1,10 @@
 // mandel.js
 
-  "use strict";
+"use strict";
 
-  var mandel = {};
+var mandel = {};
 
-
+if (Modernizr.canvas){
   mandel.init = function(){
     calculator.init();
     mandelUI.initSliders();
@@ -42,7 +42,7 @@
     complexPlane.bComplexIterated = complexPlane.bStartInActualRange;
     complexPlane.setStep();
     
-    mandelUI.setTip("tip_bignumber", "none");
+    mandelUI.setDisplay("tip_bignumber", "none");
     mandelUI.setInputCanvasSize(canvas.DEFAULT_CANVAS_SIZE);    
 
     colors.setColorScheme();
@@ -103,5 +103,12 @@
   mandel.drawer();
 
 
+}
+else {
+  mandelUI.setDisplay("panel", "none");
+}
+
+
+  
 
 
