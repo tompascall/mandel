@@ -4,10 +4,24 @@ body{
   background-color: #ddd;
   padding-bottom: 20px;
 }
-.back{
+#back{
+  display: inline-block;
+  margin: 0px;
   background: #ccc;
-  margin-bottom: 20px;
+  font-family: courier;
+  width: 120px;
+  padding: 2px;
+  border: 2px outset #bbb;
 }
+#backpar{
+  text-align: center;
+  margin: 0;
+  color: black;
+}
+a:active#back{
+  border: 2px inset #bbb;
+}
+
 #about{
   max-width: 800px;
   margin: 0 auto;

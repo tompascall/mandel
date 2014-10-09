@@ -1,11 +1,24 @@
 /* licence.css */
 body{
   background-color: #ddd;
+  padding-bottom: 20px;
 }
 #back{
-  background: #ccc;
-  margin-bottom: 20px;
   display: inline-block;
+  margin: 0px;
+  background: #ccc;
+  font-family: courier;
+  width: 120px;
+  padding: 2px;
+  border: 2px outset #bbb;
+}
+#backpar{
+  text-align: center;
+  margin: 0;
+  color: black;
+}
+a:active#back{
+  border: 2px inset #bbb;
 }
 #licence{
   max-width: 800px;

@@ -11,6 +11,7 @@ h3{
 }
 button {
   margin: 10px 0 0 0;
+  padding: 0;
   background: #ccc;
   font-family: courier;
   width: 120px;

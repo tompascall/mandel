@@ -71,15 +71,21 @@
     }
     #about{
       display: inline-block;
-      margin: 0 0 0 0;
+      margin: 0px;
       background: #ccc;
       font-family: courier;
       width: 120px;
-      padding: 2px;
-      border: 2px outset;
+      padding: 0px;
+      border: 2px outset #bbb;
     }
-    .about-link{
-      margin: 0 35px;
+    
+    #aboutpar{
+      margin: 0;
+      text-align: center;
+      color: black;
+    }
+    a:active#about{
+      border: 2px inset #bbb;
     }
     #about, #calculate{
       position: absolute;
