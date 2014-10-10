@@ -1,7 +1,7 @@
 /* main.css */
 
 body{
-  font-family: courier;
+  font-family: courier, monospace;
   margin: 0;
   padding: 0;
 }
