@@ -23,7 +23,7 @@
       vertical-align: top;
     }
     #canvasNotSupported{
-      display: block;
+      display: none;
       font-size: 1.5em;
       font-family: courier, monospace;
       max-width: 70%;

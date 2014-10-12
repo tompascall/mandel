@@ -16,7 +16,9 @@
   <link rel="stylesheet" type="text/css" href="css/main.css">
   <link rel="stylesheet" type="text/css" href="libraries/jquery-ui-1.11.1.custom/jquery-ui.min.css">
   <link rel="stylesheet" type="text/css" href="css/index.css">
-
+  <script src="libraries/es5-shim/es5-shim.min.js"></script>
+  <script src="libraries/es5-shim/es5-sham.min.js"></script>
+  <script src="libraries/jquery/jquery-1.11.1.min.js"></script>
 </head>
 
 <body>
@@ -35,7 +37,7 @@
     <h3>Mandelbrot Set Explorer</h3>
   </div>
     <canvas id="mandelCanvas"></canvas>
-    <p id="canvasNotSupported">This is a tiny application to study the <a href="http://en.wikipedia.org/wiki/Mandelbrot_set" style="color: maroon">Mandelbrot set</a>. The app gives a graphical representation of the set. You have a lot of color schemes to try. It is possible to enlarge an area of the set by marking out the area with your mouse. You can set the size of the canvas and the value of the maximum iteration. My experience it is the best choice to run the app on Firefox or Chrome. <strong>Sorry, but your browser does not support the HTML5 canvas tag. Please try the app on an other browser (Internet Explorer 10+, Firefox 3.5+, Opera 10.60+, Chrome 3+, Safari 4+).</strong></p>
+    <p id="canvasNotSupported">This is a tiny application to study the <a href="http://en.wikipedia.org/wiki/Mandelbrot_set" style="color: maroon">Mandelbrot set</a>. The app gives a graphical representation of the set. You have a lot of color schemes to try. It is possible to enlarge an area of the set by marking out the area with your mouse. You can set the size of the canvas and the value of the maximum iteration. My experience it is the best choice to run the app on Firefox or Chrome. <strong>Sorry, but your browser does not support the HTML5 canvas and webworkers API. Please try the app on an other browser (Internet Explorer 10+, Firefox 3.5+, Opera 10.60+, Chrome 3+, Safari 4+).</strong></p>
     <div id="panel">
       <div id="upper_panel">
         <strong>Canvas size: </strong><input id="inputCanvasSize" title="Adjust the size of the canvas by pixels. The canvas is a square. After modifying the canvas size and/or the iteration number, you have to push the Calculate button to set the new size." type="number" min="2" name="inputCanvasSize" tabindex="1">
@@ -93,7 +95,7 @@
         <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">Tweet</a>
       </div>
     </div>
-  <script src="libraries/jquery/jquery-2.1.1.min.js"></script>
+
   <script src="src/index.js"></script>
   <script src="libraries/modernizr/modernizr.custom.js"></script>
   <script src="libraries/jquery-ui-1.11.1.custom/jquery-ui.min.js"></script>

@@ -6,8 +6,10 @@ $(document).ready(function(){
   if (Modernizr.canvas && Modernizr.webworkers){
     mandelUI.setDisplay("panel", "inline-block");
     mandelUI.setDisplay("mandelCanvas", "inline-block");
-    mandelUI.setDisplay("canvasNotSupported", "none");
     mandel.init();
+  }
+  else {
+    mandelUI.setDisplay("canvasNotSupported", "block");
   };
 });
 
