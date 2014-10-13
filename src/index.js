@@ -10,6 +10,9 @@ $(document).ready(function(){
   }
   else {
     mandelUI.setDisplay("canvasNotSupported", "block");
+      // we give some information about the app, if
+      // the HTML5 canvas or webworkers API
+      // is not supported by the browser.
   };
 });
 

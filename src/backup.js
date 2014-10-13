@@ -15,7 +15,7 @@ backup.back = function(){
     state = backup.states.pop();
     backup.restoreState(state);
     bigManager.handleBignumberWarning();
-    colors.setColorArrays();
+    colors.setColorArrays(mandelUI.maxDepth, colors.colorScheme, mandelUI.hue, mandelUI.saturation);
     mandelUI.setDepthInput(mandelUI.maxDepth);
     mandelUI.setInputCanvasSize(canvas.canvasSize);
     canvas.setCanvasSize(canvas.canvasSize);
@@ -24,7 +24,7 @@ backup.back = function(){
     mandel.drawer("from_back");
   }
 }
-  
+
 backup.saveState = function(state){
 
     state.UI = {
