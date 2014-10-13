@@ -82,21 +82,6 @@ mandelUI.setSliderValues = function(){
   mandelUI.saturation = 1;
 }
 
-mandelUI.actualizeCanvas = function(putImage){
- var savedImgData;
-      // an array represent the depths on the whole canvas
-  colors.setColorScheme();
-    // set the sheme based on the schame radio buttons
-  colors.setColorArrays(mandelUI.maxDepth, colors.colorScheme, mandelUI.hue, mandelUI.saturation);
-    // actualize the color scheme
-    // based on the new hue value
-  if (putImage){
-    savedImgData = canvas.ctx.createImageData(canvas.canvasSize, canvas.canvasSize);
-    canvas.copyArrayToCanvas(canvas.depthArray, savedImgData);
-    canvas.ctx.putImageData(savedImgData, 0, 0);
-      // actualize the canvas based on the new scheme
-  };
-};
 mandelUI.setUIEvents = function(){
 
   $(document).keypress(function(e) {
@@ -107,11 +92,14 @@ mandelUI.setUIEvents = function(){
 
   $( "#hue" ).on( "slide", function( event, ui ) {
 
-    var putImage = true;
     mandelUI.hue = ui.value;
     if (calculator.calculationReady) {
       // if drawing the set is finished
-      mandelUI.actualizeCanvas(putImage);
+      colors.setColorSchemeByRadio();
+        // set the sheme based on the schame radio buttons
+      colors.setColorArrays(mandelUI.maxDepth, colors.colorScheme, mandelUI.hue, mandelUI.saturation);
+        // actualize the color arrays
+      canvas.putDepthArrayToCanvas();
     }
   });
 
@@ -120,32 +108,30 @@ mandelUI.setUIEvents = function(){
     mandelUI.saturation = ui.value / 100;
     if (calculator.calculationReady) {
       // if drawing the set is finished
-      mandelUI.actualizeCanvas(putImage);
+      colors.setColorSchemeByRadio();
+        // set the sheme based on the schame radio buttons
+      colors.setColorArrays(mandelUI.maxDepth, colors.colorScheme, mandelUI.hue, mandelUI.saturation);
+        // actualize the color arrays
+      canvas.putDepthArrayToCanvas();
     }
   });
 
   $("input:radio").click(function(e){
     // actualizes color schemes when setting the radio buttons
-    var putImage;
     var savedImgData = canvas.ctx.createImageData(canvas.canvasSize, canvas.canvasSize);
       // the whole canvas
     if (calculator.calculationReady) {
       // if drawing the set is finished
-      //colors.setColorScheme();
-      //colors.setColorArrays(mandelUI.maxDepth, colors.colorScheme, mandelUI.hue, mandelUI.saturation);
-        // actualize the color scheme
-      if (!colors.colorSchemeDemoModeOn) {
-        putImage = true;
-        mandelUI.actualizeCanvas(putImage);
-        // canvas.copyArrayToCanvas(canvas.depthArray, savedImgData);
-        //   canvas.ctx.putImageData(savedImgData, 0, 0);
-          // actualize the canvas based on the new scheme
+      colors.setColorSchemeByRadio();
+        // set the sheme based on the schame radio buttons
+      colors.setColorArrays(mandelUI.maxDepth, colors.colorScheme, mandelUI.hue, mandelUI.saturation);
+        // actualize the color arrays
+      if (!colors.colorSchemeDemoModeOn) {        
+        canvas.putDepthArrayToCanvas();
       }
       else if (!colors.demoSchemeIsRunning) {
         // if not just right in the middle of actualizing color schemes
         // in demoScheme mode
-        putImage = false;
-        mandelUI.actualizeCanvas(putImage);
         colors.demoScheme();
       }
     }
@@ -166,7 +152,7 @@ mandelUI.updateUIChanges = function(){
     canvas.setImgData();
   }
 
-  colors.setColorScheme();
+  colors.setColorSchemeByRadio();
   colors.setColorArrays(mandelUI.maxDepth, colors.colorScheme, mandelUI.hue, mandelUI.saturation);
 }
 

@@ -123,6 +123,14 @@ canvas.setImgData = function(){
     // a simple line
 }
 
+canvas.putDepthArrayToCanvas = function(putImage){
+ var savedImgData;
+      // an array represent the depths on the whole canvas
+    savedImgData = canvas.ctx.createImageData(canvas.canvasSize, canvas.canvasSize);
+    canvas.copyArrayToCanvas(canvas.depthArray, savedImgData);
+    canvas.ctx.putImageData(savedImgData, 0, 0);
+};
+
 canvas.copyArrayToCanvas = function(array, imgData){
     var depth;
     var length = array.length;

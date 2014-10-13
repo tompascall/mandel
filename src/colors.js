@@ -21,7 +21,7 @@ var colors = {
     // it is true while demoScheme() is running
 };
 
-colors.setColorScheme = function(){
+colors.setColorSchemeByRadio = function(){
  	colors.colorScheme = mandelUI.getRadioValue("schemes");
 }
 
