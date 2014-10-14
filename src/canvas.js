@@ -45,25 +45,18 @@ canvas.setCanvasEvents = function(){
       if (mandelUI.mouseUpX !== mandelUI.mouseDownX || mandelUI.mouseUpY !== mandelUI.mouseDownY){
         // if you didn't click in the same point
         if (!colors.colorSchemeDemoModeOn) {
-          if (mandelUI.tipMouseDisplay){
-            mandelUI.setDisplay("tip_mouse", "none");
-            mandelUI.tipMouseDisplay = false;
-              // let's take the mouse-tip away
-            mandelUI.setDisplay("tip_iteration", "block");
-            mandelUI.tipIterationDisplay = true;
-              // let's show the next tip about the iteration
-          }
+          mandelUI.manageTips();
           calculator.enlargement = true;
           mandel.drawer("enlargement");
-        }
+        };
       }
       else {
         console.log("you clicked down and up in the same point");
         // this can be a possible breakpoint
         // it executes when you click down and up in the same point
-      }
+      };
       canvas.leftClick = false;
-    }
+    };
   });
 
   canvas.c.addEventListener("touchstart", (function(e) {
@@ -123,13 +116,14 @@ canvas.setImgData = function(){
     // a simple line
 }
 
-canvas.putDepthArrayToCanvas = function(putImage){
+canvas.putDepthArrayToCanvas = function(){
  var savedImgData;
       // an array represent the depths on the whole canvas
     savedImgData = canvas.ctx.createImageData(canvas.canvasSize, canvas.canvasSize);
     canvas.copyArrayToCanvas(canvas.depthArray, savedImgData);
     canvas.ctx.putImageData(savedImgData, 0, 0);
 };
+
 
 canvas.copyArrayToCanvas = function(array, imgData){
     var depth;
