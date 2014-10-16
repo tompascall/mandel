@@ -37,8 +37,10 @@
     <h3>Mandelbrot Set Explorer</h3>
   </div>
     <canvas id="mandelCanvas"></canvas>
-    <p id="canvasNotSupported">This is a tiny application to study the <a href="http://en.wikipedia.org/wiki/Mandelbrot_set" style="color: maroon">Mandelbrot set</a>. The app gives a graphical representation of the set. You have a lot of color schemes to try. It is possible to enlarge an area of the set by marking out the area with your mouse. You can set the size of the canvas and the value of the maximum iteration. In my experience it is the best choice to run the app on Firefox or Chrome.</p> 
-    <p><strong>Sorry, but your browser does not support the HTML5 canvas and webworkers API. Please try the app on an other browser (Internet Explorer 10+, Firefox 3.5+, Opera 10.60+, Chrome 3+, Safari 4+).</strong></p>
+    <div id="canvasNotSupported">
+      <p>This is a tiny application to study the <a href="http://en.wikipedia.org/wiki/Mandelbrot_set" style="color: maroon">Mandelbrot set</a>. The app gives a graphical representation of the set. You have a lot of color schemes to try. It is possible to enlarge an area of the set by marking out the area with your mouse. You can set the size of the canvas and the value of the maximum iteration. In my experience it is the best choice to run the app on Firefox or Chrome.</p>
+      <p><strong>Sorry, but your browser does not support the HTML5 canvas and webworkers API. Please try the app on an other browser (Internet Explorer 10+, Firefox 3.5+, Opera 10.60+, Chrome 3+, Safari 4+).</strong></p>
+    </div>
     <div id="panel">
       <div id="upper_panel">
         <strong>Canvas size: </strong><input id="inputCanvasSize" title="Adjust the size of the canvas by pixels. The canvas is a square. After modifying the canvas size and/or the iteration number, you have to push the Calculate button to set the new size." type="number" min="2" name="inputCanvasSize" tabindex="1">
