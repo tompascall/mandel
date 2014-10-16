@@ -21,13 +21,13 @@ var colors = {
     // it is true while demoScheme() is running
 };
 
-colors.setColorScheme = function(){
+colors.setColorSchemeByRadio = function(){
  	colors.colorScheme = mandelUI.getRadioValue("schemes");
 }
 
-colors.setColorArrays = function(){
-  colors.colorArrays = colors.createColorArrays(mandelUI.maxDepth, colors.colorScheme, mandelUI.hue, mandelUI.saturation);
-    // the createColorArrays function is in colorarrays.js     
+colors.setColorArrays = function(maxDepth, colorScheme, hue, saturation){
+  colors.colorArrays = colors.createColorArrays(maxDepth, colorScheme, hue, saturation);
+    // the createColorArrays function is in colorarrays.js
     // colorArrays based on the scheme and mandelUI.maxDepth
     // It's length is mandelUI.maxDepth
     // The createColorArrays function is located in colorarrays.js
@@ -107,7 +107,7 @@ colors.createColorArrays = function(depth, colorSchemeIndex, hue, saturation){
 
   		rgbFromHsl = chroma(hsl, 'hsl').rgb();
   		color[0] = rgbFromHsl[0];
-  		color[1] = rgbFromHsl[1]; 
+  		color[1] = rgbFromHsl[1];
   		color[2] = rgbFromHsl[2];
   		color[3] = 255;
   		return color;
@@ -218,7 +218,7 @@ colors.demoScheme = function() {
         // if the depth input has been set
         mandelUI.maxDepth = actualDepthInput;
       }
-      colors.setColorArrays();
+      colors.setColorArrays(mandelUI.maxDepth, colors.colorScheme, mandelUI.hue, mandelUI.saturation);
       canvas.setCanvasSize();
       mandelUI.setMouseCoordinatesToCanvas();
       complexPlane.setStep();

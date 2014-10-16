@@ -45,7 +45,7 @@
     mandelUI.setDisplay("tip_bignumber", "none");
     mandelUI.setInputCanvasSize(canvas.DEFAULT_CANVAS_SIZE);
 
-    colors.setColorScheme();
+    colors.setColorSchemeByRadio();
 
     mandelUI.setMouseCoordinatesToCanvas();
     mandelUI.setDepthInput(calculator.DEFAULT_DEPTH);
