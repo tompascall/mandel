@@ -30,7 +30,7 @@ var mandelUI = {
 mandelUI.setDisplay = function(id, display){
   document.getElementById(id).style.display = display;
     // display on and off and element by ID
-}
+};
 
 mandelUI.setMaxDepth = function(){
   var d = mandelUI.getDepthInput();
@@ -41,24 +41,24 @@ mandelUI.setMaxDepth = function(){
     mandelUI.tipIterationDisplay = false;
       // if the value of the iteration has already been set,
       // there is no need for the tip about the iteration
-  }
-}
+  };
+};
 
 mandelUI.setInputCanvasSize = function(x){
   mandelUI.inputCanvasSize.value = x;
-}
+};
 
 mandelUI.getInputCanvasSize = function(){
   return Number(mandelUI.inputCanvasSize.value);
-}
+};
 
 mandelUI.setDepthInput = function(depth){
   document.getElementById("depthInput").value = depth.toString();
-}
+};
 
 mandelUI.getDepthInput = function(){
   return Number(document.getElementById("depthInput").value);
-}
+};
 
 mandelUI.getRadioValue = function(divId){
   var radioDiv = document.getElementById(divId);
@@ -67,27 +67,37 @@ mandelUI.getRadioValue = function(divId){
       return radioDiv.children[i].value;
     }
   }
-}
+};
 
 mandelUI.initSliders = function(){
   $( "#hue" ).slider({ min: 0, max: 360, step: 1});
 
   $( "#saturation" ).slider({ min: 0, max: 100, step: 1 });
-}
+};
 
 mandelUI.setSliderValues = function(){
   $( "#hue" ).slider( "option", "value", 0 );
   $( "#saturation" ).slider( "option", "value", 100 );
   mandelUI.hue = 0;
   mandelUI.saturation = 1;
-}
+};
 
+mandelUI.manageTips = function(){
+  if (mandelUI.tipMouseDisplay){
+    mandelUI.setDisplay("tip_mouse", "none");
+    mandelUI.tipMouseDisplay = false;
+      // let's take the mouse-tip away
+    mandelUI.setDisplay("tip_iteration", "block");
+    mandelUI.tipIterationDisplay = true;
+      // let's show the next tip about the iteration
+  };
+};
 mandelUI.setUIEvents = function(){
 
   $(document).keypress(function(e) {
     if(e.which == 13) {
       mandel.drawer("enter");
-    }
+    };
   });
 
   $( "#hue" ).on( "slide", function( event, ui ) {
@@ -100,7 +110,7 @@ mandelUI.setUIEvents = function(){
       colors.setColorArrays(mandelUI.maxDepth, colors.colorScheme, mandelUI.hue, mandelUI.saturation);
         // actualize the color arrays
       canvas.putDepthArrayToCanvas();
-    }
+    };
   });
 
   $( "#saturation" ).on( "slide", function( event, ui ) {
@@ -113,7 +123,7 @@ mandelUI.setUIEvents = function(){
       colors.setColorArrays(mandelUI.maxDepth, colors.colorScheme, mandelUI.hue, mandelUI.saturation);
         // actualize the color arrays
       canvas.putDepthArrayToCanvas();
-    }
+    };
   });
 
   $("input:radio").click(function(e){
@@ -126,17 +136,17 @@ mandelUI.setUIEvents = function(){
         // set the sheme based on the schame radio buttons
       colors.setColorArrays(mandelUI.maxDepth, colors.colorScheme, mandelUI.hue, mandelUI.saturation);
         // actualize the color arrays
-      if (!colors.colorSchemeDemoModeOn) {        
+      if (!colors.colorSchemeDemoModeOn) {
         canvas.putDepthArrayToCanvas();
       }
       else if (!colors.demoSchemeIsRunning) {
         // if not just right in the middle of actualizing color schemes
         // in demoScheme mode
         colors.demoScheme();
-      }
-    }
+      };
+    };
   });
-}
+};
 
 mandelUI.updateUIChanges = function(){
   mandelUI.setMaxDepth();
@@ -150,16 +160,16 @@ mandelUI.updateUIChanges = function(){
     // in order to enlargement;
     complexPlane.setStep();
     canvas.setImgData();
-  }
+  };
 
   colors.setColorSchemeByRadio();
   colors.setColorArrays(mandelUI.maxDepth, colors.colorScheme, mandelUI.hue, mandelUI.saturation);
-}
+};
 
 mandelUI.setMouseCoordinatesToCanvas = function(){
-    mandelUI.mouseDownX = mandelUI.mouseDownY = 0;
-    mandelUI.mouseUpX = mandelUI.mouseUpY = canvas.canvasSize;
-      // the default is that mouse coordinates parallel to canvas size
-      // they are modified when enlargement happens
-      // after enlargement they must be reset
-  }
+  mandelUI.mouseDownX = mandelUI.mouseDownY = 0;
+  mandelUI.mouseUpX = mandelUI.mouseUpY = canvas.canvasSize;
+    // the default is that mouse coordinates parallel to canvas size
+    // they are modified when enlargement happens
+    // after enlargement they must be reset
+};

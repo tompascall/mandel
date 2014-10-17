@@ -25,7 +25,25 @@ backup.back = function(){
   }
 }
 
-backup.saveState = function(state){
+
+  backup.restoreState = function(state){
+    bigManager.bigNumberMode = state.bigNumberMode;
+    canvas.canvasSize = state.canvasSize;
+    mandelUI.maxDepth = state.maxDepth;
+    complexPlane.aStartInActualRange = state.aStartInActualRange;
+    complexPlane.bStartInActualRange = state.bStartInActualRange;
+    complexPlane.aComplexIterated = state.aComplexIterated;
+    complexPlane.bComplexIterated = state.bComplexIterated;
+    complexPlane.step = state.step;
+    complexPlane.range = state.range;
+  }
+
+  backup.clearBackup = function(){
+    backup.states = [];
+  }
+
+  backup.updateBackup = function(){
+    var state = {};
 
     state.UI = {
       inputCanvasSize : mandelUI.getInputCanvasSize(),
@@ -62,25 +80,4 @@ backup.saveState = function(state){
       });
       return modified;
     }
-  }
-
-  backup.restoreState = function(state){
-    bigManager.bigNumberMode = state.bigNumberMode;
-    canvas.canvasSize = state.canvasSize;
-    mandelUI.maxDepth = state.maxDepth;
-    complexPlane.aStartInActualRange = state.aStartInActualRange;
-    complexPlane.bStartInActualRange = state.bStartInActualRange;
-    complexPlane.aComplexIterated = state.aComplexIterated;
-    complexPlane.bComplexIterated = state.bComplexIterated;
-    complexPlane.step = state.step;
-    complexPlane.range = state.range;
-  }
-
-  backup.clearBackup = function(){
-    backup.states = [];
-  }
-
-  backup.updateBackup = function(){
-    var state = {};
-    backup.saveState(state);
   }
