@@ -27,6 +27,8 @@
     canvas.setCanvasContext();
     canvas.setImgData();
 
+    colors.setColorSchemeByRadio();
+
     bigManager.bigNumberMode = false;
 
     complexPlane.range = 5;
@@ -44,9 +46,6 @@
 
     mandelUI.setDisplay("tip_bignumber", "none");
     mandelUI.setInputCanvasSize(canvas.DEFAULT_CANVAS_SIZE);
-
-    colors.setColorSchemeByRadio();
-
     mandelUI.setMouseCoordinatesToCanvas();
     mandelUI.setDepthInput(calculator.DEFAULT_DEPTH);
     mandelUI.setMaxDepth();
