@@ -21,7 +21,7 @@
 <p>The app uses the following libraries:</p>
 <ul>
 	<li><a href="http://jquery.com/">jQuery</a></li>	
-	<li><a href="http://jqueryui.com/">jQueri UI</a> for sliders</li>
+	<li><a href="http://jqueryui.com/">jQuery UI</a> for sliders</li>
 	<li><a href="http://mathjs.org/">math.js</a> for big numbers</li>	
 	<li><a href="https://github.com/gka/chroma.js">chroma.js</a> for HSL color conversion</li>
 </ul>
